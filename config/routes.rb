@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  get '/' => 'confirmation#index'
+  get '/' => 'confirmation#show'
 end
