@@ -6,18 +6,18 @@ common: &common
 
 development:
   <<: *common
-  database: regulus_development
   username: development
   password: 
+  database: regulus_development
 
 test:
   <<: *common
-  database: regulus_test
   username: test
   password: 
+  database: regulus_test
 
 production:
   <<: *common
-  database: regulus_production
   username: production
   password: 
+  database: regulus_production

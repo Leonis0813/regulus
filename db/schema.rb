@@ -20,19 +20,21 @@ ActiveRecord::Schema.define(version: 20150811112759) do
     t.datetime "updated_at",             null: false
   end
 
-  create_table "currencies", force: :cascade do |t|
-    t.string   "name",       limit: 255
-    t.integer  "price",      limit: 4
-    t.date     "date"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+  create_table "currencies", id: false, force: :cascade do |t|
+    t.datetime "time",                          null: false
+    t.string   "pair", limit: 255, default: "", null: false
+    t.float    "bid",  limit: 24,               null: false
+    t.float    "ask",  limit: 24,               null: false
+    t.float    "open", limit: 24,               null: false
+    t.float    "high", limit: 24,               null: false
+    t.float    "low",  limit: 24,               null: false
   end
 
-  create_table "tweets", force: :cascade do |t|
-    t.string   "content",    limit: 255
-    t.date     "date"
+  create_table "tweets", primary_key: "tweet_id", force: :cascade do |t|
+    t.string   "user_name",  limit: 255, null: false
+    t.string   "full_text",  limit: 255, null: false
+    t.datetime "tweeted_at",             null: false
     t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
   end
 
 end
