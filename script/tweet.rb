@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'twitter'
 
 client = Twitter::REST::Client.new do |config|
@@ -7,21 +8,20 @@ client = Twitter::REST::Client.new do |config|
   config.access_token_secret = 't1n8iXnbfCiZKiwJu0RUtHjoiCGw1fFL50pqNyPlZ2Cfw'
 end
 
+ENV['TZ'] = 'UTC'
 now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
-client.search('overload_anime', :count => 100, :result_type => 'recent').each do |tweet|
-=begin
+
+tweets = client.search('為替', :count => 20, :result_type => 'recent')
+tweets.take(100).each do |tweet|
   query = <<"EOF"
 INSERT INTO
   tweets
 VALUES (
-  '#{tweet.id}', '#{tweet.user.name}', 
+  '#{tweet.id}', '#{tweet.user.name}', '#{tweet.full_text.gsub('\'', '&apos;')}', '#{tweet.created_at}', '#{now}'
 )
+ON DUPLICATE KEY UPDATE
+  user_name = VALUES(user_name),
+  full_text = VALUES(full_text)
 EOF
-=end
-  p tweet.id
-  p "@" + tweet.user.name
-  p tweet.full_text
-  p tweet.created_at
-  
-  print("\n")
+  `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
 end

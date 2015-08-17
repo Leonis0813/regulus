@@ -6,6 +6,8 @@ parsed_url = URI.parse(url)
 req = Net::HTTP::Get.new(parsed_url)
 res = Net::HTTP.start(parsed_url.host, parsed_url.port) {|http| http.request req }
 parsed_body = JSON.parse(res.read_body)
+
+ENV['TZ'] = 'UTC'
 now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
 
 parsed_body['quotes'].each do |rate|

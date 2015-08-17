@@ -13,11 +13,12 @@
 
 ActiveRecord::Schema.define(version: 20150811112759) do
 
-  create_table "articles", force: :cascade do |t|
-    t.string   "content",    limit: 255
-    t.date     "date"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+  create_table "articles", id: false, force: :cascade do |t|
+    t.datetime "published",                null: false
+    t.string   "title",      limit: 255,   null: false
+    t.text     "summary",    limit: 65535, null: false
+    t.string   "url",        limit: 255
+    t.datetime "created_at",               null: false
   end
 
   create_table "currencies", id: false, force: :cascade do |t|
@@ -31,10 +32,10 @@ ActiveRecord::Schema.define(version: 20150811112759) do
   end
 
   create_table "tweets", primary_key: "tweet_id", force: :cascade do |t|
-    t.string   "user_name",  limit: 255, null: false
-    t.string   "full_text",  limit: 255, null: false
-    t.datetime "tweeted_at",             null: false
-    t.datetime "created_at",             null: false
+    t.string   "user_name",  limit: 255,   null: false
+    t.text     "full_text",  limit: 65535, null: false
+    t.datetime "tweeted_at",               null: false
+    t.datetime "created_at",               null: false
   end
 
 end

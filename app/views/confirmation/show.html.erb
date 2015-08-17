@@ -1,3 +1,16 @@
-<%= @currencies %>
-<%= @tweets %>
-<%= @articles %>
+<% @currencies.each do |cur| %>
+<%=  "#{cur.datetime} #{cur.pair} #{cur.bid}" %><br />
+<% end %>
+<br />
+<% @tweets.each do |tw| %>
+<%= tw.user_name %><br/>
+<%= tw.full_text.gsub('\n', '<br />') %><br />
+<br />
+<% end %>
+<br />
+<% @articles.each do |article| %>
+Title: <%= article.title %><br />
+Summary: <%= article.summary %><br />
+URL: <%= article.url %><br />
+<br />
+<% end %>
