@@ -17,10 +17,11 @@ tweets.take(100).each do |tweet|
 INSERT INTO
   tweets
 VALUES (
-  '#{tweet.id}', '#{tweet.user.name}', '#{tweet.full_text.gsub('\'', '&apos;')}', '#{tweet.created_at}', '#{now}'
+  '#{tweet.id}', '#{tweet.user.name}', '#{tweet.user.profile_image_url}', '#{tweet.full_text.gsub('\'', '&apos;')}', '#{tweet.created_at}', '#{now}'
 )
 ON DUPLICATE KEY UPDATE
   user_name = VALUES(user_name),
+  profile_image_url = VALUES(profile_image_url),
   full_text = VALUES(full_text)
 EOF
   `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`

@@ -24,6 +24,7 @@ INSERT INTO
 )
 ON DUPLICATE KEY UPDATE
   user_name = VALUES(user_name),
+  profile_image_url = VALUES(profile_image_url),
   full_text = VALUES(full_text)
 EOF
   `mysql --user=root --password=7QiSlC?4 regulus_#{env} -e "#{query}"`
