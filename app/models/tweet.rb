@@ -3,6 +3,6 @@ class Tweet < ActiveRecord::Base
   validates :date, :presence => true, :format => /\d{4}-\d{2}-\d{2}/
 
   def self.get_tweets
-    Tweet.order('created_at DESC').limit(20)
+    Tweet.order('created_at DESC').limit(100)
   end
 end

@@ -32,10 +32,11 @@ ActiveRecord::Schema.define(version: 20150811112759) do
   end
 
   create_table "tweets", primary_key: "tweet_id", force: :cascade do |t|
-    t.string   "user_name",  limit: 255,   null: false
-    t.text     "full_text",  limit: 65535, null: false
-    t.datetime "tweeted_at",               null: false
-    t.datetime "created_at",               null: false
+    t.string   "user_name",         limit: 255,   null: false
+    t.string   "profile_image_url", limit: 255,   null: false
+    t.text     "full_text",         limit: 65535, null: false
+    t.datetime "tweeted_at",                      null: false
+    t.datetime "created_at",                      null: false
   end
 
 end
