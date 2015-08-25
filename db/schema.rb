@@ -24,11 +24,7 @@ ActiveRecord::Schema.define(version: 20150811112759) do
   create_table "currencies", id: false, force: :cascade do |t|
     t.datetime "time",                          null: false
     t.string   "pair", limit: 255, default: "", null: false
-    t.float    "bid",  limit: 24,               null: false
-    t.float    "ask",  limit: 24,               null: false
-    t.float    "open", limit: 24,               null: false
-    t.float    "high", limit: 24,               null: false
-    t.float    "low",  limit: 24,               null: false
+    t.float    "rate", limit: 24,               null: false
   end
 
   create_table "tweets", primary_key: "tweet_id", force: :cascade do |t|
