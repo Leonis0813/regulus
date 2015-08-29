@@ -23,11 +23,7 @@ INSERT INTO
   SELECT * FROM regulus.currencies
 )
 ON DUPLICATE KEY UPDATE
-  bid = VALUES(bid),
-  ask = VALUES(ask),
-  open = VALUES(open),
-  high = VALUES(high),
-  low = VALUES(low)
+  rate = VALUES(rate)
 EOF
   `mysql --user=root --password=7QiSlC?4 regulus_#{env} -e "#{query}"`
 end
