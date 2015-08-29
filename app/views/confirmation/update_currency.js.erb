@@ -1,6 +1,6 @@
-<div style="float:left; width:330px; margin:0px 0px 10px 0px;" id="cur_usd"></div>
-<div style="float:left; width:330px; margin:0px 0px 10px 0px;" id="cur_eur"></div>
-<div style="float:left; width:330px; margin:10px 0px 0px 0px;" id="cur_gbp"></div>
+<div style="float:left; width:330px; margin:0px 10px 10px 0px;" id="cur_usd"></div>
+<div style="float:left; width:330px; margin:0px 0px 10px 10px;" id="cur_eur"></div>
+<div style="float:left; width:330px; margin:10px 10px 0px 0px;" id="cur_gbp"></div>
 
 <script type="text/javascript">
 $('#cur_usd').html("");
@@ -13,9 +13,7 @@ options = {
       min: <%= raw("'#{@currencies_usd.last.first}'") %>,
       max: <%= raw("'#{@currencies_usd.first.first}'") %>,
       tickOptions: {formatString:'%H:%M'},
-      label:'Date',
     },
-    yaxis:{label: 'Price'}
   },
   series: [{
     renderer: $.jqplot.OHLCRenderer,
@@ -41,9 +39,7 @@ options = {
       min: <%= raw("'#{@currencies_eur.last.first}'") %>,
       max: <%= raw("'#{@currencies_eur.first.first}'") %>,
       tickOptions: {formatString:'%H:%M'},
-      label:'Date',
     },
-    yaxis:{label: 'Price'}
   },
   series: [{
     renderer: $.jqplot.OHLCRenderer,
@@ -69,9 +65,7 @@ options = {
       min: <%= raw("'#{@currencies_gbp.last.first}'") %>,
       max: <%= raw("'#{@currencies_gbp.first.first}'") %>,
       tickOptions: {formatString:'%H:%M'},
-      label:'Date',
     },
-    yaxis:{label: 'Price'}
   },
   series: [{
     renderer: $.jqplot.OHLCRenderer,
