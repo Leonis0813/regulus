@@ -1,11 +1,11 @@
 class Currency < ActiveRecord::Base
-  validates :time, :presence => true
-  validates :pair, :presence => true
-
   scope :interval, ->(from, to) { where("time BETWEEN '#{from}' AND '#{to}'") }
   scope :pair, ->(pair) { where(:pair => pair) }
 
   def self.get_currencies(pair, interval)
+    return nil if Currency.pair(pair).select(:pair).distinct.count(:pair) == 0
+    return nil unless interval && interval > 0
+
     now = Time.now - 32400
     to = now - (now.min % interval) * 60
     [].tap do |arr|
@@ -20,8 +20,8 @@ class Currency < ActiveRecord::Base
                 results.first.rate,
                 results.maximum(:rate),
                 results.minimum(:rate),
-                results.last.rate
-               ]
+                results.last.rate,
+               ] unless results.empty?
         to = from
       end
     end
