@@ -1,4 +1,4 @@
-<% 20.times do |i| %> 
+<% 5.times do |i| %> 
 article<%= i %>:
   published: 1999-12-31
   title: test_title_<%= i %>
