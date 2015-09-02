@@ -1,7 +1,4 @@
 class Currency < ActiveRecord::Base
-  validates :time, :presence => true
-  validates :pair, :presence => true
-
   scope :interval, ->(from, to) { where("time BETWEEN '#{from}' AND '#{to}'") }
   scope :pair, ->(pair) { where(:pair => pair) }
 
@@ -17,10 +14,10 @@ class Currency < ActiveRecord::Base
           .select(:rate)
         arr << [
                 to.strftime('%H:%M:00'),
-                results.first.rate,
-                results.maximum(:rate),
-                results.minimum(:rate),
-                results.last.rate
+                results.first ? results.first.rate : 0.0,
+                results.maximum(:rate) || 0.0,
+                results.minimum(:rate) || 0.0,
+                results.last ? results.last.rate : 0.0
                ]
         to = from
       end

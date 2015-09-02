@@ -6,7 +6,7 @@ class ArticleTest < ActiveSupport::TestCase
   end
 
   test 'should return recent articles' do
-    assert 5, Article.get_articles.size
+    assert_equal 5, Article.get_articles.size
   end
 
   test 'should return recent 20 articles' do
