@@ -3,6 +3,9 @@ class Currency < ActiveRecord::Base
   scope :pair, ->(pair) { where(:pair => pair) }
 
   def self.get_currencies(pair, interval)
+    return nil if Currency.pair(pair).select(:pair).distinct.count(:pair) == 0
+    return nil unless interval && interval > 0
+
     now = Time.now - 32400
     to = now - (now.min % interval) * 60
     [].tap do |arr|
@@ -14,11 +17,11 @@ class Currency < ActiveRecord::Base
           .select(:rate)
         arr << [
                 to.strftime('%H:%M:00'),
-                results.first ? results.first.rate : 0.0,
-                results.maximum(:rate) || 0.0,
-                results.minimum(:rate) || 0.0,
-                results.last ? results.last.rate : 0.0
-               ]
+                results.first.rate,
+                results.maximum(:rate),
+                results.minimum(:rate),
+                results.last.rate,
+               ] unless results.empty?
         to = from
       end
     end
