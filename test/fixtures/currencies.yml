@@ -1,0 +1,6 @@
+<% 5.times do |i| %>
+currency<%= i %>:
+  time: <%= Time.now - (i+1) * 300 %>
+  pair: USDJPY
+  rate: 100.000
+<% end %>

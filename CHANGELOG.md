@@ -1,3 +1,3 @@
-# CHANGELOG
-## 1.0.0
-* NEW: regulus
+# regulus
+
+-  1.0.0: [NEW] create app
