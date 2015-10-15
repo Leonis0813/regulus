@@ -1,10 +1,7 @@
-<div style="float:left; width:330px; margin:0px 10px 10px 0px;" id="cur_usd"></div>
-<div style="float:left; width:330px; margin:0px 0px 10px 10px;" id="cur_eur"></div>
-<div style="float:left; width:330px; margin:10px 10px 0px 0px;" id="cur_gbp"></div>
-
-<script type="text/javascript">
-$('#cur_usd').html("");
-
+<div style="float:left; width:325px; margin:0px 10px 10px 0px;" id="cur_usd"></div>
+<div style="float:left; width:325px; margin:0px 0px 10px 10px;" id="cur_eur"></div>
+<div style="float:left; width:325px; margin:10px 10px 0px 0px;" id="cur_gbp"></div>
+<%= javascript_tag do %>
 options = {
   title:{text: 'USDJPY'},
   axes:{
@@ -26,10 +23,6 @@ data = [
 ];
 
 $.jqplot('cur_usd', data, options);
-</script>
-
-<script type="text/javascript">
-$('#cur_eur').html("");
 
 options = {
   title:{text: 'EURJPY'},
@@ -52,10 +45,6 @@ data = [
 ];
 
 $.jqplot('cur_eur', data, options);
-</script>
-
-<script type="text/javascript">
-$('#cur_gbp').html("");
 
 options = {
   title:{text: 'GBPJPY'},
@@ -78,4 +67,4 @@ data = [
 ];
 
 $.jqplot('cur_gbp', data, options);
-</script>
+<% end %>
