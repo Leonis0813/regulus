@@ -3,24 +3,8 @@
 <div style="float:left; width:48%; height:671px; border-style:solid; border-width:5px; border-radius:10px; margin:1px; padding:10px;" id="currency">
 </div>
 <div style="float:left; width:48%;">
-  <div style="height:320px; overflow-y:scroll; border-style:solid; border-width:5px; border-radius:10px; margin:1px; padding:10px;" id="tweet"></div>
-  <div style="height:320px; overflow-y:scroll; border-style:solid; border-width:5px; border-radius:10px; margin:1px; padding:10px;" id="article"></div>
+  <div style="height:320px; overflow-y:scroll; border-style:solid; border-width:5px; border-radius:10px; margin:1px; padding:10px;" id="tweet">
+  </div>
+  <div style="height:320px; overflow-y:scroll; border-style:solid; border-width:5px; border-radius:10px; margin:1px; padding:10px;" id="article">
+  </div>
 </div>
-<script type="text/javascript">
-$(document).ready(
-  function(){
-    setInterval(function(){
-      $('#tweet').load('/tweet');
-    }, 1000);
-    setInterval(function(){
-      $('#article').load('/article');
-    }, 60 * 1000);
-    setInterval(function(){
-      $('#currency').load('/currency');
-    }, 10 * 1000);
-    $('#currency').load('/currency');
-    $('#tweet').load('/tweet');
-    $('#article').load('/article');
-  }
-);
-</script>
