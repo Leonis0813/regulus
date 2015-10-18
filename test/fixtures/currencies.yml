@@ -4,3 +4,17 @@ currency<%= i %>:
   pair: USDJPY
   rate: 100.000
 <% end %>
+
+<% 5.times do |i| %>
+currency<%= i+5 %>:
+  time: <%= Time.now - (i+1) * 300 %>
+  pair: EURJPY
+  rate: 100.000
+<% end %>
+
+<% 5.times do |i| %>
+currency<%= i+10 %>:
+  time: <%= Time.now - (i+1) * 300 %>
+  pair: GBPJPY
+  rate: 100.000
+<% end %>
