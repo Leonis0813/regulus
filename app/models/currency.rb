@@ -1,28 +1,14 @@
 class Currency < ActiveRecord::Base
-  scope :interval, ->(from, to) { where("time BETWEEN '#{from}' AND '#{to}'") }
+  scope :interval, ->(interval) { where(:interval => interval) }
   scope :pair, ->(pair) { where(:pair => pair) }
 
   def self.get_currencies(pair, interval)
     return nil if Currency.pair(pair).select(:pair).distinct.count(:pair) == 0
     return nil unless interval && interval > 0
 
-    now = Time.now - 32400
-    to = now - (now.min % interval) * 60
     [].tap do |arr|
-      30.times do
-        from = to - interval * 60
-        results = Currency.pair(pair)
-          .interval(from.strftime('%Y-%m-%d %H:%M:00'), to.strftime('%Y-%m-%d %H:%M:00'))
-          .order(:time)
-          .select(:rate)
-        arr << [
-                to.strftime('%H:%M:00'),
-                results.first.rate,
-                results.maximum(:rate),
-                results.minimum(:rate),
-                results.last.rate,
-               ] unless results.empty?
-        to = from
+      Currency.pair(pair).interval("#{interval}-min").order('to_date DESC').select('to_date, open, close, high, low').limit(30).each do |record|
+        arr << [(record.to_date + 1).strftime('%Y-%m-%d %H:%M:%S'), record.open, record.high, record.low, record.close]
       end
     end
   end
