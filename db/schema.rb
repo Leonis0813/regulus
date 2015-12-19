@@ -22,9 +22,16 @@ ActiveRecord::Schema.define(version: 20150811112759) do
   end
 
   create_table "currencies", id: false, force: :cascade do |t|
-    t.datetime "time",                          null: false
-    t.string   "pair", limit: 255, default: "", null: false
-    t.float    "rate", limit: 24,               null: false
+    t.datetime "from_date",                           null: false
+    t.datetime "to_date",                             null: false
+    t.string   "pair",       limit: 255, default: "", null: false
+    t.string   "interval",   limit: 255, default: "", null: false
+    t.float    "open",       limit: 24,               null: false
+    t.float    "close",      limit: 24,               null: false
+    t.float    "high",       limit: 24,               null: false
+    t.float    "low",        limit: 24,               null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "tweets", primary_key: "tweet_id", force: :cascade do |t|
