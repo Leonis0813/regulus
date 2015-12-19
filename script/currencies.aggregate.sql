@@ -84,8 +84,8 @@ INSERT INTO
     axis.pair = low.pair
 )
 ON DUPLICATE KEY UPDATE
-  open = VALUES(open)
-  close = VALUES(close)
-  high = VALUES(high)
-  low = VALUES(low)
+  open = VALUES(open),
+  close = VALUES(close),
+  high = VALUES(high),
+  low = VALUES(low),
   updated_at = NOW()

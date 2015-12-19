@@ -49,10 +49,18 @@ end
 
 [:min, :hour, :day, :week, :month, :year].each do |time_name|
   send(time_name, end_date).each do |interval, begin_date|
+    puts [
+      '[INFO]',
+      Time.now.strftime('%Y-%m-%d %H:%M:%S'),
+      'aggregated',
+      begin_date.strftime('%Y-%m-%d %H:%M:%S'),
+      '-',
+      (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S')
+    ].join(' ')
     query = File.read('currencies.aggregate.sql')
             .gsub('$BEGIN', begin_date.strftime('%Y-%m-%d %H:%M:%S'))
             .gsub('$END', (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'))
             .gsub('$INTERVAL', interval)
-    system %{mysql --user=root --password=7QiSlC?4 regulus_development -e '#{query}'}
+    `mysql --user=root --password=7QiSlC?4 regulus_development -e "#{query}"`
   end
 end
