@@ -2,8 +2,8 @@ INSERT INTO
   currencies
 (
   SELECT
-    axis.from,
-    axis.to,
+    axis.from_date,
+    axis.to_date,
     axis.pair,
     axis.interval,
     open.rate AS open,
@@ -14,8 +14,8 @@ INSERT INTO
     NOW() AS updated_at
   FROM (
     SELECT DISTINCT
-      '$BEGIN' AS 'from',
-      '$END' AS 'to',
+      '$BEGIN' AS from_date,
+      '$END' AS to_date,
       pair,
       '$INTERVAL' AS 'interval'
     FROM regulus.currencies
