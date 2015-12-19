@@ -12,9 +12,14 @@ class CurrencyTest < ActiveSupport::TestCase
   test 'should return 30 currency infos' do
     (5...50).each do |i|
       currency = Currency.new
-      currency.time = Time.now - (i+1) * 300
+      currency.from_date = Time.now - (i+1) * 300
+      currency.to_date = Time.now - i
       currency.pair = 'USDJPY'
-      currency.rate = 100.000 + i
+      currency.interval = '5-min'
+      currency.open = 100.000 + i
+      currency.close = 100.000 + i
+      currency.high = 100.000 + i
+      currency.low = 100.000 + i
       currency.save!
     end
     currencies = Currency.get_currencies('USDJPY', 5)

@@ -1,20 +1,35 @@
 <% 5.times do |i| %>
 currency<%= i %>:
-  time: <%= Time.now - (i+1) * 300 %>
+  from_date: <%= Time.now - (i+1) * 300 %>
+  to_date: <%= Time.now - 1 %>
   pair: USDJPY
-  rate: 100.000
+  interval: '5-min'
+  open: 100.000
+  close: 100.000
+  high: 100.000
+  low: 100.000
 <% end %>
 
 <% 5.times do |i| %>
 currency<%= i+5 %>:
-  time: <%= Time.now - (i+1) * 300 %>
+  from_date: <%= Time.now - (i+1) * 300 %>
+  to_date: <%= Time.now - 1 %>
   pair: EURJPY
-  rate: 100.000
+  interval: '5-min'
+  open: 100.000
+  close: 100.000
+  high: 100.000
+  low: 100.000
 <% end %>
 
 <% 5.times do |i| %>
 currency<%= i+10 %>:
-  time: <%= Time.now - (i+1) * 300 %>
+  from_date: <%= Time.now - (i+1) * 300 %>
+  to_date: <%= Time.now - 1 %>
   pair: GBPJPY
-  rate: 100.000
+  interval: '5-min'
+  open: 100.000
+  close: 100.000
+  high: 100.000
+  low: 100.000
 <% end %>
