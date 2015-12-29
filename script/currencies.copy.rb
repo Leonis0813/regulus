@@ -10,7 +10,7 @@ def create_table(env)
 CREATE TABLE IF NOT EXISTS
   currencies
 LIKE
-  regulus.currencies
+  regulus_development.currencies
 EOF
   `mysql --user=root --password=7QiSlC?4 regulus_#{env} -e "#{query}"`
 end
@@ -20,14 +20,18 @@ def insert_values(env)
 INSERT INTO
   currencies
 (
-  SELECT * FROM regulus.currencies
+  SELECT * FROM regulus_development.currencies
 )
 ON DUPLICATE KEY UPDATE
-  rate = VALUES(rate)
+  open = VALUES(open),
+  close = VALUES(close),
+  high = VALUES(high),
+  low = VALUES(low),
+  updated_at = NOW()
 EOF
   `mysql --user=root --password=7QiSlC?4 regulus_#{env} -e "#{query}"`
 end
 
-create_database 'development'
-create_table 'development'
-insert_values 'development'
+create_database 'production'
+create_table 'production'
+insert_values 'production'
