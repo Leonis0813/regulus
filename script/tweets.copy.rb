@@ -33,3 +33,4 @@ end
 create_database 'development'
 create_table 'development'
 insert_values 'development'
+insert_values 'production'
