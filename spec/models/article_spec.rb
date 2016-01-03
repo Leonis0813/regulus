@@ -20,7 +20,7 @@ shared_context 'create articles' do |num_article|
   after(:all) { Article.delete_all }
 end
 
-describe Article do
+describe Article, :type => :model do
   context 'more than 20 articles in database' do
     include_context 'create articles', 100
 

@@ -19,7 +19,7 @@ shared_context 'create currencies' do |num_currency|
   after(:all) { Currency.delete_all }
 end
 
-describe Currency do
+describe Currency, :type => :model do
   context 'more than 30 currencies in database' do
     include_context 'create currencies', 50
 

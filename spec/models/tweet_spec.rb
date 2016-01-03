@@ -21,7 +21,7 @@ shared_context 'create tweets' do |num_tweet|
   after(:all) { Tweet.delete_all }
 end
 
-describe Tweet do
+describe Tweet, :type => :model do
   context 'more than 100 tweets in database' do
     include_context 'create tweets', 150
 
