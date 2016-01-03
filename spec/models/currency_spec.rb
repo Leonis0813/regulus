@@ -35,4 +35,28 @@ describe Currency do
       expect(Currency.get_currencies('USDJPY', 5).size).to eq(5)
     end
   end
+
+  it 'should return nil if pair is nil' do
+    expect(Currency.get_currencies(nil, 5)).to eq(nil)
+  end
+
+  it 'should return nil if interval is nil' do
+    expect(Currency.get_currencies('USDJPY', nil)).to eq(nil)
+  end
+
+  it 'should return nil if pair and interval are nil' do
+    expect(Currency.get_currencies(nil, nil)).to eq(nil)
+  end
+
+  it 'should return nil if invalid pair' do
+    expect(Currency.get_currencies('INVALID', 5)).to eq(nil)
+  end
+
+  it 'should return nil if invalid interval' do
+    expect(Currency.get_currencies('USDJPY', -1)).to eq(nil)
+  end
+
+  it 'should return nil if invalid pair and interval' do
+    expect(Currency.get_currencies('INVALID', -1)).to eq(nil)
+  end
 end
