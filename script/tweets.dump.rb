@@ -9,17 +9,17 @@ query = <<"EOF"
 SELECT
   *
 FROM
-  currencies
+  tweets
 WHERE
-  DATE(time) = '#{yesterday.strftime('%F')}'
+  DATE(created_at) = '#{yesterday.strftime('%F')}'
 ORDER BY
-  time
+  created_at
 EOF
-rates = `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
+tweets = `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
 
-backup_dir = "backup/currencies/#{yesterday.strftime('%Y-%m')}"
+backup_dir = "backup/tweets/#{yesterday.strftime('%Y-%m')}"
 FileUtils.mkdir_p backup_dir unless File.exists? backup_dir
 csv_file = "#{backup_dir}/#{yesterday.strftime('%d')}.csv"
 File.open(csv_file, 'w') do |out|
-  rates.split("\n").each {|rate| out.puts(rate.tr("\t", ',')) }
+  tweets.split("\n").each {|tweet| out.puts(tweet.tr("\t", ',')) }
 end

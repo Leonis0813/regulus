@@ -8,8 +8,7 @@ CHECKER = {
   :min => [5, 10, 20, 30],
   :hour => [1, 2, 3, 4, 6, 12],
   :day => [1],
-  :month => [1, 2, 3, 6],
-  :year => [1],
+  :month => [1],
 }
 
 def check(time_name, date)
