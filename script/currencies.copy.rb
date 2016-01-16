@@ -30,8 +30,14 @@ ON DUPLICATE KEY UPDATE
   updated_at = NOW()
 EOF
   `mysql --user=root --password=7QiSlC?4 regulus_#{env} -e "#{query}"`
+  puts [
+    "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+    '[copy]',
+    "{env: #{env}}",
+  ].join(' ')
 end
 
+ENV['TZ'] = 'UTC'
 create_database 'production'
 create_table 'production'
 insert_values 'production'
