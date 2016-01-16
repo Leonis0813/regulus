@@ -21,3 +21,10 @@ VALUES (
 EOF
   `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
 end
+
+rates = parsed_body['query']['results']['rate'].map {|result| "{pair: #{result['id']}, rate: #{result['Rate'].to_f}}" }
+puts [
+  "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+  '[import]',
+  "{time: #{now}, rates: [#{rates.join(', ')}]}",
+].join(' ')

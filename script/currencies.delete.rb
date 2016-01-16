@@ -10,3 +10,9 @@ WHERE
   DATE(time) < '#{(today << 2).strftime('%F')}'
 EOF
 `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
+
+puts [
+  "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+  '[delete]',
+  "{date: #{(today << 2).strftime('%F')}}",
+].join(' ')
