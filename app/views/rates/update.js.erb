@@ -7,8 +7,8 @@ options = {
   axes:{
     xaxis:{
       renderer: $.jqplot.DateAxisRenderer,
-      min: <%= raw("'#{@currencies_usd.last.first}'") %>,
-      max: <%= raw("'#{@currencies_usd.first.first}'") %>,
+      min: <%= raw("'#{@rates_usd.last.first}'") %>,
+      max: <%= raw("'#{@rates_usd.first.first}'") %>,
       tickOptions: {formatString:'%H:%M'},
     },
   },
@@ -19,7 +19,7 @@ options = {
 }
 
 data = [
-  <%= raw(@currencies_usd) %>
+  <%= raw(@rates_usd) %>
 ];
 
 $.jqplot('cur_usd', data, options);
@@ -29,8 +29,8 @@ options = {
   axes:{
     xaxis:{
       renderer: $.jqplot.DateAxisRenderer,
-      min: <%= raw("'#{@currencies_eur.last.first}'") %>,
-      max: <%= raw("'#{@currencies_eur.first.first}'") %>,
+      min: <%= raw("'#{@rates_eur.last.first}'") %>,
+      max: <%= raw("'#{@rates_eur.first.first}'") %>,
       tickOptions: {formatString:'%H:%M'},
     },
   },
@@ -41,7 +41,7 @@ options = {
 }
 
 data = [
-  <%= raw(@currencies_eur) %>
+  <%= raw(@rates_eur) %>
 ];
 
 $.jqplot('cur_eur', data, options);
@@ -51,8 +51,8 @@ options = {
   axes:{
     xaxis:{
       renderer: $.jqplot.DateAxisRenderer,
-      min: <%= raw("'#{@currencies_gbp.last.first}'") %>,
-      max: <%= raw("'#{@currencies_gbp.first.first}'") %>,
+      min: <%= raw("'#{@rates_gbp.last.first}'") %>,
+      max: <%= raw("'#{@rates_gbp.first.first}'") %>,
       tickOptions: {formatString:'%H:%M'},
     },
   },
@@ -63,7 +63,7 @@ options = {
 }
 
 data = [
-  <%= raw(@currencies_gbp) %>
+  <%= raw(@rates_gbp) %>
 ];
 
 $.jqplot('cur_gbp', data, options);
