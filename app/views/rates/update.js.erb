@@ -1,14 +1,12 @@
-<div style="float:left; width:325px; margin:0px 10px 10px 0px;" id="cur_usd"></div>
-<div style="float:left; width:325px; margin:0px 0px 10px 10px;" id="cur_eur"></div>
-<div style="float:left; width:325px; margin:10px 10px 0px 0px;" id="cur_gbp"></div>
 <%= javascript_tag do %>
+$('#rate').html('<div style="margin: 0px 20px 10px 20px; height: 650px;" id="usd"></div>');
 options = {
   title:{text: 'USDJPY'},
   axes:{
     xaxis:{
       renderer: $.jqplot.DateAxisRenderer,
-      min: <%= raw("'#{@rates_usd.last.first}'") %>,
-      max: <%= raw("'#{@rates_usd.first.first}'") %>,
+      min: <%= raw("'#{@rates.last.first}'") %>,
+      max: <%= raw("'#{@rates.first.first}'") %>,
       tickOptions: {formatString:'%H:%M'},
     },
   },
@@ -19,52 +17,8 @@ options = {
 }
 
 data = [
-  <%= raw(@rates_usd) %>
+  <%= raw(@rates) %>
 ];
 
-$.jqplot('cur_usd', data, options);
-
-options = {
-  title:{text: 'EURJPY'},
-  axes:{
-    xaxis:{
-      renderer: $.jqplot.DateAxisRenderer,
-      min: <%= raw("'#{@rates_eur.last.first}'") %>,
-      max: <%= raw("'#{@rates_eur.first.first}'") %>,
-      tickOptions: {formatString:'%H:%M'},
-    },
-  },
-  series: [{
-    renderer: $.jqplot.OHLCRenderer,
-    rendererOptions:{candleStick:true}
-  }]
-}
-
-data = [
-  <%= raw(@rates_eur) %>
-];
-
-$.jqplot('cur_eur', data, options);
-
-options = {
-  title:{text: 'GBPJPY'},
-  axes:{
-    xaxis:{
-      renderer: $.jqplot.DateAxisRenderer,
-      min: <%= raw("'#{@rates_gbp.last.first}'") %>,
-      max: <%= raw("'#{@rates_gbp.first.first}'") %>,
-      tickOptions: {formatString:'%H:%M'},
-    },
-  },
-  series: [{
-    renderer: $.jqplot.OHLCRenderer,
-    rendererOptions:{candleStick:true}
-  }]
-}
-
-data = [
-  <%= raw(@rates_gbp) %>
-];
-
-$.jqplot('cur_gbp', data, options);
+$('#usd').jqplot(data, options);
 <% end %>

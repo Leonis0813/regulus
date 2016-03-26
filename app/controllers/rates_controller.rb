@@ -1,8 +1,9 @@
 class RatesController < ApplicationController
+  def show
+    @rates = Rate.get_rates('USDJPY', 5)
+  end
+
   def update
-    @rates_usd = Rate.get_rates('USDJPY', 5)
-    @rates_eur = Rate.get_rates('EURJPY', 5)
-    @rates_gbp = Rate.get_rates('GBPJPY', 5)
-    render :nothing => true
+    @rates = Rate.get_rates('USDJPY', 5)
   end
 end
