@@ -1,13 +1,9 @@
 update_currency = ->
-  $('#currency').load('/currency');
-  return
-
-update_tweet = ->
-  $('#tweet').load('/tweet');
+  $('#currency').load('/rate/update');
   return
 
 update_article = ->
-  $('#article').load('/article');
+  $('#article').load('/article/update');
   return
 
 $(document).ready ->
@@ -17,13 +13,8 @@ $(document).ready ->
   , 10 * 1000);
   setInterval(
     () ->
-      update_tweet();
-  , 1000);
-  setInterval(
-    () ->
       update_article();
   , 60 * 1000);
   update_currency()
-  update_tweet()
   update_article()
   return
