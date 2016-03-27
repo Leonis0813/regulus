@@ -1,5 +1,10 @@
+# coding: utf-8
 require 'rails_helper'
 
-RSpec.describe "tweets/show", type: :view do
-  pending "add some examples to (or delete) #{__FILE__}"
+describe "tweets/show", :type => :view do
+  before { render :template => 'tweet/show.html.erb' }
+
+  it 'div タグが表示されていること' do
+    expect(response).to match /div.*id="tweet"/
+  end
 end
