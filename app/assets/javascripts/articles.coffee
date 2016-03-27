@@ -1,5 +1,5 @@
 update_article = ->
-  $('#article').load('/article/update');
+  $('#article').load('/articles/update');
   return
 
 $(document).ready ->

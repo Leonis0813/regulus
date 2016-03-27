@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
-  get '/' => 'confirmation#show'
-  get '/rate' => 'rates#show'
-  get '/tweet' => 'tweets#show'
-  get '/article' => 'articles#show'
-  get '/rate/update' => 'rates#update'
-  get '/tweet/update' => 'tweets#update'
-  get '/article/update' => 'articles#update'
+  get '/', to: redirect('/rates')
+  get '/rates' => 'rates#show'
+  get '/tweets' => 'tweets#show'
+  get '/articles' => 'articles#show'
+  get '/rates/update' => 'rates#update'
+  get '/tweets/update' => 'tweets#update'
+  get '/articles/update' => 'articles#update'
 end

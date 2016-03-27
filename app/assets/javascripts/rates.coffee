@@ -1,5 +1,5 @@
 update_rate = ->
-  $('#rate').load('/rate/update');
+  $('#rate').load('/rates/update');
   return
 
 $(document).ready ->

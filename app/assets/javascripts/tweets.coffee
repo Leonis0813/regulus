@@ -1,5 +1,5 @@
 update_tweet = ->
-  $('#tweet').load('/tweet/update');
+  $('#tweet').load('/tweets/update');
   return
 
 $(document).ready ->
