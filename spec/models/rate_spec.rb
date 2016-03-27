@@ -1,41 +1,22 @@
 # coding: utf-8
 require 'rails_helper'
 
-shared_context 'レートを作成する' do |num_rate|
-  before(:all) do
-    num_rate.times do |i|
-      rate = Rate.new
-      rate.from_date = Time.now - (i+1) * 300
-      rate.to_date = Time.now - i
-      rate.pair = 'USDJPY'
-      rate.interval = '5-min'
-      rate.open = 100.000 + i
-      rate.close = 100.000 + i
-      rate.high = 100.000 + i
-      rate.low = 100.000 + i
-      rate.save!
-    end
+describe Rate, :type => :model do
+  shared_context 'レートを取得する' do |params = {}|
+    before(:all) { @res = Rate.get_rates(params[:pair], params[:interval]) }
   end
 
-  after(:all) { Rate.delete_all }
-end
+  shared_examples 'レートが取得されていること' do |expected_size|
+    it { expect(@res.size).to eq(expected_size) }
+  end
 
-shared_context 'レートを取得する' do |params = {}|
-  before(:all) { @res = Rate.get_rates(params[:pair], params[:interval]) }
-end
+  shared_examples 'レートが取得されていないこと' do
+    it { expect(@res).to be_nil }
+  end
 
-shared_examples 'レートが取得されていること' do |expected_size|
-  it { expect(@res.size).to eq(expected_size) }
-end
-
-shared_examples 'レートが取得されていないこと' do
-  it { expect(@res).to be_nil }
-end
-
-describe Rate, :type => :model do
   [
     ['レート情報が十分にある場合', 50, 30],
-    ['レート情報は不十分な場合', 5, 5],
+    ['レート情報が不十分な場合', 5, 5],
   ].each do |description, num_rate, expected_size|
     context description do
       include_context 'レートを作成する', num_rate
