@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150811112759) do
+ActiveRecord::Schema.define(version: 20160326112357) do
 
   create_table "articles", id: false, force: :cascade do |t|
     t.datetime "published",                null: false
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20150811112759) do
     t.datetime "created_at",               null: false
   end
 
-  create_table "currencies", id: false, force: :cascade do |t|
+  create_table "rates", id: false, force: :cascade do |t|
     t.datetime "from_date",                           null: false
     t.datetime "to_date",                             null: false
     t.string   "pair",       limit: 255, default: "", null: false

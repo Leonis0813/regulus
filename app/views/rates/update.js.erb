@@ -1,0 +1,24 @@
+<%= javascript_tag do %>
+$('#rate').html('<div style="margin: 0px 20px 10px 20px; height: 640px;" id="usd"></div>');
+options = {
+  title:{text: 'USDJPY'},
+  axes:{
+    xaxis:{
+      renderer: $.jqplot.DateAxisRenderer,
+      min: <%= raw("'#{@rates.last.first}'") %>,
+      max: <%= raw("'#{@rates.first.first}'") %>,
+      tickOptions: {formatString:'%H:%M'},
+    },
+  },
+  series: [{
+    renderer: $.jqplot.OHLCRenderer,
+    rendererOptions:{candleStick:true}
+  }]
+}
+
+data = [
+  <%= raw(@rates) %>
+];
+
+$('#usd').jqplot(data, options);
+<% end %>

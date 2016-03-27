@@ -1,6 +1,6 @@
-class CreateCurrencies < ActiveRecord::Migration
+class CreateRates < ActiveRecord::Migration
   def change
-    create_table :currencies, :id => false do |t|
+    create_table :rates, :id => false do |t|
       t.datetime :from_date
       t.datetime :to_date
       t.string :pair
@@ -11,6 +11,6 @@ class CreateCurrencies < ActiveRecord::Migration
       t.float :low, :null => false
       t.timestamps
     end
-    execute 'ALTER TABLE currencies ADD PRIMARY KEY (from_date, to_date, pair, `interval`)'
+    execute 'ALTER TABLE rates ADD PRIMARY KEY (from_date, to_date, pair, `interval`)'
   end
 end
