@@ -1,6 +1,10 @@
 regulus
 =======
 
+- 1.0.3
+  - [UPDATE] scripts
+  - [ADD] rspec
+
 - 1.0.2
   - [UPDATE] table schema of currency
   - [FIX] bug when deploying for production environment

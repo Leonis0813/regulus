@@ -25,4 +25,6 @@ ON DUPLICATE KEY UPDATE
   full_text = VALUES(full_text)
 EOF
   `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
+  `mysql --user=root --password=7QiSlC?4 regulus_development -e "#{query}"`
+  `mysql --user=root --password=7QiSlC?4 regulus_production -e "#{query}"`
 end
