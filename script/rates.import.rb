@@ -14,7 +14,7 @@ now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
 parsed_body['query']['results']['rate'].each do |result|
   query = <<"EOF"
 INSERT INTO
-  currencies
+  rates
 VALUES (
   '#{now}', '#{result['id']}', #{result['Rate'].to_f}
 )

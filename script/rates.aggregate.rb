@@ -53,7 +53,7 @@ end
       '[aggregate]',
       "{begin: #{begin_date.strftime('%Y-%m-%d %H:%M:%S')}, end: #{(end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S')}, interval: #{interval}}",
     ].join(' ')
-    query = File.read('currencies.aggregate.sql')
+    query = File.read('rates.aggregate.sql')
             .gsub('$BEGIN', begin_date.strftime('%Y-%m-%d %H:%M:%S'))
             .gsub('$END', (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'))
             .gsub('$INTERVAL', interval)

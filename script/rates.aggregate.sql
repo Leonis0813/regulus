@@ -1,5 +1,5 @@
 INSERT INTO
-  currencies
+  rates
 (
   SELECT
     axis.from_date,
@@ -18,20 +18,20 @@ INSERT INTO
       '$END' AS to_date,
       pair,
       '$INTERVAL' AS 'interval'
-    FROM regulus.currencies
+    FROM regulus.rates
   ) AS axis
   LEFT JOIN (
     SELECT
       pair,
       rate
     FROM
-      regulus.currencies
+      regulus.rates
     WHERE
       time = (
         SELECT
           MIN(time)
         FROM
-          regulus.currencies
+          regulus.rates
         WHERE
           time BETWEEN '$BEGIN' AND '$END'
       )
@@ -43,13 +43,13 @@ INSERT INTO
       pair,
       rate
     FROM
-      regulus.currencies
+      regulus.rates
     WHERE
       time = (
         SELECT
           MAX(time)
         FROM
-          regulus.currencies
+          regulus.rates
         WHERE
           time BETWEEN '$BEGIN' AND '$END'
       )
@@ -61,7 +61,7 @@ INSERT INTO
       pair,
       MAX(rate) AS rate
     FROM
-      regulus.currencies
+      regulus.rates
     WHERE
       time BETWEEN '$BEGIN' AND '$END'
     GROUP BY
@@ -74,7 +74,7 @@ INSERT INTO
       pair,
       MIN(rate) AS rate
     FROM
-      regulus.currencies
+      regulus.rates
     WHERE
       time BETWEEN '$BEGIN' AND '$END'
     GROUP BY

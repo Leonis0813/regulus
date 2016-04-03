@@ -5,7 +5,7 @@ today = ARGV[0] ? Date.parse(ARGV[0]) : Date.today
 
 query = <<"EOF"
 DELETE FROM
-  currencies
+  rates
 WHERE
   DATE(time) < '#{(today << 2).strftime('%F')}'
 EOF
