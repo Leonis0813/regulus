@@ -35,6 +35,9 @@ gem 'unicorn'
 
 group :development, :test do
   gem 'rspec-rails'
+  gem 'capybara'
+  gem 'capybara-mechanize'
+
   gem 'fuubar'
 
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -45,5 +48,11 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  # for system test
+  gem 'httpclient'
+
+  # for debug
+  gem 'pry'
 end
 

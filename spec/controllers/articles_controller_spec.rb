@@ -1,32 +1,28 @@
+# coding: utf-8
 require 'rails_helper'
 
 describe ArticlesController, :type => :controller do
-  describe 'GET #update' do
-    before(:all) do
-      @articles = [].tap do |articles|
-        20.times do |i|
-          article = Article.new
-          article.published = '1999-12-31'
-          article.title = "title#{i}"
-          article.summary = "summary#{i}"
-          article.url = "http://example.com/#{i}"
-          article.created_at = Time.now + i
-          articles << article
-        end
-
-        articles.shuffle.each {|article| article.save! }
-      end
-    end
-
-    after(:all) { Article.delete_all }
-
-    it 'should return 20 articles' do
-      request.env['HTTP_AUTHORIZATION'] = 'Basic ' + Base64::encode64("dev:.dev")
-      get :update
-
+  shared_examples 'ステータスコードとインスタンス変数が正しいこと' do
+    it '' do
       expected_articles = @articles.map {|article| article.title }
       actual_articles = assigns(:articles).to_a.map {|article| article.title }
+
+      expect(response.status).to eq(200)
       expect(actual_articles).to match_array expected_articles
     end
+  end
+
+  include_context '記事を作成する', 20
+
+  describe 'GET #show' do
+    include_context 'ユーザー名とパスワードをセットする'
+    before { get :show }
+    it_behaves_like 'ステータスコードとインスタンス変数が正しいこと'
+  end
+
+  describe 'GET #update' do
+    include_context 'ユーザー名とパスワードをセットする'
+    before { xhr :get, :update }
+    it_behaves_like 'ステータスコードとインスタンス変数が正しいこと'
   end
 end

@@ -5,5 +5,8 @@ class ArticlesController < ApplicationController
 
   def update
     @articles = Article.get_articles
+    respond_to do |format|
+      format.js
+    end
   end
 end
