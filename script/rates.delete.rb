@@ -5,9 +5,9 @@ today = ARGV[0] ? Date.parse(ARGV[0]) : Date.today
 
 query = <<"EOF"
 DELETE FROM
-  currencies
+  rates
 WHERE
-  DATE(time) < '#{(today << 2).strftime('%F')}'
+  time < '#{(today << 2).strftime('%Y-%m-%d 00:00:00')}'
 EOF
 `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
 

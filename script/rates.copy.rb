@@ -8,9 +8,9 @@ end
 def create_table(env)
   query = <<"EOF"
 CREATE TABLE IF NOT EXISTS
-  currencies
+  rates
 LIKE
-  regulus_development.currencies
+  regulus_development.rates
 EOF
   `mysql --user=root --password=7QiSlC?4 regulus_#{env} -e "#{query}"`
 end
@@ -18,9 +18,9 @@ end
 def insert_values(env)
   query = <<'EOF'
 INSERT INTO
-  currencies
+  rates
 (
-  SELECT * FROM regulus_development.currencies
+  SELECT * FROM regulus_development.rates
 )
 ON DUPLICATE KEY UPDATE
   open = VALUES(open),

@@ -11,7 +11,7 @@ SELECT
 FROM
   tweets
 WHERE
-  DATE(created_at) = '#{yesterday.strftime('%F')}'
+  created_at BETWEEN '#{yesterday.strftime('%Y-%m-%d 00:00:00')}' AND '#{yesterday.strftime('%Y-%m-%d 23:59:59')}'
 ORDER BY
   created_at
 EOF
