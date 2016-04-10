@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 1.1.0
+  - [UPDATE] create each view for rates, tweets and articles
+
 - 1.0.3
   - [UPDATE] scripts
   - [ADD] rspec
