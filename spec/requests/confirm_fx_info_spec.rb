@@ -36,7 +36,7 @@ describe '通貨情報を確認する', :type => :request do
       end
 
       it 'レートのタブが選択されていること' do
-        expect(@res.body).to match /a.*href="\/rates".*color: #ffffff/
+        expect(@res.body).to match /a.*href="\/rates".*class="selected"/
       end
 
       describe 'ツイートを表示する' do
@@ -50,7 +50,7 @@ describe '通貨情報を確認する', :type => :request do
         end
 
         it 'ツイートのタブが選択されていること' do
-          expect(@res.body).to match /a.*href="\/tweets".*color: #ffffff/
+          expect(@res.body).to match /a.*href="\/tweets".*class="selected"/
         end
 
         describe '記事を表示する' do
@@ -64,7 +64,7 @@ describe '通貨情報を確認する', :type => :request do
           end
 
           it '記事のタブが選択されていること' do
-            expect(@res.body).to match /a.*href="\/articles".*color: #ffffff/
+            expect(@res.body).to match /a.*href="\/articles".*class="selected"/
           end
         end
       end
