@@ -4,6 +4,7 @@ regulus
 - 1.1.1
   - [UPDATE] write style to scss
   - [UPDATE] change currencies to rates
+  - [UPDATE] modify interval for updating tweets
 
 - 1.1.0
   - [UPDATE] create each view for rates, tweets and articles
