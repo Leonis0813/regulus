@@ -13,20 +13,3 @@
  *= require_tree .
  *= require_self
  */
-
-a.selected {
-    background-color: #000000;
-    color: #ffffff;
-    text-decoration: none;
-    padding: 5px;
-}
-
-a.not-selected {
-    color: #000000;
-    text-decoration: none;
-    padding: 5px;
-}
-
-font.separator {
-    color: #aaaaaa;
-}
