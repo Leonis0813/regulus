@@ -1,17 +1,22 @@
 # coding: utf-8
 require 'rails_helper'
 
-shared_examples 'アクセスできること' do
-  it { expect(@res.code).to eq(200) }
-end
-
-shared_examples 'タブが表示されていること' do
-  it { expect(@res.body).to match /a.*href="\/rates"/ }
-  it { expect(@res.body).to match /a.*href="\/tweets"/ }
-  it { expect(@res.body).to match /a.*href="\/articles"/ }
-end
-
 describe '通貨情報を確認する', :type => :request do
+  shared_examples 'アクセスできること' do
+    it { expect(@res.code).to eq(200) }
+  end
+
+  shared_examples 'タブが表示されていること' do
+    it { expect(@res.body).to match /a.*href="\/rates"/ }
+    it { expect(@res.body).to match /a.*href="\/tweets"/ }
+    it { expect(@res.body).to match /a.*href="\/articles"/ }
+  end
+
+  shared_examples '表示されているデータが正しいこと' do |resource|
+    it { expect(@res.body).to match /div.*id="#{resource}"/ }
+    it { expect(@res.body).to match /a.*href="\/#{resource}s".*class="selected"/ }
+  end
+
   include_context '共通設定'
 
   describe 'ルートパスにアクセスする' do
@@ -30,42 +35,21 @@ describe '通貨情報を確認する', :type => :request do
 
       it_behaves_like 'アクセスできること'
       it_behaves_like 'タブが表示されていること'
-
-      it 'グラフが表示されていること' do
-        expect(@res.body).to match /div.*id="rate"/
-      end
-
-      it 'レートのタブが選択されていること' do
-        expect(@res.body).to match /a.*href="\/rates".*color: #ffffff/
-      end
+      it_behaves_like '表示されているデータが正しいこと', 'rate'
 
       describe 'ツイートを表示する' do
         before(:all) { @res = @hc.get("#{@base_url}/tweets") }
 
         it_behaves_like 'アクセスできること'
         it_behaves_like 'タブが表示されていること'
-
-        it 'ツイートが表示されていること' do
-          expect(@res.body).to match /div.*id="tweet"/
-        end
-
-        it 'ツイートのタブが選択されていること' do
-          expect(@res.body).to match /a.*href="\/tweets".*color: #ffffff/
-        end
+        it_behaves_like '表示されているデータが正しいこと', 'tweet'
 
         describe '記事を表示する' do
           before(:all) { @res = @hc.get("#{@base_url}/articles") }
 
           it_behaves_like 'アクセスできること'
           it_behaves_like 'タブが表示されていること'
-
-          it '記事が表示されていること' do
-            expect(@res.body).to match /div.*id="article"/
-          end
-
-          it '記事のタブが選択されていること' do
-            expect(@res.body).to match /a.*href="\/articles".*color: #ffffff/
-          end
+          it_behaves_like '表示されているデータが正しいこと', 'article'
         end
       end
     end
