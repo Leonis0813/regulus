@@ -6,6 +6,6 @@ $(document).ready ->
   setInterval(
     () ->
       update_tweet();
-  , 1000);
+  , 10 * 1000);
   update_tweet()
   return
