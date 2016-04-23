@@ -3,13 +3,11 @@ require 'rails_helper'
 
 describe RatesController, :type => :controller do
   shared_examples 'ステータスコードとインスタンス変数が正しいこと' do
-    it do
-      expect(response.status).to eq(200)
-      expect(assigns[:rates].size).to eq(30)
-    end
+    it { expect(response.status).to eq(200) }
+    it { expect(assigns[:rates].size).to eq(100) }
   end
 
-  include_context 'レートを作成する', 30
+  include_context 'レートを作成する', 150
 
   describe 'GET #show' do
     include_context 'ユーザー名とパスワードをセットする'

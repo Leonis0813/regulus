@@ -1,24 +1,67 @@
 <%= javascript_tag do %>
-$('#rate').html('<div class="graph" id="usd"></div>');
-options = {
-  title:{text: 'USDJPY'},
-  axes:{
-    xaxis:{
-      renderer: $.jqplot.DateAxisRenderer,
-      min: <%= raw("'#{@rates.last.first}'") %>,
-      max: <%= raw("'#{@rates.first.first}'") %>,
-      tickOptions: {formatString:'%H:%M'},
-    },
-  },
-  series: [{
-    renderer: $.jqplot.OHLCRenderer,
-    rendererOptions:{candleStick:true}
-  }]
-}
+$('#rate').html('<svg width="100%" height="800px" id="graph"></svg>');
 
-data = [
-  <%= raw(@rates) %>
-];
+var dataSet = <%= @rates.map {|rate| rate[1..-1] } %>
+var min = <%= @rates.map {|rate| rate[3] }.sort.first %>
+var max = <%= @rates.map {|rate| rate[2] }.sort.last %>
+var medium = (max + min) / 2;
+min = min - (medium * 0.1)
+max = max + (medium * 0.1);
 
-$('#usd').jqplot(data, options);
+var yScale = d3.scale.linear()
+  .domain([min, max])
+  .range([500, 0]);
+
+var line = d3.svg.line()
+  .x(function(d) {return d[0] * 12 + 100 + 3;})
+  .y(function(d) {return 50 + (500 * (max-d[1]))/(max-min);});
+
+d3.select("#graph")
+  .append("g")
+  .attr("transform", "translate(75, 50)")
+  .call(
+    d3.svg.axis()
+      .scale(yScale)
+      .orient("left")
+  )
+
+d3.select("#graph")
+  .selectAll("path")
+  .data(dataSet)
+  .enter()
+  .append("path")
+  .attr("d", function(d, i){
+    return line([[i-1, d[1]], [i-1, d[2]]]);
+  })
+  .attr("stroke", "black")
+										
+d3.select("#graph")
+  .selectAll("rect")
+  .data(dataSet)
+  .enter()
+  .append("rect")
+  .attr("x", function(d, i){
+    return i * 12 + 100;
+  })
+  .attr("y", function(d, i){
+    if(d[3] > d[0])
+      return 50 + (500 * (max-d[3]))/(max-min);
+    else
+      return 50 + (500 * (max-d[0]))/(max-min);
+  })
+  .attr("width", "6px")
+  .attr("height", function(d, i){
+    if(d[3] == d[0])
+      return "1px";
+    else
+      return (500 * Math.abs(d[3] - d[0]))/(max-min) + "px";
+  })
+  .style("fill", function(d, i){
+    if(d[3] > d[0])
+      return "red";
+    else if(d[3] < d[0])
+      return "blue";
+    else
+      return "black";
+  })
 <% end %>

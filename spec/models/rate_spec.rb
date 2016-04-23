@@ -15,7 +15,7 @@ describe Rate, :type => :model do
   end
 
   [
-    ['レート情報が十分にある場合', 50, 30],
+    ['レート情報が十分にある場合', 150, 100],
     ['レート情報が不十分な場合', 5, 5],
   ].each do |description, num_rate, expected_size|
     context description do
