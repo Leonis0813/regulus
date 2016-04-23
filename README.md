@@ -8,48 +8,56 @@
     Gemfile
     README.md
     Rakefile
-    app   -- assets      -- images
-                         -- javascripts               -- confirmation.coffee
-                                                      -- excanvas.min.js
-                                                      -- jqplot.dateAxisRenderer.min.js
-                                                      -- jqplot.ohlcRenderer.min.js
-                                                      -- jquery.jqplot.min.js
-                                                      -- jquery.min.js
-                                                      -- ...
-                         -- stylesheets               -- confirmation.scss
-                                                      -- jquery.jqplot.min.css
-                                                      -- ...
-          -- controllers -- confirmation_controller.rb
-                         -- ...
-          -- helpers     -- confirmation_helper.rb
-                         -- ...
-          -- mailers
-          -- models      -- article.rb
-                         -- currency.rb
-                         -- tweet.rb
-                         -- ...
-          -- views       -- confirmation              -- show.html.erb
-                                                      -- update_article.js.erb
-                                                      -- update_currency.js.erb
-                                                      -- update_tweet.js.erb
-                         -- layouts                   -- ...
+    app    -- assets      -- images
+                          -- javascripts               -- application.js
+                                                       -- articles.coffee
+                                                       -- rates.coffee
+                                                       -- tweets.coffee
+                          -- stylesheets               -- application.css
+                                                       -- rates.scss
+                                                       -- tab.scss
+                                                       -- tweets.scss
+           -- controllers -- application_controller.rb
+                          -- articles_controller.rb
+                          -- rates_controller.rb
+                          -- tweets_controller.rb
+           -- helpers     -- application_helper.rb
+           -- mailers
+           -- models      -- article.rb
+                          -- rate.rb
+                          -- tweet.rb
+                          -- ...
+           -- views       -- articles                  -- show.html.erb
+                                                       -- update.js.erb
+                          -- rates                     -- show.html.erb
+                                                       -- update.js.erb
+                          -- tweets                    -- show.html.erb
+                                                       -- update.js.erb
+                          -- layouts                   -- ...
     bin    -- ...
-    config               -- environments              -- ...
-                         -- initializers              -- ...
-                         -- ...
+    config                -- environments              -- ...
+                          -- initializers              -- ...
+                          -- ...
     config.ru
-    db     -- migrate    -- ...
+    db     -- migrate     -- ...
            -- ...
     lib    -- ...
     log    -- ...
     public -- ...
     script -- Gemfile
-           -- currency.rb
-           -- nikkei.rb
-           -- tweet.rb
-           -- update_currencies.rb
-           -- update_nikkei.rb
-           -- update_tweets.rb
+           -- articles.copy.rb
+           -- articles.import.rb
+           -- rates.aggregate.rb
+           -- rates.aggregate.sql
+           -- rates.copy.rb
+           -- rates.delete.rb
+           -- rates.dump.rb
+           -- rates.import.rb
+           -- tweets.copy.rb
+           -- tweets.delete.rb
+           -- tweets.dump.rb
+           -- tweets.import.rb
+    spec   -- ...
     test   -- controllers -- confirmation_controller_test.rb
            -- fixtures    -- articles.yml
                           -- currencies.yml
@@ -63,7 +71,7 @@
            -- pids        -- ...
            -- sessions
            -- sockets
-    vendor -- assets      -- ...
+    vendor -- assets      -- javascripts               -- d3.min.js
 
 ## Requirement
 
@@ -72,17 +80,18 @@
 
 ## DB
 
-- Currencies Table
+- Ratess Table
 
 |Column Name  |Type     |Description                            |
 |:------------|:--------|:--------------------------------------|
-|time         |datetime |the time which got currency info       |
+|from_date    |datetime |oldest time between the interval       |
+|to_date      |datetime |newest time between the interval       |
 |pair         |varchar  |currency pair code                     |
-|bid          |float    |bid price of the currency              |
-|ask          |float    |ask price of the currency              |
-|open         |float    |open price of the currency             |
-|high         |float    |high price of the currency             |
-|low          |float    |low price of the currency              |
+|interval     |varchar  |aggregating period                     |
+|open         |float    |first price of the currency            |
+|close        |float    |last price of the currency             |
+|high         |float    |maximum price of the currency          |
+|low          |float    |minimum price of the currency          |
 
 - Tweets Table
 
