@@ -33,6 +33,8 @@ gem 'unicorn'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+gem 'config', '~> 1.0.0'
+
 group :development, :test do
   gem 'rspec-rails'
   gem 'capybara'
