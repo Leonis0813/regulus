@@ -1,5 +1,6 @@
 require 'net/http'
 require 'json'
+require 'mysql2'
 
 PAIR_CODE = %w[USDJPY EURJPY AUDJPY GBPJPY NZDJPY CADJPY CHFJPY ZARJPY CNHJPY EURUSD GBPUSD AUDUSD]
 RAW_URL = 'http://info.finance.yahoo.co.jp/fx/detail/'
@@ -24,7 +25,9 @@ VALUES (
   '#{now}', '#{pair_code}', #{bid.to_f}, #{ask.to_f}
 )
 EOF
-    `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
+    client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => 'regulus')
+    client.query(query)
+    client.close
     puts [
       "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
       '[import]',

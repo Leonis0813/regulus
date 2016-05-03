@@ -1,4 +1,5 @@
 require 'date'
+require 'mysql2'
 
 ENV['TZ'] = 'UTC'
 now = Time.now
@@ -54,7 +55,9 @@ end
             .gsub('$INTERVAL', interval)
     %w[development production].each do |env|
       begin
-        `mysql --user=root --password=7QiSlC?4 regulus_#{env} -e "#{query}"`
+        client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => "regulus_#{env}")
+        client.query(query)
+        client.close
         puts [
           "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
           '[aggregate]',

@@ -1,9 +1,14 @@
 require 'date'
 require 'fileutils'
+require 'mysql2'
 
 ENV['TZ'] = 'UTC'
 today = ARGV[0] ? Date.parse(ARGV[0]) : Date.today
 yesterday = today - 1
+
+backup_dir = "backup/tweets/#{yesterday.strftime('%Y-%m')}"
+FileUtils.mkdir_p backup_dir unless File.exists? backup_dir
+csv_file = "#{backup_dir}/#{yesterday.strftime('%d')}.csv"
 
 query = <<"EOF"
 SELECT
@@ -15,13 +20,14 @@ WHERE
 ORDER BY
   created_at
 EOF
-tweets = `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
 
-backup_dir = "backup/tweets/#{yesterday.strftime('%Y-%m')}"
-FileUtils.mkdir_p backup_dir unless File.exists? backup_dir
-csv_file = "#{backup_dir}/#{yesterday.strftime('%d')}.csv"
 File.open(csv_file, 'w') do |out|
-  tweets.split("\n").each {|tweet| out.puts(tweet.tr("\t", ',')) }
+  out.puts('tweet_id,user_name,profile_image_url,full_text,tweeted_at,created_at')
+  client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => 'regulus')
+  client.query(query).each do |tweet|
+    out.puts(tweet.values.join(','))
+  end
+  client.close
 end
 
 puts [
