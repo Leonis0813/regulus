@@ -15,5 +15,16 @@ ON DUPLICATE KEY UPDATE
   summary = VALUES(summary),
   url = VALUES(url)
 EOF
-  `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
+  %w[regulus regulus_development regulus_production].each do |db|
+    begin
+      `mysql --user=root --password=7QiSlC?4 #{db} -e "#{query}"`
+      puts [
+        "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+        '[import]',
+        "{database: #{db}, url: #{tweet.id}}",
+      ].join(' ')
+    rescue
+      next
+    end
+  end
 end

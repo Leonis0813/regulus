@@ -1,36 +1,36 @@
 require 'net/http'
 require 'json'
 
-PAIR = %w["AUDCHF" "AUDJPY" "AUDNZD" "AUDUSD" "CADJPY" "CHFJPY" "EURAUD" "EURCAD" "EURCHF" "EURGBP" "EURJPY" "EURNZD"
-          "EURUSD" "GBPAUD" "GBPCHF" "GBPJPY" "GBPNZD" "GBPUSD" "NZDJPY" "NZDUSD" "USDCAD" "USDCHF" "USDJPY" "ZARJPY"]
-SQL = "select id,Rate from yahoo.finance.xchange where pair in (#{PAIR.join(',')})"
-RAW_URL = "http://query.yahooapis.com/v1/public/yql?q=#{URI.encode(SQL)}&format=json&env=store://datatables.org/alltableswithkeys"
-PARSED_URL = URI.parse(RAW_URL)
+PAIR_CODE = %w[USDJPY EURJPY AUDJPY GBPJPY NZDJPY CADJPY CHFJPY ZARJPY CNHJPY EURUSD GBPUSD AUDUSD]
+RAW_URL = 'http://info.finance.yahoo.co.jp/fx/detail/'
 ENV['TZ'] = 'UTC'
 
 def get_rates
-  req = Net::HTTP::Get.new(PARSED_URL)
-  res = Net::HTTP.start(PARSED_URL.host, PARSED_URL.port) {|http| http.request req }
-  results = JSON.parse(res.read_body)['query']['results']['rate']
-
   now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
-  results.each do |result|
+
+  PAIR_CODE.each do |pair_code|
+    parsed_url = URI.parse("#{RAW_URL}/?code=#{pair_code}=FX")
+    req = Net::HTTP::Get.new(parsed_url)
+    res = Net::HTTP.start(parsed_url.host, parsed_url.port) {|http| http.request req }
+
+    rates = res.body.scan(/(.*#{pair_code}_detail_[bid|ask].*)/).flatten
+    bid = rates.find {|rate| rate.include?('bid') }.gsub(/<.*?>/, '')
+    ask = rates.find {|rate| rate.include?('ask') }.gsub(/<.*?>/, '')
+
     query = <<"EOF"
 INSERT INTO
   rates
 VALUES (
-  '#{now}', '#{result['id']}', #{result['Rate'].to_f}
+  '#{now}', '#{pair_code}', #{bid.to_f}, #{ask.to_f}
 )
 EOF
     `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
+    puts [
+      "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+      '[import]',
+      "{time: #{now}, pair: #{pair_code}, bid: #{bid}, ask: #{ask}}",
+    ].join(' ')
   end
-
-  results.map! {|result| "{pair: #{result['id']}, rate: #{result['Rate'].to_f}}" }
-  puts [
-    "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
-    '[import]',
-    "{time: #{now}, rates: [#{results.join(', ')}]}",
-  ].join(' ')
 end
 
 get_rates

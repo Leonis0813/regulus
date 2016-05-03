@@ -24,7 +24,16 @@ ON DUPLICATE KEY UPDATE
   profile_image_url = VALUES(profile_image_url),
   full_text = VALUES(full_text)
 EOF
-  `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
-  `mysql --user=root --password=7QiSlC?4 regulus_development -e "#{query}"`
-  `mysql --user=root --password=7QiSlC?4 regulus_production -e "#{query}"`
+  %w[regulus regulus_development regulus_production].each do |db|
+    begin
+      `mysql --user=root --password=7QiSlC?4 #{db} -e "#{query}"`
+      puts [
+        "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+        '[import]',
+        "{database: #{db}, tweet_id: #{tweet.id}}",
+      ].join(' ')
+    rescue
+      next
+    end
+  end
 end

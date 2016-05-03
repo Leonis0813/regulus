@@ -23,3 +23,9 @@ csv_file = "#{backup_dir}/#{yesterday.strftime('%d')}.csv"
 File.open(csv_file, 'w') do |out|
   tweets.split("\n").each {|tweet| out.puts(tweet.tr("\t", ',')) }
 end
+
+puts [
+  "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+  '[dump]',
+  "{date: #{yesterday.strftime('%F')}, csv_file: #{csv_file}}",
+].join(' ')
