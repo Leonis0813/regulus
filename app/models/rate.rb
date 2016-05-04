@@ -3,7 +3,7 @@ class Rate < ActiveRecord::Base
   scope :pair, ->(pair) { where(:pair => pair) }
 
   def self.get_rates(pair, interval)
-    return nil if Rate.pair(pair).select(:pair).distinct.count(:pair) == 0
+    return nil if Rate.pair(pair).size == 0
     return nil unless interval && interval > 0
 
     [].tap do |arr|
