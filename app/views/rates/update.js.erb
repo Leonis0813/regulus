@@ -10,7 +10,7 @@ var yScale = d3.scale.linear()
   .range([500, 0]);
 
 var line = d3.svg.line()
-  .x(function(d) {return d[0] * 12 + 100 + 3;})
+  .x(function(d) {return 1400 - (d[0] * 12 + 100) + 3;})
   .y(function(d) {return 50 + (500 * (max-d[1]))/(max-min);});
 
 d3.select("#graph")
@@ -38,7 +38,7 @@ d3.select("#graph")
   .enter()
   .append("rect")
   .attr("x", function(d, i){
-    return i * 12 + 100;
+    return 1400 - (i * 12 + 100);
   })
   .attr("y", function(d, i){
     if(d[3] > d[0])
