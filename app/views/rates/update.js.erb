@@ -5,6 +5,13 @@ var dataSet = <%= @rates.map {|rate| rate[1..-1] } %>
 var min = <%= @rates.map {|rate| rate[3] }.sort.first %>
 var max = <%= @rates.map {|rate| rate[2] }.sort.last %>
 
+var xScale = d3.time.scale()
+  .domain([
+    new Date('<%= @rates.last[0] %>'),
+    new Date('<%= @rates.first[0] %>')
+  ])
+  .range([40, 1228]);
+
 var yScale = d3.scale.linear()
   .domain([min, max])
   .range([500, 0]);
@@ -12,6 +19,17 @@ var yScale = d3.scale.linear()
 var line = d3.svg.line()
   .x(function(d) {return 1400 - (d[0] * 12 + 100) + 3;})
   .y(function(d) {return 50 + (500 * (max-d[1]))/(max-min);});
+
+d3.select("#graph")
+  .append("g")
+  .attr("transform", "translate(75, 580)")
+  .call(
+    d3.svg.axis()
+      .scale(xScale)
+      .orient("bottom")
+      .ticks(d3.time.minute, 30)
+      .tickFormat(d3.time.format('%H:%M'))
+  )
 
 d3.select("#graph")
   .append("g")
@@ -28,7 +46,7 @@ d3.select("#graph")
   .enter()
   .append("path")
   .attr("d", function(d, i){
-    return line([[i-1, d[1]], [i-1, d[2]]]);
+    return line([[i, d[1]], [i, d[2]]]);
   })
   .attr("stroke", "black")
 										
