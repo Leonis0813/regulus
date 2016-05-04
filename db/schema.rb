@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160326112357) do
+ActiveRecord::Schema.define(version: 20160504154515) do
 
   create_table "articles", id: false, force: :cascade do |t|
     t.datetime "published",                null: false
@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 20160326112357) do
     t.string   "url",        limit: 255
     t.datetime "created_at",               null: false
   end
+
+  add_index "articles", ["created_at"], name: "index_articles_on_created_at", using: :btree
 
   create_table "rates", id: false, force: :cascade do |t|
     t.datetime "from_date",                           null: false
@@ -34,6 +36,10 @@ ActiveRecord::Schema.define(version: 20160326112357) do
     t.datetime "updated_at"
   end
 
+  add_index "rates", ["interval"], name: "index_rates_on_interval", using: :btree
+  add_index "rates", ["pair"], name: "index_rates_on_pair", using: :btree
+  add_index "rates", ["to_date"], name: "index_rates_on_to_date", using: :btree
+
   create_table "tweets", primary_key: "tweet_id", force: :cascade do |t|
     t.string   "user_name",         limit: 255,   null: false
     t.string   "profile_image_url", limit: 255,   null: false
@@ -41,5 +47,7 @@ ActiveRecord::Schema.define(version: 20160326112357) do
     t.datetime "tweeted_at",                      null: false
     t.datetime "created_at",                      null: false
   end
+
+  add_index "tweets", ["created_at"], name: "index_tweets_on_created_at", using: :btree
 
 end
