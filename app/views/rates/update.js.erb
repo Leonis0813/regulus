@@ -4,9 +4,6 @@ $('#rate').html('<svg width="100%" height="600px" id="graph"></svg>');
 var dataSet = <%= @rates.map {|rate| rate[1..-1] } %>
 var min = <%= @rates.map {|rate| rate[3] }.sort.first %>
 var max = <%= @rates.map {|rate| rate[2] }.sort.last %>
-var medium = (max + min) / 2;
-min = min - (medium * 0.1)
-max = max + (medium * 0.1);
 
 var yScale = d3.scale.linear()
   .domain([min, max])
