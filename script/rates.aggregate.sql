@@ -23,7 +23,7 @@ INSERT INTO
   LEFT JOIN (
     SELECT
       pair,
-      rate
+      bid AS rate
     FROM
       regulus.rates
     WHERE
@@ -41,7 +41,7 @@ INSERT INTO
   LEFT JOIN (
     SELECT
       pair,
-      rate
+      bid AS rate
     FROM
       regulus.rates
     WHERE
@@ -59,7 +59,7 @@ INSERT INTO
   LEFT JOIN (
     SELECT
       pair,
-      MAX(rate) AS rate
+      MAX(bid) AS rate
     FROM
       regulus.rates
     WHERE
@@ -72,7 +72,7 @@ INSERT INTO
   LEFT JOIN (
     SELECT
       pair,
-      MIN(rate) AS rate
+      MIN(bid) AS rate
     FROM
       regulus.rates
     WHERE

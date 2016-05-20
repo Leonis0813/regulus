@@ -9,7 +9,9 @@ DELETE FROM
 WHERE
   time < '#{(today << 2).strftime('%Y-%m-%d 00:00:00')}'
 EOF
-`mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
+client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => 'regulus')
+client.query(query)
+client.close
 
 puts [
   "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",

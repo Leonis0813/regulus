@@ -1,3 +1,4 @@
+require 'mysql2'
 require 'feedjira'
 
 feed = Feedjira::Feed.fetch_and_parse 'http://www.nikkeibp.co.jp/rss/business.rdf'
@@ -15,5 +16,18 @@ ON DUPLICATE KEY UPDATE
   summary = VALUES(summary),
   url = VALUES(url)
 EOF
-  `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
+  %w[regulus regulus_development regulus_production].each do |db|
+    begin
+      client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => db)
+      client.query(query)
+      client.close
+      puts [
+        "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+        '[import]',
+        "{database: #{db}, url: #{entry.url}}",
+      ].join(' ')
+    rescue
+      next
+    end
+  end
 end
