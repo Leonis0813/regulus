@@ -27,7 +27,7 @@ d3.select("#graph")
     d3.svg.axis()
       .scale(xScale)
       .orient("bottom")
-      .ticks(d3.time.minute, 30)
+      .ticks(10)
       .tickFormat(d3.time.format('%H:%M'))
   )
 

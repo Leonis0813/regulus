@@ -2,5 +2,11 @@
 <a href="/rates" class="selected">レート</a><font size="5" class="separator"> | </font>
 <a href="/tweets" class="not-selected">ツイート</a><font size="5" class="separator"> | </font>
 <a href="/articles" class="not-selected">記事</a>
+<span style="float:right">
+  <%= form_tag({:controller => "rates", :action => "show"}, {:method => 'get', :enforce_utf8 => false}) do %>
+    <%= select_tag(:pair, options_for_select(Settings.pairs, params[:pair] || 'USDJPY'), :onchange => "this.form.submit()") %>
+    <%= select_tag(:interval, options_for_select(Settings.intervals, params[:interval] || '5-min'), :onchange => "this.form.submit()") %>
+  <% end %>
+</span>
 <hr>
 <div id="rate"></div>
