@@ -2,21 +2,6 @@
 require 'rails_helper'
 
 describe RatesController, :type => :controller do
-  shared_context 'インスタンス変数初期化' do
-    before(:all) do
-      @res = nil
-      @rates = nil
-    end
-  end
-
-  shared_examples 'ステータスコードが正しいこと' do
-    it { expect(@res.status).to eq(200) }
-  end
-
-  shared_examples 'インスタンス変数(rates)が正しいこと' do |num_rate|
-    it { expect(@rates.size).to eq(num_rate) }
-  end
-
   include_context 'ユーザー名とパスワードをセットする'
 
   context '正常系' do
@@ -36,7 +21,8 @@ describe RatesController, :type => :controller do
       [{:pair => 'GBPJPY', :interval => '30-min'}, 97],
     ].each do |query, num_rate|
       context "#{query}の場合" do
-        include_context 'インスタンス変数初期化'
+        include_context 'レスポンス初期化'
+        include_context 'RatesControllerインスタンス変数初期化'
         before(:each) do
           @res ||= get(:show, query)
           @rates ||= assigns[:rates]
@@ -55,7 +41,8 @@ describe RatesController, :type => :controller do
       {:pair => ['USDJPY'], :interval => {:min => 5}},
     ].each do |query|
       context "#{query}の場合" do
-        include_context 'インスタンス変数初期化'
+        include_context 'レスポンス初期化'
+        include_context 'RatesControllerインスタンス変数初期化'
         before(:each) do
           @res ||= get(:show, query)
           @rates ||= assigns[:rates]

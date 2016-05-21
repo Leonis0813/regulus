@@ -1,4 +1,9 @@
 # coding: utf-8
+
+shared_context 'TweetsControllerインスタンス変数初期化' do
+  before(:all) { @tweets = nil }
+end
+
 shared_context 'ツイートを作成する' do |num_tweet|
   before(:all) do
     [].tap do |tweets|

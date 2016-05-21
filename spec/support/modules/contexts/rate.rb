@@ -1,4 +1,9 @@
 # coding: utf-8
+
+shared_context 'RatesControllerインスタンス変数初期化' do
+  before(:all) { @rates = nil }
+end
+
 shared_context 'レートを作成する' do |pair, interval, num_rate|
   before(:all) do
     num_rate.times do |i|

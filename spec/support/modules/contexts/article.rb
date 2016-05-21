@@ -1,4 +1,9 @@
 # coding: utf-8
+
+shared_context 'ArticlesControllerインスタンス変数初期化' do
+  before(:all) { @articles = nil }
+end
+
 shared_context '記事を作成する' do |num_article|
   before(:all) do
     [].tap do |articles|
