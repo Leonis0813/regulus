@@ -2,9 +2,10 @@
 require 'rails_helper'
 
 describe "tweets/show", :type => :view do
-  before { render :template => 'tweets/show.html.erb' }
+  include_context 'レスポンス初期化'
+  include_context 'View: ビューを描画'
 
-  it 'div タグが表示されていること' do
-    expect(response).to match /div.*id="tweet"/
+  it '<div>タグがあること' do
+    expect(@res).to have_selector('div#tweet')
   end
 end
