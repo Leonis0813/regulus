@@ -3,7 +3,7 @@ require 'rails_helper'
 
 describe 'グラフを変更する', :type => :request do
   shared_examples 'クエリが正しいこと' do |pair, interval|
-    it { binding.pry; expect(current_url).to match /pair=EURJPY&interval=5-min/ }
+    it { expect(current_url).to match /pair=#{pair}&interval=#{interval}/ }
   end
 
   describe 'ルートパスにアクセスする' do
