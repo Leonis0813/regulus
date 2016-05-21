@@ -20,22 +20,10 @@ describe TweetsController, :type => :controller do
 
   include_context 'ツイートを作成する', 100
   include_context 'ユーザー名とパスワードをセットする'
-
-  describe 'GET #show' do
-    include_context 'インスタンス変数初期化'
-    before(:each) do
-      @res ||= get(:show)
-      @tweets ||= assigns[:tweets]
-    end
-    it_behaves_like 'ステータスコードとインスタンス変数が正しいこと'
+  include_context 'インスタンス変数初期化'
+  before(:each) do
+    @res ||= xhr(:get, :update)
+    @tweets ||= assigns[:tweets]
   end
-
-  describe 'GET #update' do
-    include_context 'インスタンス変数初期化'
-    before(:each) do
-      @res ||= xhr(:get, :update)
-      @tweets ||= assigns[:tweets]
-    end
-    it_behaves_like 'ステータスコードとインスタンス変数が正しいこと'
-  end
+  it_behaves_like 'ステータスコードとインスタンス変数が正しいこと'
 end
