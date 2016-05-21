@@ -1,7 +1,7 @@
 # coding: utf-8
 shared_context '記事を作成する' do |num_article|
   before(:all) do
-    @articles = [].tap do |articles|
+    [].tap do |articles|
       num_article.times do |i|
         article = Article.new
         article.published = '1999-12-31'

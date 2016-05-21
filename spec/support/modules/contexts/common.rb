@@ -1,6 +1,7 @@
 # coding: utf-8
+
 shared_context 'ユーザー名とパスワードをセットする' do
-  before do
+  before(:each) do
     encoded_key = Base64::encode64("dev:.dev")
     request.env['HTTP_AUTHORIZATION'] = "Basic #{encoded_key}"
   end

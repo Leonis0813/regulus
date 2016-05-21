@@ -1,7 +1,7 @@
 # coding: utf-8
 shared_context 'ツイートを作成する' do |num_tweet|
   before(:all) do
-    @tweets = [].tap do |tweets|
+    [].tap do |tweets|
       num_tweet.times do |i|
         tweet = Tweet.new
         tweet.tweet_id = i+1
