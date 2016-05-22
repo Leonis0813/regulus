@@ -2,9 +2,10 @@
 require 'rails_helper'
 
 describe "articles/show", :type => :view do
-  before { render :template => 'articles/show.html.erb' }
+  include_context 'レスポンス初期化'
+  include_context 'View: ビューを描画'
 
-  it 'div タグが表示されていること' do
-    expect(response).to match /div.*id="article"/
+  it '<div>タグがあること' do
+    expect(@res).to have_selector('div#article')
   end
 end
