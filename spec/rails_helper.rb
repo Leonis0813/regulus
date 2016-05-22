@@ -6,6 +6,7 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'spec_helper'
 require 'rspec/rails'
 require 'capybara/rails'
+require 'capybara/rspec'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -28,11 +29,27 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 ActiveRecord::Migration.maintain_test_schema!
 
 Capybara.app_host = 'http://160.16.66.112:888'
+Capybara.javascript_driver = :webkit
+Headless.new.start
 
 module Capybara
   class << self
     alias_method :old_reset_sessions!, :reset_sessions!
     def reset_sessions!; end
+  end
+end
+
+Capybara::Webkit.configure do |config|
+  config.block_unknown_urls
+  config.allow_url('http://160.16.66.112:888')
+end
+
+module Capybara::Webkit
+  class Driver < Capybara::Driver::Base
+    def reset!; end
+    def browser
+      @browser
+    end
   end
 end
 
