@@ -55,6 +55,9 @@ GEM
     capybara-mechanize (1.5.0)
       capybara (~> 2.4, >= 2.4.4)
       mechanize (~> 2.7.0)
+    capybara-webkit (1.11.1)
+      capybara (>= 2.3.0, < 2.8.0)
+      json
     coderay (1.1.1)
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
@@ -80,10 +83,10 @@ GEM
       ruby-progressbar (~> 1.4)
     globalid (0.3.0)
       activesupport (>= 4.1.0)
+    headless (2.2.3)
     hike (1.2.3)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
-    httpclient (2.7.1)
     i18n (0.7.0)
     jbuilder (2.2.6)
       activesupport (>= 3.0.0, < 5)
@@ -229,10 +232,11 @@ DEPENDENCIES
   byebug
   capybara
   capybara-mechanize
+  capybara-webkit
   coffee-rails (~> 4.1.0)
   config (~> 1.0.0)
   fuubar
-  httpclient
+  headless
   jbuilder (~> 2.0)
   jquery-rails
   mysql2
