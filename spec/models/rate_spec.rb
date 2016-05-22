@@ -19,17 +19,17 @@ describe Rate, :type => :model do
     ['レート情報が不十分な場合', 5, 5],
   ].each do |description, num_rate, expected_size|
     context description do
-      include_context 'レートを作成する', num_rate
-      include_context 'レートを取得する', {:pair => 'USDJPY', :interval => 5}
+      include_context 'レートを作成する', 'USDJPY', '5-min', num_rate
+      include_context 'レートを取得する', {:pair => 'USDJPY', :interval => '5-min'}
       it_behaves_like 'レートが取得されていること', expected_size
     end
   end
 
   [
-    ['為替ペアコードを指定しない場合', {:interval => 5}],
+    ['為替ペアコードを指定しない場合', {:interval => '5-min'}],
     ['期間を指定しない場合', {:pair => 'USDJPY'}],
     ['為替ペアコードと期間を指定しない場合', {}],
-    ['為替ペアコードが不正な場合', {:pair => 'INVALID', :interval => 5}],
+    ['為替ペアコードが不正な場合', {:pair => 'INVALID', :interval => '5-min'}],
     ['期間が不正な場合', {:pair => 'USDJPY', :interval => -1}],
     ['為替ペアコードと期間が不正な場合', {:pair => 'INVALID', :interval => -1}],
   ].each do |description, params|
