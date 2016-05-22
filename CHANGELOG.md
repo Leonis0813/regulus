@@ -1,6 +1,11 @@
 regulus
 =======
 
+- 1.2.0
+  - [UPDATE] add select tag for pair & interval
+  - [UPDATE] use d3.js instead of jqplot
+  - [UPDATE] use gem 'mysql2' in external scripts
+
 - 1.1.1
   - [UPDATE] write style to scss
   - [UPDATE] change currencies to rates
