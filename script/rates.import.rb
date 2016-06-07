@@ -18,6 +18,8 @@ def get_rates
     bid = rates.find {|rate| rate.include?('bid') }.gsub(/<.*?>/, '')
     ask = rates.find {|rate| rate.include?('ask') }.gsub(/<.*?>/, '')
 
+    redo if bid.to_f == 0.0 or ask.to_f == 0.0
+
     query = <<"EOF"
 INSERT INTO
   rates
