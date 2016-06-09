@@ -1,5 +1,5 @@
 <%= javascript_tag do %>
-$('#rate').html('<svg width="100%" height="600px" id="graph"></svg>');
+$('#rate').html('<svg width="100%" height="620px" id="graph"></svg>');
 
 var dataSet = <%= @rates.map {|rate| rate[1..-1] } %>
 var min = <%= @rates.map {|rate| rate[3] }.sort.first %>
@@ -22,22 +22,30 @@ var line = d3.svg.line()
 
 d3.select("#graph")
   .append("g")
+  .attr("class", "axis")
   .attr("transform", "translate(75, 580)")
   .call(
     d3.svg.axis()
       .scale(xScale)
       .orient("bottom")
+      .innerTickSize(-530)
+      .outerTickSize(2)
+      .tickPadding(10)
       .ticks(10)
       .tickFormat(d3.time.format('%H:%M'))
   )
 
 d3.select("#graph")
   .append("g")
+  .attr("class", "axis")
   .attr("transform", "translate(75, 50)")
   .call(
     d3.svg.axis()
       .scale(yScale)
       .orient("left")
+      .innerTickSize(-1228)
+      .outerTickSize(0)
+      .tickPadding(10)
   )
 
 d3.select("#graph")
