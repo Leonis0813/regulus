@@ -7,8 +7,8 @@ var max = <%= @rates.map {|rate| rate[2] }.sort.last %>
 
 var xScale = d3.time.scale()
   .domain([
-    new Date('<%= @rates.last[0] %>'),
-    new Date('<%= @rates.first[0] %>')
+    new Date('<%= (Time.parse(@rates.last[0]) + 9 * 60 * 60).strftime('%Y-%m-%d %H:%M:%S') %>'),
+    new Date('<%= (Time.parse(@rates.first[0]) + 9 * 60 * 60).strftime('%Y-%m-%d %H:%M:%S') %>')
   ])
   .range([40, 1228]);
 
@@ -31,7 +31,7 @@ d3.select("#graph")
       .innerTickSize(-530)
       .outerTickSize(2)
       .tickPadding(10)
-      .ticks(10)
+      .ticks(15)
       .tickFormat(d3.time.format('%H:%M'))
   )
 
