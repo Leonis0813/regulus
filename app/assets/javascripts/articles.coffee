@@ -7,5 +7,8 @@ $(document).ready ->
     () ->
       update_article();
   , 60 * 1000);
+  return
+
+$(document).on 'page:change', ->
   update_article()
   return

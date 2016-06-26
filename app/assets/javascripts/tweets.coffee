@@ -7,5 +7,8 @@ $(document).ready ->
     () ->
       update_tweet();
   , 10 * 1000);
+  return
+
+$(document).on 'page:change', ->
   update_tweet()
   return
