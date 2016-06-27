@@ -1,6 +1,10 @@
 regulus
 =======
 
+- 1.3.0
+  - [UPDATE] show rate info on display
+  - [UPDATE] refactor javascript
+
 - 1.2.0
   - [UPDATE] add select tag for pair & interval
   - [UPDATE] use d3.js instead of jqplot
