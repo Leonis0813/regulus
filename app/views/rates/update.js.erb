@@ -87,4 +87,19 @@ d3.select("#graph")
     else
       return "black";
   })
+  .on("mouseover", function(){
+    d3.select("#graph")
+      .append("rect")
+      .attr("class", "info")
+      .attr("x", d3.mouse(this)[0] + 10)
+      .attr("y", d3.mouse(this)[1] - 100)
+      .attr("width", "100px")
+      .attr("height", "100px")
+      .attr("stroke", "black")
+      .attr("fill", "white")
+  })
+  .on("mouseout", function(){
+    d3.select(".info")
+      .remove()
+  })
 <% end %>
