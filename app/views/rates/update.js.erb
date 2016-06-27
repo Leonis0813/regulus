@@ -1,14 +1,17 @@
 <%= javascript_tag do %>
 $('#rate').html('<svg width="100%" height="620px" id="graph"></svg>');
 
+<% hour = 60 * 60 %>
+var graph_width = 1400
+
 var dataSet = <%== @rates.to_json %>
 var min = <%= @rates.map {|rate| rate[:low] }.sort.first %>
 var max = <%= @rates.map {|rate| rate[:high] }.sort.last %>
 
 var xScale = d3.time.scale()
   .domain([
-    new Date('<%= (Time.parse(@rates.last[:time]) + 9 * 60 * 60).strftime('%Y-%m-%d %H:%M:%S') %>'),
-    new Date('<%= (Time.parse(@rates.first[:time]) + 9 * 60 * 60).strftime('%Y-%m-%d %H:%M:%S') %>')
+    new Date('<%= (Time.parse(@rates.last[:time]) + 9 * hour).strftime('%Y-%m-%d %H:%M:%S') %>'),
+    new Date('<%= (Time.parse(@rates.first[:time]) + 9 * hour).strftime('%Y-%m-%d %H:%M:%S') %>')
   ])
   .range([40, 1228]);
 
@@ -17,7 +20,7 @@ var yScale = d3.scale.linear()
   .range([500, 0]);
 
 var line = d3.svg.line()
-  .x(function(d) {return 1400 - (d[0] * 12 + 100) + 3;})
+  .x(function(d) {return graph_width - (d[0] * 12 + 100) + 3;})
   .y(function(d) {return 50 + (500 * (max-d[1]))/(max-min);});
 
 d3.select("#graph")
@@ -64,7 +67,7 @@ d3.select("#graph")
   .enter()
   .append("rect")
   .attr("x", function(d, i){
-    return 1400 - (i * 12 + 100);
+    return graph_width - (i * 12 + 100);
   })
   .attr("y", function(d, i){
     if(d.close > d.open)
