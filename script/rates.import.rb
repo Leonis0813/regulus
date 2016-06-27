@@ -1,30 +1,43 @@
 require 'net/http'
 require 'json'
+require 'mysql2'
 
-pair = %w["AUDCHF" "AUDJPY" "AUDNZD" "AUDUSD" "CADJPY" "CHFJPY" "EURAUD" "EURCAD" "EURCHF" "EURGBP" "EURJPY" "EURNZD"
-          "EURUSD" "GBPAUD" "GBPCHF" "GBPJPY" "GBPNZD" "GBPUSD" "NZDJPY" "NZDUSD" "USDCAD" "USDCHF" "USDJPY" "ZARJPY"]
-url = "http://query.yahooapis.com/v1/public/yql?q=select%20id,Rate%20from%20yahoo.finance.xchange%20where%20pair%20in%20(#{pair.join(',')})&format=json&env=store://datatables.org/alltableswithkeys"
-parsed_url = URI.parse(url)
-req = Net::HTTP::Get.new(parsed_url)
-res = Net::HTTP.start(parsed_url.host, parsed_url.port) {|http| http.request req }
-parsed_body = JSON.parse(res.read_body)
-
+PAIR_CODE = %w[USDJPY EURJPY AUDJPY GBPJPY NZDJPY CADJPY CHFJPY ZARJPY CNHJPY EURUSD GBPUSD AUDUSD]
+RAW_URL = 'http://info.finance.yahoo.co.jp/fx/detail/'
 ENV['TZ'] = 'UTC'
-now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
-parsed_body['query']['results']['rate'].each do |result|
-  query = <<"EOF"
+
+def get_rates
+  now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+
+  PAIR_CODE.each do |pair_code|
+    parsed_url = URI.parse("#{RAW_URL}/?code=#{pair_code}=FX")
+    req = Net::HTTP::Get.new(parsed_url)
+    res = Net::HTTP.start(parsed_url.host, parsed_url.port) {|http| http.request req }
+
+    rates = res.body.scan(/(.*#{pair_code}_detail_[bid|ask].*)/).flatten
+    bid = rates.find {|rate| rate.include?('bid') }.gsub(/<.*?>/, '')
+    ask = rates.find {|rate| rate.include?('ask') }.gsub(/<.*?>/, '')
+
+    redo if bid.to_f == 0.0 or ask.to_f == 0.0
+
+    query = <<"EOF"
 INSERT INTO
-  currencies
+  rates
 VALUES (
-  '#{now}', '#{result['id']}', #{result['Rate'].to_f}
+  '#{now}', '#{pair_code}', #{bid.to_f}, #{ask.to_f}
 )
 EOF
-  `mysql --user=root --password=7QiSlC?4 regulus -e "#{query}"`
+    client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => 'regulus')
+    client.query(query)
+    client.close
+    puts [
+      "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+      '[import]',
+      "{time: #{now}, pair: #{pair_code}, bid: #{bid}, ask: #{ask}}",
+    ].join(' ')
+  end
 end
 
-rates = parsed_body['query']['results']['rate'].map {|result| "{pair: #{result['id']}, rate: #{result['Rate'].to_f}}" }
-puts [
-  "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
-  '[import]',
-  "{time: #{now}, rates: [#{rates.join(', ')}]}",
-].join(' ')
+get_rates
+sleep 30
+get_rates

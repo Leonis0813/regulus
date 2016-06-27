@@ -1,4 +1,5 @@
 require 'date'
+require 'mysql2'
 
 ENV['TZ'] = 'UTC'
 now = Time.now
@@ -48,15 +49,23 @@ end
 
 [:min, :hour, :day, :week, :month, :year].each do |time_name|
   send(time_name, end_date).each do |interval, begin_date|
-    puts [
-      "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
-      '[aggregate]',
-      "{begin: #{begin_date.strftime('%Y-%m-%d %H:%M:%S')}, end: #{(end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S')}, interval: #{interval}}",
-    ].join(' ')
-    query = File.read('currencies.aggregate.sql')
+    query = File.read(File.join(File.dirname(File.absolute_path(__FILE__)), 'rates.aggregate.sql'))
             .gsub('$BEGIN', begin_date.strftime('%Y-%m-%d %H:%M:%S'))
             .gsub('$END', (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'))
             .gsub('$INTERVAL', interval)
-    `mysql --user=root --password=7QiSlC?4 regulus_development -e "#{query}"`
+    %w[development production].each do |env|
+      begin
+        client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => "regulus_#{env}")
+        client.query(query)
+        client.close
+        puts [
+          "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+          '[aggregate]',
+          "{env: #{env}, begin: #{begin_date.strftime('%Y-%m-%d %H:%M:%S')}, end: #{(end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S')}, interval: #{interval}}",
+        ].join(' ')
+      rescue
+        next
+      end
+    end
   end
 end

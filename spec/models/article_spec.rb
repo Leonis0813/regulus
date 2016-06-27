@@ -1,39 +1,24 @@
+# coding: utf-8
 require 'rails_helper'
 
-shared_context 'create articles' do |num_article|
-  before(:all) do
-    [].tap do |articles|
-      num_article.times do |i|
-        article = Article.new
-        article.published = '1999-12-31'
-        article.title = "title#{i}"
-        article.summary = "summary#{i}"
-        article.url = "http://example.com/#{i}"
-        article.created_at = Time.now + i
-        articles << article
-      end
-
-      articles.shuffle.each {|article| article.save! }
-    end
-  end
-
-  after(:all) { Article.delete_all }
-end
-
 describe Article, :type => :model do
-  context 'more than 20 articles in database' do
-    include_context 'create articles', 100
-
-    it 'should return 20 articles' do
-      expect(Article.get_articles.size).to eq(20)
-    end
+  shared_context '記事を取得する' do
+    before(:all) { @res = Article.get_articles }
   end
 
-  context 'less than 20 articles in database' do
-    include_context 'create articles', 5
+  shared_examples '記事が取得されていること' do |expected_size|
+    it { expect(@res.size).to eq(expected_size) }
+  end
 
-    it 'should return 5 articles' do
-      expect(Article.get_articles.size).to eq(5)
-    end
+  context '記事が十分にある場合' do
+    include_context '記事を作成する', 100
+    include_context '記事を取得する'
+    it_behaves_like '記事が取得されていること', 20
+  end
+
+  context '記事が不十分な場合' do
+    include_context '記事を作成する', 5
+    include_context '記事を取得する'
+    it_behaves_like '記事が取得されていること', 5
   end
 end
