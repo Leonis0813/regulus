@@ -2,7 +2,12 @@
 $('#rate').html('<svg width="100%" height="620px" id="graph"></svg>');
 
 <% hour = 60 * 60 %>
+var num_bar = 100
+var bar_width = 6
 var graph_width = 1400
+var offset_left = 75
+var offset_right = 75
+var graph_size_x = graph_width - offset_left - offset_right
 
 var dataSet = <%== @rates.to_json %>
 var min = <%= @rates.map {|rate| rate[:low] }.sort.first %>
@@ -13,20 +18,20 @@ var xScale = d3.time.scale()
     new Date('<%= (Time.parse(@rates.last[:time]) + 9 * hour).strftime('%Y-%m-%d %H:%M:%S') %>'),
     new Date('<%= (Time.parse(@rates.first[:time]) + 9 * hour).strftime('%Y-%m-%d %H:%M:%S') %>')
   ])
-  .range([40, 1228]);
+  .range([offset_left, graph_width - offset_right]);
 
 var yScale = d3.scale.linear()
   .domain([min, max])
   .range([500, 0]);
 
 var line = d3.svg.line()
-  .x(function(d) {return graph_width - (d[0] * 12 + 100) + 3;})
+  .x(function(d) {return graph_size_x - d[0] * (graph_size_x / num_bar) + offset_left + bar_width / 2;})
   .y(function(d) {return 50 + (500 * (max-d[1]))/(max-min);});
 
 d3.select("#graph")
   .append("g")
   .attr("class", "axis")
-  .attr("transform", "translate(75, 580)")
+  .attr("transform", "translate(0, 580)")
   .call(
     d3.svg.axis()
       .scale(xScale)
@@ -56,10 +61,10 @@ d3.select("#graph")
   .data(dataSet)
   .enter()
   .append("path")
+  .attr("stroke", "black")
   .attr("d", function(d, i){
     return line([[i, d.high], [i, d.low]]);
   })
-  .attr("stroke", "black")
 
 d3.select("#graph")
   .selectAll("rect")
@@ -67,7 +72,7 @@ d3.select("#graph")
   .enter()
   .append("rect")
   .attr("x", function(d, i){
-    return graph_width - (i * 12 + 100);
+    return graph_size_x - i * (graph_size_x / num_bar) + offset_left;
   })
   .attr("y", function(d, i){
     if(d.close > d.open)
