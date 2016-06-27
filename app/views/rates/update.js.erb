@@ -4,10 +4,16 @@ $('#rate').html('<svg width="100%" height="620px" id="graph"></svg>');
 <% hour = 60 * 60 %>
 var num_bar = 100
 var bar_width = 6
+
 var graph_width = 1400
 var offset_left = 75
 var offset_right = 75
 var graph_size_x = graph_width - offset_left - offset_right
+
+var graph_height = 620
+var offset_upper = 50
+var offset_lower = 50
+var graph_size_y = graph_height - offset_upper - offset_lower
 
 var dataSet = <%== @rates.to_json %>
 var min = <%= @rates.map {|rate| rate[:low] }.sort.first %>
@@ -22,21 +28,21 @@ var xScale = d3.time.scale()
 
 var yScale = d3.scale.linear()
   .domain([min, max])
-  .range([500, 0]);
+  .range([graph_height - offset_lower, offset_upper]);
 
 var line = d3.svg.line()
-  .x(function(d) {return graph_size_x - d[0] * (graph_size_x / num_bar) + offset_left + bar_width / 2;})
-  .y(function(d) {return 50 + (500 * (max-d[1]))/(max-min);});
+  .x(function(d) {return graph_size_x - d[0] * (graph_size_x / num_bar) + offset_left;})
+  .y(function(d) {return offset_upper + (graph_size_y * (max-d[1]))/(max-min);});
 
 d3.select("#graph")
   .append("g")
   .attr("class", "axis")
-  .attr("transform", "translate(0, 580)")
+  .attr("transform", "translate(0, " + (graph_height - offset_lower) + ")")
   .call(
     d3.svg.axis()
       .scale(xScale)
       .orient("bottom")
-      .innerTickSize(-530)
+      .innerTickSize(-graph_size_y)
       .outerTickSize(2)
       .tickPadding(10)
       .ticks(15)
@@ -46,12 +52,12 @@ d3.select("#graph")
 d3.select("#graph")
   .append("g")
   .attr("class", "axis")
-  .attr("transform", "translate(75, 50)")
+  .attr("transform", "translate(" + offset_left + ", 0)")
   .call(
     d3.svg.axis()
       .scale(yScale)
       .orient("left")
-      .innerTickSize(-1228)
+      .innerTickSize(-graph_size_x)
       .outerTickSize(0)
       .tickPadding(10)
   )
@@ -72,20 +78,20 @@ d3.select("#graph")
   .enter()
   .append("rect")
   .attr("x", function(d, i){
-    return graph_size_x - i * (graph_size_x / num_bar) + offset_left;
+    return graph_size_x - i * (graph_size_x / num_bar) + offset_left - bar_width / 2;
   })
   .attr("y", function(d, i){
     if(d.close > d.open)
-      return 50 + (500 * (max-d.close))/(max-min);
+      return offset_upper + (graph_size_y * (max-d.close))/(max-min);
     else
-      return 50 + (500 * (max-d.open))/(max-min);
+      return offset_upper + (graph_size_y * (max-d.open))/(max-min);
   })
-  .attr("width", "6px")
+  .attr("width", bar_width + "px")
   .attr("height", function(d, i){
     if(d.close == d.open)
       return "1px";
     else
-      return (500 * Math.abs(d.close - d.open))/(max-min) + "px";
+      return (graph_size_y * Math.abs(d.close - d.open))/(max-min) + "px";
   })
   .style("fill", function(d, i){
     if(d.close > d.open)
