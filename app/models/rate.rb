@@ -8,7 +8,13 @@ class Rate < ActiveRecord::Base
 
     [].tap do |arr|
       Rate.pair(pair).interval(interval).order('to_date DESC').select('to_date, open, close, high, low').limit(100).each do |record|
-        arr << [(record.to_date + 1).strftime('%Y-%m-%d %H:%M:%S'), record.open, record.high, record.low, record.close]
+        arr << {
+          :time => (record.to_date + 1).strftime('%Y-%m-%d %H:%M:%S'),
+          :open => record.open,
+          :high => record.high,
+          :low => record.low,
+          :close => record.close,
+        }
       end
     end
   end
