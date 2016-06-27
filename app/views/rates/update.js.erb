@@ -1,14 +1,14 @@
 <%= javascript_tag do %>
 $('#rate').html('<svg width="100%" height="620px" id="graph"></svg>');
 
-var dataSet = <%= @rates.map {|rate| rate[1..-1] } %>
-var min = <%= @rates.map {|rate| rate[3] }.sort.first %>
-var max = <%= @rates.map {|rate| rate[2] }.sort.last %>
+var dataSet = <%== @rates.to_json %>
+var min = <%= @rates.map {|rate| rate[:low] }.sort.first %>
+var max = <%= @rates.map {|rate| rate[:high] }.sort.last %>
 
 var xScale = d3.time.scale()
   .domain([
-    new Date('<%= (Time.parse(@rates.last[0]) + 9 * 60 * 60).strftime('%Y-%m-%d %H:%M:%S') %>'),
-    new Date('<%= (Time.parse(@rates.first[0]) + 9 * 60 * 60).strftime('%Y-%m-%d %H:%M:%S') %>')
+    new Date('<%= (Time.parse(@rates.last[:time]) + 9 * 60 * 60).strftime('%Y-%m-%d %H:%M:%S') %>'),
+    new Date('<%= (Time.parse(@rates.first[:time]) + 9 * 60 * 60).strftime('%Y-%m-%d %H:%M:%S') %>')
   ])
   .range([40, 1228]);
 
@@ -54,10 +54,10 @@ d3.select("#graph")
   .enter()
   .append("path")
   .attr("d", function(d, i){
-    return line([[i, d[1]], [i, d[2]]]);
+    return line([[i, d.high], [i, d.low]]);
   })
   .attr("stroke", "black")
-										
+
 d3.select("#graph")
   .selectAll("rect")
   .data(dataSet)
@@ -67,39 +67,67 @@ d3.select("#graph")
     return 1400 - (i * 12 + 100);
   })
   .attr("y", function(d, i){
-    if(d[3] > d[0])
-      return 50 + (500 * (max-d[3]))/(max-min);
+    if(d.close > d.open)
+      return 50 + (500 * (max-d.close))/(max-min);
     else
-      return 50 + (500 * (max-d[0]))/(max-min);
+      return 50 + (500 * (max-d.open))/(max-min);
   })
   .attr("width", "6px")
   .attr("height", function(d, i){
-    if(d[3] == d[0])
+    if(d.close == d.open)
       return "1px";
     else
-      return (500 * Math.abs(d[3] - d[0]))/(max-min) + "px";
+      return (500 * Math.abs(d.close - d.open))/(max-min) + "px";
   })
   .style("fill", function(d, i){
-    if(d[3] > d[0])
+    if(d.close > d.open)
       return "red";
-    else if(d[3] < d[0])
+    else if(d.close < d.open)
       return "blue";
     else
       return "black";
   })
-  .on("mouseover", function(){
+  .on("mouseover", function(d){
     d3.select("#graph")
       .append("rect")
       .attr("class", "info")
       .attr("x", d3.mouse(this)[0] + 10)
       .attr("y", d3.mouse(this)[1] - 100)
-      .attr("width", "100px")
+      .attr("width", "140px")
       .attr("height", "100px")
       .attr("stroke", "black")
       .attr("fill", "white")
+    d3.select("#graph")
+      .append("text")
+      .attr("class", "info")
+      .text("始値: " + d.open)
+      .attr("x", d3.mouse(this)[0] + 18)
+      .attr("y", d3.mouse(this)[1] - 78)
+      .attr("stroke", "black")
+    d3.select("#graph")
+      .append("text")
+      .attr("class", "info")
+      .text("終値: " + d.close)
+      .attr("x", d3.mouse(this)[0] + 18)
+      .attr("y", d3.mouse(this)[1] - 56)
+      .attr("stroke", "black")
+    d3.select("#graph")
+      .append("text")
+      .attr("class", "info")
+      .text("高値: " + d.high)
+      .attr("x", d3.mouse(this)[0] + 18)
+      .attr("y", d3.mouse(this)[1] - 34)
+      .attr("stroke", "black")
+    d3.select("#graph")
+      .append("text")
+      .attr("class", "info")
+      .text("安値: " + d.low)
+      .attr("x", d3.mouse(this)[0] + 18)
+      .attr("y", d3.mouse(this)[1] - 12)
+      .attr("stroke", "black")
   })
   .on("mouseout", function(){
-    d3.select(".info")
+    d3.selectAll(".info")
       .remove()
   })
 <% end %>
