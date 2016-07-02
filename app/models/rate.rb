@@ -26,7 +26,7 @@ class Rate < ActiveRecord::Base
 
       [].tap do |arr|
         open_rates = Rate.pair(pair).interval(interval).order('to_date DESC').select('to_date, open').limit(174)
-        100.times do |i|
+        (open_rates.size - 74) < 0 ? [] : (open_rates.size - 74).times do |i|
           arr << {
             :time => (open_rates[i].to_date + 1).strftime('%Y-%m-%d %H:%M:%S'),
             :average => open_rates[(-i-75)..(-i-1)].map(&:open).inject(:+)/75,
