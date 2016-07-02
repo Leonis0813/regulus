@@ -151,4 +151,14 @@ d3.select("#graph")
     d3.selectAll(".info")
       .remove()
   })
+
+var moving_average = d3.svg.line()
+  .x(function(d, i) {return graph_size_x - i * (graph_size_x / (num_bar - 1)) + offset_left;})
+  .y(function(d, i) {return offset_upper + (graph_size_y * (max-d))/(max-min);});
+
+d3.select("#graph")
+  .append("path")
+  .attr("stroke", "green")
+  .attr("fill", "none")
+  .attr("d", moving_average(<%= @averages.map{|rate| rate[:average] } %>))
 <% end %>
