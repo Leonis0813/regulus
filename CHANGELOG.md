@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 1.4.0
+  - [ADD] moving average
+
 - 1.3.0
   - [UPDATE] show rate info on display
   - [UPDATE] refactor javascript
