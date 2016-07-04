@@ -26,9 +26,11 @@ describe RatesController, :type => :controller do
         before(:each) do
           @res ||= get(:show, query)
           @rates ||= assigns[:rates]
+          @averages ||= assigns[:averages]
         end
         it_behaves_like 'ステータスコードが正しいこと'
         it_behaves_like 'インスタンス変数(rates)が正しいこと', num_rate
+        it_behaves_like 'インスタンス変数(averages)が正しいこと', num_rate-74
       end
     end
   end
@@ -43,12 +45,12 @@ describe RatesController, :type => :controller do
       context "#{query}の場合" do
         include_context 'レスポンス初期化'
         include_context 'RatesControllerインスタンス変数初期化'
-        before(:each) do
-          @res ||= get(:show, query)
-          @rates ||= assigns[:rates]
-        end
-        it '@ratesがnilであること' do
-          expect(@rates).to be_nil
+        before(:each) { @res ||= get(:show, query) }
+
+        %i[ rates averages ].each do |var_name|
+          it "#{var_name}がnilであること" do
+            expect(assigns[var_name]).to be_nil
+          end
         end
       end
     end
