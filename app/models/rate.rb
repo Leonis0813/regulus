@@ -29,7 +29,7 @@ class Rate < ActiveRecord::Base
         (open_rates.size - 74) < 0 ? [] : (open_rates.size - 74).times do |i|
           arr << {
             :time => (open_rates[i].to_date + 1).strftime('%Y-%m-%d %H:%M:%S'),
-            :average => open_rates[(-i-75)..(-i-1)].map(&:open).inject(:+)/75,
+            :average => open_rates[i..i+74].map(&:open).inject(:+)/75,
           }
         end
       end
