@@ -1,6 +1,10 @@
 regulus
 =======
 
+- 1.4.1
+  - [FIX] reverse moving average
+  - [FIX] set jst for event
+
 - 1.4.0
   - [ADD] moving average
 
