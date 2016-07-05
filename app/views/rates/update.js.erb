@@ -1,7 +1,6 @@
 <%= javascript_tag do %>
 $('#rate').html('<svg width="100%" height="620px" id="graph"></svg>');
 
-<% hour = 60 * 60 %>
 var num_bar = 100
 var bar_width = 6
 
@@ -21,8 +20,8 @@ var max = <%= @rates.map {|rate| rate[:high] }.sort.last %>
 
 var xScale = d3.time.scale()
   .domain([
-    new Date('<%= (Time.parse(@rates.last[:time]) + 9 * hour).strftime('%Y-%m-%d %H:%M:%S') %>'),
-    new Date('<%= (Time.parse(@rates.first[:time]) + 9 * hour).strftime('%Y-%m-%d %H:%M:%S') %>')
+    new Date('<%= @rates.last[:time] %>'),
+    new Date('<%= @rates.first[:time] %>')
   ])
   .range([offset_left, graph_width - offset_right]);
 
