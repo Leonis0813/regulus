@@ -6,6 +6,14 @@ PAIR_CODE = %w[USDJPY EURJPY AUDJPY GBPJPY NZDJPY CADJPY CHFJPY ZARJPY CNHJPY EU
 RAW_URL = 'http://info.finance.yahoo.co.jp/fx/detail/'
 ENV['TZ'] = 'UTC'
 
+def log(body)
+  puts [
+    "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+    '[import]',
+    body,
+  ].join(' ')
+end
+
 def get_rates
   now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -19,20 +27,12 @@ def get_rates
     ask = rates.find {|rate| rate.include?('ask') }.gsub(/<.*?>/, '')
 
     unless res.code == '200'
-      puts [
-        "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
-        '[import]',
-        "{status: #{res.code}, message: #{res.message}, uri: #{res.uri.to_s}, error_type: #{res.error_type}}"
-      ].join(' ')
+      log "{status: #{res.code}, message: #{res.message}, uri: #{res.uri.to_s}, error_type: #{res.error_type}}"
       next
     end
 
     if bid.to_f == 0.0 or ask.to_f == 0.0
-      puts [
-        "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
-        '[import]',
-        "{status: #{res.code}, uri: #{res.uri.to_s}, pair: #{pair_code}, bid: #{bid}, ask: #{ask}}",
-      ].join(' ')
+      log "{status: #{res.code}, uri: #{res.uri.to_s}, pair: #{pair_code}, bid: #{bid}, ask: #{ask}}"
       redo
     end
 
@@ -46,11 +46,7 @@ EOF
     client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => 'regulus')
     client.query(query)
     client.close
-    puts [
-      "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
-      '[import]',
-      "{status: #{res.code}, uri: #{res.uri.to_s}, pair: #{pair_code}, bid: #{bid}, ask: #{ask}}",
-    ].join(' ')
+    log "{status: #{res.code}, uri: #{res.uri.to_s}, pair: #{pair_code}, bid: #{bid}, ask: #{ask}}"
   end
 end
 
