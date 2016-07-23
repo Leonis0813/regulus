@@ -18,8 +18,23 @@ def get_rates
     bid = rates.find {|rate| rate.include?('bid') }.gsub(/<.*?>/, '')
     ask = rates.find {|rate| rate.include?('ask') }.gsub(/<.*?>/, '')
 
-    next unless res.code == '200'
-    redo if bid.to_f == 0.0 or ask.to_f == 0.0
+    unless res.code == '200'
+      puts [
+        "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+        '[import]',
+        "{status: #{res.code}, message: #{res.message}, uri: #{res.uri.to_s}, error_type: #{res.error_type}}"
+      ].join(' ')
+      next
+    end
+
+    if bid.to_f == 0.0 or ask.to_f == 0.0
+      puts [
+        "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
+        '[import]',
+        "{status: #{res.code}, uri: #{res.uri.to_s}, pair: #{pair_code}, bid: #{bid}, ask: #{ask}}",
+      ].join(' ')
+      redo
+    end
 
     query = <<"EOF"
 INSERT INTO
@@ -34,7 +49,7 @@ EOF
     puts [
       "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
       '[import]',
-      "{time: #{now}, pair: #{pair_code}, bid: #{bid}, ask: #{ask}}",
+      "{status: #{res.code}, uri: #{res.uri.to_s}, pair: #{pair_code}, bid: #{bid}, ask: #{ask}}",
     ].join(' ')
   end
 end
