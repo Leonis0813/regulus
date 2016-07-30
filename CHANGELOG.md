@@ -1,6 +1,10 @@
 regulus
 =======
 
+- 1.4.2
+  - [FIX] add error handling for external service error
+  - [ADD] output http response as log
+
 - 1.4.1
   - [FIX] reverse moving average
   - [FIX] set jst for event
