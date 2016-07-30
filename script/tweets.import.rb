@@ -20,7 +20,7 @@ def get_tweets
 INSERT INTO
   tweets
 VALUES (
-  '#{tweet.id}', '#{tweet.user.name}', '#{tweet.user.profile_image_url}', '#{tweet.full_text.gsub('\'', '&apos;')}', '#{tweet.created_at}', '#{now}'
+  '#{tweet.id}', "#{tweet.user.name}", '#{tweet.user.profile_image_url}', "#{tweet.full_text.gsub('\'', '&apos;')}", '#{tweet.created_at}', '#{now}'
 )
 ON DUPLICATE KEY UPDATE
   user_name = VALUES(user_name),

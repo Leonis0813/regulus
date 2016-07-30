@@ -10,7 +10,7 @@ feed.entries.each do |entry|
 INSERT INTO
   articles
 VALUES (
-  DATE_FORMAT('#{entry.published}', '%Y-%m-%d %H:%i:%S'), '#{entry.title}', '#{entry.summary}', '#{entry.url}', '#{now}'
+  DATE_FORMAT('#{entry.published}', '%Y-%m-%d %H:%i:%S'), "#{entry.title}", "#{entry.summary}", '#{entry.url}', '#{now}'
 )
 ON DUPLICATE KEY UPDATE
   summary = VALUES(summary),
