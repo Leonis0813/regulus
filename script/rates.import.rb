@@ -3,7 +3,7 @@ require 'json'
 require 'mysql2'
 
 PAIR_CODE = %w[USDJPY EURJPY AUDJPY GBPJPY NZDJPY CADJPY CHFJPY ZARJPY CNHJPY EURUSD GBPUSD AUDUSD]
-RAW_URL = 'http://info.finance.yahoo.co.jp/fx/detail/'
+RAW_URL = 'http://info.finance.yahoo.co.jp/fx/detail'
 ENV['TZ'] = 'UTC'
 
 def log(body)
