@@ -1,7 +1,7 @@
 require 'mysql2'
 require 'feedjira'
 
-feed = Feedjira::Feed.fetch_and_parse 'http://www.nikkeibp.co.jp/rss/business.rdf'
+feed = Feedjira::Feed.fetch_and_parse 'http://www.nikkeibp.co.jp/rss/index.rdf'
 
 ENV['TZ'] = 'UTC'
 now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
