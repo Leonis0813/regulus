@@ -1,9 +1,9 @@
-require 'net/http'
 require 'json'
 require 'mysql2'
+require 'net/http'
+require_relative 'config/settings'
 
-PAIR_CODE = %w[USDJPY EURJPY AUDJPY GBPJPY NZDJPY CADJPY CHFJPY ZARJPY CNHJPY EURUSD GBPUSD AUDUSD]
-RAW_URL = 'http://info.finance.yahoo.co.jp/fx/detail'
+IMPORT = Settings.rate['import']
 ENV['TZ'] = 'UTC'
 
 def log(body)
@@ -17,8 +17,8 @@ end
 def get_rates
   now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
 
-  PAIR_CODE.each do |pair_code|
-    parsed_url = URI.parse("#{RAW_URL}/?code=#{pair_code}=FX")
+  IMPORT['pairs'].each do |pair_code|
+    parsed_url = URI.parse("#{IMPORT['url']}/?code=#{pair_code}=FX")
     req = Net::HTTP::Get.new(parsed_url)
     res = Net::HTTP.start(parsed_url.host, parsed_url.port) {|http| http.request req }
 
@@ -43,7 +43,7 @@ VALUES (
   '#{now}', '#{pair_code}', #{bid.to_f}, #{ask.to_f}
 )
 EOF
-    client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => 'regulus')
+    client = Mysql2::Client.new(Settings.mysql)
     client.query(query)
     client.close
     log "{status: #{res.code}, uri: #{res.uri.to_s}, pair: #{pair_code}, bid: #{bid}, ask: #{ask}}"
