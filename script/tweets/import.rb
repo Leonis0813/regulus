@@ -26,7 +26,7 @@ def get_tweets
     }
     IMPORT['databases'].each do |db|
       begin
-        execute_sql(db, __FILE__.sub('.rb', '.sql'), param)
+        execute_sql(db, File.join(Settings.application_root, 'tweets/import.sql'), param)
         puts [
           "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
           '[import]',

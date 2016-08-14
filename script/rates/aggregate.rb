@@ -51,9 +51,9 @@ end_date = (now - now.sec).to_datetime
       :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'),
       :interval => interval,
     }
-    %w[ development production ].each do |env|
+    %w[ regulus_development regulus_production ].each do |db|
       begin
-        execute_sql("regulus_#{env}", __FILE__.sub('.rb', '.sql'), param)
+        execute_sql(db, File.join(Settings.application_root, 'rates/aggregate.sql'), param)
         puts [
           "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
           '[aggregate]',

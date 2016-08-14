@@ -18,7 +18,7 @@ File.open(csv_file, 'w') do |out|
     :from = yesterday.strftime('%Y-%m-%d 00:00:00'),
     :to = yesterday.strftime('%Y-%m-%d 23:59:59'),
   }
-  tweets = execute_sql('regulus', __FILE__.sub('.rb', '.sql'), param)
+  tweets = execute_sql('regulus', File.join(Settings.application_root, 'tweets/dump.sql'), param)
   tweets.each {|tweet| out.puts(tweet.values.join(',')) }
 end
 

@@ -7,7 +7,7 @@ ENV['TZ'] = 'UTC'
 
 today = ARGV[0] ? Date.parse(ARGV[0]) : Date.today
 param = {:created_at => (today << DELETE['period']).strftime('%Y-%m-%d 00:00:00')}
-execute_sql('regulus', __FILE__.sub('.rb', '.sql'), param)
+execute_sql('regulus', File.join(Settings.application_root, 'tweets/delete.sql'), param)
 
 puts [
   "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",

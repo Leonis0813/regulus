@@ -37,7 +37,7 @@ def get_rates
     end
 
     param = {:time => now, :pair => pair, :bid => bid, :ask => ask}
-    execute_sql('regulus', __FILE__.sub('.rb', '.sql'), param)
+    execute_sql('regulus', File.join(Settings.application_root, 'rates/import.sql'), param)
     log "{status: #{res.code}, uri: #{res.uri.to_s}, pair: #{pair}, bid: #{bid}, ask: #{ask}}"
   end
 end
