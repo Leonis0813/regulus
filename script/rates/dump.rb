@@ -1,7 +1,7 @@
 require 'date'
 require 'fileutils'
-require_relative 'config/settings'
-require_relative 'lib/mysql_client'
+require_relative '../config/settings'
+require_relative '../lib/mysql_client'
 
 DUMP = Settings.rate['dump']
 ENV['TZ'] = 'UTC'

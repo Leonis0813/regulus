@@ -1,6 +1,6 @@
 require 'date'
-require_relative 'config/settings'
-require_relative 'lib/mysql_client'
+require_relative '../config/settings'
+require_relative '../lib/mysql_client'
 
 AGGREGATE = Settings.rate['aggregate']
 ENV['TZ'] = 'UTC'
