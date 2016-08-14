@@ -1,28 +1,34 @@
 require 'date'
 require 'fileutils'
 require 'mysql2'
+require_relative 'config/settings'
 
+DUMP = Settings.rate['dump']
 ENV['TZ'] = 'UTC'
+
 today = ARGV[0] ? Date.parse(ARGV[0]) : Date.today
 yesterday = today - 1
 
-backup_dir = File.join(File.dirname(File.absolute_path(__FILE__)), "backup/rates/#{yesterday.strftime('%Y-%m')}")
-FileUtils.mkdir_p backup_dir unless File.exists? backup_dir
-csv_file = File.join(backup_dir, "#{yesterday.strftime('%d')}.csv")
-
+from = yesterday.strftime('%Y-%m-%d 00:00:00')
+to = yesterday.strftime('%Y-%m-%d 23:59:59')
 query = <<"EOF"
 SELECT
   *
 FROM
   rates
 WHERE
-  time BETWEEN '#{yesterday.strftime('%Y-%m-%d 00:00:00')}' AND '#{yesterday.strftime('%Y-%m-%d 23:59:59')}'
+  time BETWEEN '#{from}' AND '#{to}'
 ORDER BY
   time
 EOF
+
+backup_dir = File.join(DUMP['backup_dir'], yesterday.strftime('%Y-%m'))
+FileUtils.mkdir_p backup_dir
+csv_file = File.join(backup_dir, "#{yesterday.strftime('%d')}.csv")
+
 File.open(csv_file, 'w') do |out|
-  out.puts('time,pair,bid,ask')
-  client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => 'regulus')
+  out.puts(DUMP['header'])
+  client = Mysql2::Client.new(Settings.mysql)
   client.query(query).each do |rate|
     out.puts(rate.values.join(','))
   end

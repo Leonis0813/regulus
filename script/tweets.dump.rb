@@ -9,10 +9,6 @@ ENV['TZ'] = 'UTC'
 today = ARGV[0] ? Date.parse(ARGV[0]) : Date.today
 yesterday = today - 1
 
-backup_dir = File.join(DUMP['backup_dir'], yesterday.strftime('%Y-%m'))
-FileUtils.mkdir_p backup_dir
-csv_file = File.join(backup_dir, "#{yesterday.strftime('%d')}.csv")
-
 from = yesterday.strftime('%Y-%m-%d 00:00:00')
 to = yesterday.strftime('%Y-%m-%d 23:59:59')
 query = <<"EOF"
@@ -25,6 +21,10 @@ WHERE
 ORDER BY
   created_at
 EOF
+
+backup_dir = File.join(DUMP['backup_dir'], yesterday.strftime('%Y-%m'))
+FileUtils.mkdir_p backup_dir
+csv_file = File.join(backup_dir, "#{yesterday.strftime('%d')}.csv")
 
 File.open(csv_file, 'w') do |out|
   out.puts(DUMP['header'])
