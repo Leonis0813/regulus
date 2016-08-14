@@ -2,10 +2,10 @@ require 'feedjira'
 require 'mysql2'
 require_relative 'config/settings'
 
-Article = Settings.article
-feed = Feedjira::Feed.fetch_and_parse Article['url']
-
+IMPORT = Settings.article['import']
 ENV['TZ'] = 'UTC'
+
+feed = Feedjira::Feed.fetch_and_parse IMPORT['url']
 now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
 feed.entries.each do |entry|
   query = <<"EOF"
@@ -18,7 +18,7 @@ ON DUPLICATE KEY UPDATE
   summary = VALUES(summary),
   url = VALUES(url)
 EOF
-  Article['databases'].each do |db|
+  IMPORT['databases'].each do |db|
     begin
       client = Mysql2::Client.new(Settings.mysql.merge('database' => db))
       client.query(query)
