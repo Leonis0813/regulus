@@ -1,7 +1,9 @@
-require 'mysql2'
 require 'feedjira'
+require 'mysql2'
+require_relative 'config/settings'
 
-feed = Feedjira::Feed.fetch_and_parse 'http://www.nikkeibp.co.jp/rss/index.rdf'
+Article = Settings.article
+feed = Feedjira::Feed.fetch_and_parse Article['url']
 
 ENV['TZ'] = 'UTC'
 now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
@@ -16,11 +18,10 @@ ON DUPLICATE KEY UPDATE
   summary = VALUES(summary),
   url = VALUES(url)
 EOF
-  %w[regulus regulus_development regulus_production].each do |db|
+  Article['databases'].each do |db|
     begin
-      client = Mysql2::Client.new(:host => "localhost", :username => "root", :password => "7QiSlC?4", :database => db)
+      client = Mysql2::Client.new(Settings.mysql.merge('database' => db))
       client.query(query)
-      client.close
       puts [
         "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
         '[import]',
@@ -28,6 +29,8 @@ EOF
       ].join(' ')
     rescue
       next
+    ensure
+      client.close
     end
   end
 end
