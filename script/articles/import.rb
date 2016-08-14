@@ -1,7 +1,7 @@
 require 'feedjira'
 require 'mysql2'
-require_relative 'config/settings'
-require_relative 'lib/mysql_client'
+require_relative '../config/settings'
+require_relative '../lib/mysql_client'
 
 IMPORT = Settings.article['import']
 ENV['TZ'] = 'UTC'
@@ -19,7 +19,8 @@ feed.entries.each do |entry|
         '[import]',
         "{database: #{db}, url: #{entry.url}}",
       ].join(' ')
-    rescue
+    rescue => e
+      puts e.message
     end
   end
 end
