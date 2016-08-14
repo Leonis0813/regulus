@@ -1,14 +1,13 @@
-require 'mysql2'
 require 'twitter'
 require_relative 'config/settings'
+require_relative 'lib/mysql_client'
 
 IMPORT = Settings.tweet['import']
 ENV['TZ'] = 'UTC'
 CLIENT = Twitter::REST::Client.new do |config|
-  config.consumer_key = IMPORT['consumer_key']
-  config.consumer_secret = IMPORT['consumer_secret']
-  config.access_token = IMPORT['access_token']
-  config.access_token_secret = IMPORT['access_token_secret']
+  %w[ consumer_key consumer_secret access_token access_token_secret ].each do |key_name|
+    config.send("#{key.name}=", IMPORT[key_name])
+  end
 end
 
 def get_tweets
@@ -17,22 +16,17 @@ def get_tweets
   query = IMPORT['query']
   tweets = CLIENT.search(query['word'], :count => query['count'], :result_type => query['result_type'])
   tweets.take(query['max_count']).each do |tweet|
-    query = <<"EOF"
-INSERT INTO
-  tweets
-VALUES (
-  '#{tweet.id}', "#{tweet.user.name}", '#{tweet.user.profile_image_url}', "#{tweet.full_text.gsub('\'', '&apos;')}", '#{tweet.created_at}', '#{now}'
-)
-ON DUPLICATE KEY UPDATE
-  user_name = VALUES(user_name),
-  profile_image_url = VALUES(profile_image_url),
-  full_text = VALUES(full_text)
-EOF
+    param = {
+      :id => tweet.id,
+      :user_name => tweet.user.name,
+      :profile_image_url => tweet.user.profile_image_url,
+      :full_text => tweet.full_text.gsub("'", '&apos;'),
+      :tweeted_at => tweet.created_at,
+      :created_at => now,
+    }
     IMPORT['databases'].each do |db|
       begin
-        client = Mysql2::Client.new(Settings.mysql.merge('database' => db))
-        client.query(query)
-        client.close
+        execute_sql(db, __FILE__.sub('.rb', '.sql'), param)
         puts [
           "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
           '[import]',
@@ -40,7 +34,6 @@ EOF
         ].join(' ')
       rescue => e
         puts e
-        next
       end
     end
   end
