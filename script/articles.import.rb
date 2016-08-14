@@ -9,11 +9,11 @@ ENV['TZ'] = 'UTC'
 now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
 feed = Feedjira::Feed.fetch_and_parse IMPORT['url']
 feed.entries.each do |entry|
-  params = %i[ published title summary url ].map {|key| [key, entry.send(key)] }.to_h
+  param = %i[ published title summary url ].map {|key| [key, entry.send(key)] }.to_h
 
   IMPORT['databases'].each do |db|
     begin
-      execute_sql(db, __FILE__.sub('.rb', '.sql'),   params.merge(:created_at => now))
+      execute_sql(db, __FILE__.sub('.rb', '.sql'),   param.merge(:created_at => now))
       puts [
         "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
         '[import]',
