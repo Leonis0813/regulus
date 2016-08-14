@@ -1,6 +1,6 @@
 require 'twitter'
-require_relative 'config/settings'
-require_relative 'lib/mysql_client'
+require_relative '../config/settings'
+require_relative '../lib/mysql_client'
 
 IMPORT = Settings.tweet['import']
 ENV['TZ'] = 'UTC'
