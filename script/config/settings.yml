@@ -38,7 +38,7 @@ rate:
         - 1
       month:
         - 1
-  dump;
+  dump:
     backup_dir: 'backup/rates'
     header: 'time,pair,bid,ask'
   delete:
