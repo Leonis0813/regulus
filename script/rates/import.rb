@@ -1,18 +1,11 @@
 require 'json'
 require 'net/http'
 require_relative '../config/settings'
+require_relative '../lib/logger'
 require_relative '../lib/mysql_client'
 
 IMPORT = Settings.rate['import']
 ENV['TZ'] = 'UTC'
-
-def log(body)
-  puts [
-    "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
-    '[import]',
-    body,
-  ].join(' ')
-end
 
 def get_rates
   now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
@@ -23,22 +16,22 @@ def get_rates
     res = Net::HTTP.start(parsed_url.host, parsed_url.port) {|http| http.request req }
 
     rates = res.body.scan(/(.*#{pair}_detail_[bid|ask].*)/).flatten
-    bid = rates.find {|rate| rate.include?('bid') }.gsub(/<.*?>/, '').to_f
-    ask = rates.find {|rate| rate.include?('ask') }.gsub(/<.*?>/, '').to_f
+    status, message, uri = res.code, res.message, res.uri.to_s
 
     unless res.code == '200'
-      log "{status: #{res.code}, message: #{res.message}, uri: #{res.uri.to_s}, error_type: #{res.error_type}}"
+      error_type = res.error_type
+      Logger.write {:status => status, :message => message, :uri => uri, :error_type => error_type}
       next
     end
 
-    if bid == 0.0 or ask == 0.0
-      log "{status: #{res.code}, uri: #{res.uri.to_s}, pair: #{pair}, bid: #{bid}, ask: #{ask}}"
-      redo
-    end
+    bid = rates.find {|rate| rate.include?('bid') }.gsub(/<.*?>/, '').to_f
+    ask = rates.find {|rate| rate.include?('ask') }.gsub(/<.*?>/, '').to_f
+
+    Logger.write {:status => status, :uri => uri, :pair => pair, :bid => bid, :ask => ask}
+    redo if bid == 0.0 or ask == 0.0
 
     param = {:time => now, :pair => pair, :bid => bid, :ask => ask}
     execute_sql('regulus', File.join(Settings.application_root, 'rates/import.sql'), param)
-    log "{status: #{res.code}, uri: #{res.uri.to_s}, pair: #{pair}, bid: #{bid}, ask: #{ask}}"
   end
 end
 
