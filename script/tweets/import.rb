@@ -1,5 +1,6 @@
 require 'twitter'
 require_relative '../config/settings'
+require_relative '../lib/logger'
 require_relative '../lib/mysql_client'
 
 IMPORT = Settings.tweet['import']
@@ -27,11 +28,7 @@ def get_tweets
     IMPORT['databases'].each do |db|
       begin
         execute_sql(db, File.join(Settings.application_root, 'tweets/import.sql'), param)
-        puts [
-          "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
-          '[import]',
-          "{database: #{db}, tweet_id: #{tweet.id}}",
-        ].join(' ')
+        Logger.write('tweets', File.basename(__FILE__, '.rb'), {:database => db, :tweet_id => tweet.id})
       rescue => e
         puts e
       end
