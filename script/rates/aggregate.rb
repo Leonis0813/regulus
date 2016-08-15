@@ -1,5 +1,6 @@
 require 'date'
 require_relative '../config/settings'
+require_relative '../lib/logger'
 require_relative '../lib/mysql_client'
 
 AGGREGATE = Settings.rate['aggregate']
@@ -54,11 +55,16 @@ end_date = (now - now.sec).to_datetime
     %w[ regulus_development regulus_production ].each do |db|
       begin
         execute_sql(db, File.join(Settings.application_root, 'rates/aggregate.sql'), param)
-        puts [
-          "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
-          '[aggregate]',
-          "{env: #{env}, begin: #{begin_date.strftime('%Y-%m-%d %H:%M:%S')}, end: #{(end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S')}, interval: #{interval}}",
-        ].join(' ')
+        Logger.write(
+          'rates',
+          File.basename(__FILE__, '.rb'),
+          {
+            :database => db,
+            :begin => begin_date.strftime('%Y-%m-%d %H:%M:%S'),
+            :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'),
+            :interval => interval,
+          }
+        )
       rescue
         next
       end

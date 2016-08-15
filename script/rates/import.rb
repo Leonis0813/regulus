@@ -20,14 +20,22 @@ def get_rates
 
     unless res.code == '200'
       error_type = res.error_type
-      Logger.write {:status => status, :message => message, :uri => uri, :error_type => error_type}
+      Logger.write(
+        'rates',
+        File.basename(__FILE__, '.rb'),
+        {:status => status, :message => message, :uri => uri, :error_type => error_type}
+      )
       next
     end
 
     bid = rates.find {|rate| rate.include?('bid') }.gsub(/<.*?>/, '').to_f
     ask = rates.find {|rate| rate.include?('ask') }.gsub(/<.*?>/, '').to_f
 
-    Logger.write {:status => status, :uri => uri, :pair => pair, :bid => bid, :ask => ask}
+    Logger.write(
+      'rates',
+      File.basename(__FILE__, '.rb'),
+      {:status => status, :uri => uri, :pair => pair, :bid => bid, :ask => ask}
+    )
     redo if bid == 0.0 or ask == 0.0
 
     param = {:time => now, :pair => pair, :bid => bid, :ask => ask}
