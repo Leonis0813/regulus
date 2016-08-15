@@ -1,6 +1,7 @@
 require 'date'
 require 'fileutils'
 require_relative '../config/settings'
+require_relative '../lib/logger'
 require_relative '../lib/mysql_client'
 
 DUMP = Settings.rate['dump']
@@ -22,8 +23,8 @@ File.open(csv_file, 'w') do |out|
   rates.each {|rate| out.puts(rate.values.join(',')) }
 end
 
-puts [
-  "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
-  '[dump]',
-  "{date: #{yesterday.strftime('%F')}, csv_file: #{csv_file}}",
-].join(' ')
+Logger.write(
+  'rates',
+  File.basename(__FILE__, '.rb'),
+  {:date => yesterday.strftime('%F'), :csv_file => csv_file}
+)
