@@ -1,6 +1,4 @@
 require 'date'
 
 last_month = (Date.today -2).strftime('%Y-%m')
-%w[ rates tweets ].each do |data|
-  system "cd backup/#{data}; tar zcf #{last_month}.tar.gz #{last_month}"
-end
+system "cd backup/rates; tar zcf #{last_month}.tar.gz #{last_month}"
