@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 1.4.3
+  - [REFACTOR] scripts
+
 - 1.4.2
   - [FIX] add error handling for external service error
   - [ADD] output http response as log
