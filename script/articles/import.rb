@@ -10,8 +10,13 @@ ENV['TZ'] = 'UTC'
 now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
 feed = Feedjira::Feed.fetch_and_parse IMPORT['url']
 feed.entries.each do |entry|
-  param = %i[ published title summary url ].map {|key| [key, entry.send(key)] }.to_h
-  param.merge!(:created_at => now))
+  param = {
+    :published => entry.published.strftime('%Y-%m-%d %H:%M:%S'),
+    :title => entry.title,
+    :summary => entry.summary,
+    :url => entry.url,
+    :created_at => now,
+  }
 
   IMPORT['databases'].each do |db|
     begin

@@ -7,7 +7,7 @@ IMPORT = Settings.tweet['import']
 ENV['TZ'] = 'UTC'
 CLIENT = Twitter::REST::Client.new do |config|
   %w[ consumer_key consumer_secret access_token access_token_secret ].each do |key_name|
-    config.send("#{key.name}=", IMPORT[key_name])
+    config.send("#{key_name}=", IMPORT[key_name])
   end
 end
 
@@ -18,11 +18,11 @@ def get_tweets
   tweets = CLIENT.search(query['word'], :count => query['count'], :result_type => query['result_type'])
   tweets.take(query['max_count']).each do |tweet|
     param = {
-      :id => tweet.id,
+      :id => tweet.id.to_s,
       :user_name => tweet.user.name,
       :profile_image_url => tweet.user.profile_image_url,
       :full_text => tweet.full_text.gsub("'", '&apos;'),
-      :tweeted_at => tweet.created_at,
+      :tweeted_at => tweet.created_at.strftime('%Y-%m-%d %H:%M:%S'),
       :created_at => now,
     }
     IMPORT['databases'].each do |db|

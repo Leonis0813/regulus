@@ -1,5 +1,5 @@
 require 'mysql2'
-require_relative 'config/settings'
+require_relative '../config/settings'
 
 def execute_sql(database, sql_file, param)
   query = File.read(sql_file)

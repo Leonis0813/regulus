@@ -38,7 +38,7 @@ def get_rates
     )
     redo if bid == 0.0 or ask == 0.0
 
-    param = {:time => now, :pair => pair, :bid => bid, :ask => ask}
+    param = {:time => now, :pair => pair, :bid => bid.to_s, :ask => ask.to_s}
     execute_sql('regulus', File.join(Settings.application_root, 'rates/import.sql'), param)
   end
 end

@@ -1,7 +1,7 @@
 require_relative '../config/settings'
 
 module Logger
-  def write(resource, operate, text)
+  def self.write(resource, operate, text)
     file_path = File.join(Settings.application_root, "log/#{resource}.log")
     body = [
       "[#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}]",
