@@ -20,6 +20,13 @@ rate:
       - 'EURUSD'
       - 'GBPUSD'
       - 'AUDUSD'
+    out_of_service:
+      from:
+        hour: 20
+        minute: 50
+      to:
+        hour: 22
+        minute: 00
   aggregate:
     checker:
       min:
