@@ -1,5 +1,5 @@
 worker_processes Integer(ENV["WEB_CONCURRENCY"] || 1)
-timeout 15
+timeout 150
 preload_app true
 
 listen File.expand_path('tmp/sockets/unicorn.sock', ENV['RAILS_ROOT'])
