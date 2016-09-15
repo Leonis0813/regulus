@@ -7,6 +7,15 @@ require_relative '../lib/mysql_client'
 IMPORT = Settings.rate['import']
 ENV['TZ'] = 'UTC'
 
+def out_of_service?
+  now = Time.now
+  from, to = IMPORT['out_of_service']['from'], IMPORT['out_of_service']['to']
+
+  now.saturday? or
+    (now.friday? and now.hour > from['hour'] and now.min > from['minute']) or
+    (now.sunday? and now.hour < to['hour'] and now.min < to['minute'])
+end
+
 def get_rates
   now = Time.now.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -42,6 +51,8 @@ def get_rates
     execute_sql('regulus', File.join(Settings.application_root, 'rates/import.sql'), param)
   end
 end
+
+exit if out_of_service?
 
 get_rates
 sleep 30

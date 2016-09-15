@@ -15,8 +15,8 @@ var offset_lower = 50
 var graph_size_y = graph_height - offset_upper - offset_lower
 
 var dataSet = <%== @rates.to_json %>
-var min = <%= @rates.map {|rate| rate[:low] }.sort.first %>
-var max = <%= @rates.map {|rate| rate[:high] }.sort.last %>
+var min = <%= (@rates.map {|rate| rate[:low] } + @averages.map{|rate| rate[:average] }).min %>
+var max = <%= (@rates.map {|rate| rate[:high] } + @averages.map{|rate| rate[:average] }).max %>
 
 var xScale = d3.time.scale()
   .domain([

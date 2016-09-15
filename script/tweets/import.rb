@@ -20,7 +20,7 @@ def get_tweets
     param = {
       :id => tweet.id.to_s,
       :user_name => tweet.user.name,
-      :profile_image_url => tweet.user.profile_image_url,
+      :profile_image_url => tweet.user.profile_image_url.to_s,
       :full_text => tweet.full_text.gsub("'", '&apos;'),
       :tweeted_at => tweet.created_at.strftime('%Y-%m-%d %H:%M:%S'),
       :created_at => now,
