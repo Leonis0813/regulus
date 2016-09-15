@@ -1,6 +1,13 @@
 regulus
 =======
 
+- 1.4.4
+  - [CHANGE] timeout
+  - [FIX] y range
+  - [FIX] bug for fetching profile_image_url from twitter api
+  - [UPDATE] remove aggregated rates before 2 months
+  - [FIX] not import when out of service
+
 - 1.4.3
   - [REFACTOR] scripts
 
