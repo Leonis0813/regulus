@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 1.4.5
+  - [FIX] not aggregate when out pf service
+
 - 1.4.4
   - [CHANGE] timeout
   - [FIX] y range
