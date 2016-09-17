@@ -1,3 +1,5 @@
+require_relative '../config/settings'
+
 def out_of_service?
   now = Time.now
   from, to = IMPORT['out_of_service']['from'], IMPORT['out_of_service']['to']
