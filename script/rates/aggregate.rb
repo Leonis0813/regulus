@@ -1,4 +1,5 @@
 require 'date'
+require_relative 'helper'
 require_relative '../config/settings'
 require_relative '../lib/logger'
 require_relative '../lib/mysql_client'
@@ -41,6 +42,8 @@ def year(date)
   intervals = (date.min == 0 and date.hour == 0 and date.day == 1 and date.month == 1) ? check('year', date) : []
   intervals.map {|interval| [interval, date << (12 * interval.split('-').first.to_i)] }
 end
+
+exit if out_of_service?
 
 now = Time.now
 end_date = (now - now.sec).to_datetime
