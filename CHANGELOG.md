@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 1.4.6
+  - [FIX] require settings.rb
+
 - 1.4.5
   - [FIX] not aggregate when out pf service
 
