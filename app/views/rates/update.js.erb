@@ -1,7 +1,6 @@
 <%= javascript_tag do %>
 $('#rate').html('<svg width="100%" height="620px" id="graph"></svg>');
 
-<% hour = 60 * 60 %>
 var num_bar = 100
 var bar_width = 6
 
@@ -16,13 +15,13 @@ var offset_lower = 50
 var graph_size_y = graph_height - offset_upper - offset_lower
 
 var dataSet = <%== @rates.to_json %>
-var min = <%= @rates.map {|rate| rate[:low] }.sort.first %>
-var max = <%= @rates.map {|rate| rate[:high] }.sort.last %>
+var min = <%= (@rates.map {|rate| rate[:low] } + @averages.map{|rate| rate[:average] }).min %>
+var max = <%= (@rates.map {|rate| rate[:high] } + @averages.map{|rate| rate[:average] }).max %>
 
 var xScale = d3.time.scale()
   .domain([
-    new Date('<%= (Time.parse(@rates.last[:time]) + 9 * hour).strftime('%Y-%m-%d %H:%M:%S') %>'),
-    new Date('<%= (Time.parse(@rates.first[:time]) + 9 * hour).strftime('%Y-%m-%d %H:%M:%S') %>')
+    new Date('<%= @rates.last[:time] %>'),
+    new Date('<%= @rates.first[:time] %>')
   ])
   .range([offset_left, graph_width - offset_right]);
 
@@ -72,6 +71,20 @@ d3.select("#graph")
       .tickPadding(10)
   )
 
+var rate_window_x = function(mouse_x, offset){
+  if((mouse_x + 240) >= graph_width)
+    return mouse_x - 240 + offset;
+  else
+    return mouse_x + 10 + offset;
+}
+
+var rate_window_y = function(mouse_y, offset){
+  if((mouse_y - 125) <= 0)
+    return mouse_y + offset;
+  else
+    return mouse_y - 125 + offset;
+}
+
 d3.select("#graph")
   .selectAll("rect")
   .data(dataSet)
@@ -105,8 +118,8 @@ d3.select("#graph")
     d3.select("#graph")
       .append("rect")
       .attr("class", "info")
-      .attr("x", d3.mouse(this)[0] + 10)
-      .attr("y", d3.mouse(this)[1] - 125)
+      .attr("x", rate_window_x(d3.mouse(this)[0], 0))
+      .attr("y", rate_window_y(d3.mouse(this)[1], 0))
       .attr("width", "230px")
       .attr("height", "135px")
       .attr("stroke", "black")
@@ -115,40 +128,50 @@ d3.select("#graph")
       .append("text")
       .attr("class", "info")
       .text("時刻: " + d.time)
-      .attr("x", d3.mouse(this)[0] + 18)
-      .attr("y", d3.mouse(this)[1] - 100)
+      .attr("x", rate_window_x(d3.mouse(this)[0], 8))
+      .attr("y", rate_window_y(d3.mouse(this)[1], 25))
       .attr("stroke", "black")
     d3.select("#graph")
       .append("text")
       .attr("class", "info")
       .text("始値: " + d.open)
-      .attr("x", d3.mouse(this)[0] + 18)
-      .attr("y", d3.mouse(this)[1] - 75)
+      .attr("x", rate_window_x(d3.mouse(this)[0], 8))
+      .attr("y", rate_window_y(d3.mouse(this)[1], 50))
       .attr("stroke", "black")
     d3.select("#graph")
       .append("text")
       .attr("class", "info")
       .text("終値: " + d.close)
-      .attr("x", d3.mouse(this)[0] + 18)
-      .attr("y", d3.mouse(this)[1] - 50)
+      .attr("x", rate_window_x(d3.mouse(this)[0], 8))
+      .attr("y", rate_window_y(d3.mouse(this)[1], 75))
       .attr("stroke", "black")
     d3.select("#graph")
       .append("text")
       .attr("class", "info")
       .text("高値: " + d.high)
-      .attr("x", d3.mouse(this)[0] + 18)
-      .attr("y", d3.mouse(this)[1] - 25)
+      .attr("x", rate_window_x(d3.mouse(this)[0], 8))
+      .attr("y", rate_window_y(d3.mouse(this)[1], 100))
       .attr("stroke", "black")
     d3.select("#graph")
       .append("text")
       .attr("class", "info")
       .text("安値: " + d.low)
-      .attr("x", d3.mouse(this)[0] + 18)
-      .attr("y", d3.mouse(this)[1] - 0)
+      .attr("x", rate_window_x(d3.mouse(this)[0], 8))
+      .attr("y", rate_window_y(d3.mouse(this)[1], 125))
       .attr("stroke", "black")
   })
   .on("mouseout", function(){
     d3.selectAll(".info")
       .remove()
   })
+
+var moving_average = d3.svg.line()
+  .x(function(d, i) {return graph_size_x - i * (graph_size_x / (num_bar - 1)) + offset_left;})
+  .y(function(d, i) {return offset_upper + (graph_size_y * (max-d))/(max-min);});
+
+d3.select("#graph")
+  .append("path")
+  .attr("stroke", "green")
+  .attr("fill", "none")
+  .attr("d", moving_average(<%= @averages.map{|rate| rate[:average] } %>))
 <% end %>

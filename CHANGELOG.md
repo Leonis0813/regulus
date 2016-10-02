@@ -1,6 +1,33 @@
 regulus
 =======
 
+- 1.4.6
+  - [FIX] require settings.rb
+
+- 1.4.5
+  - [FIX] not aggregate when out pf service
+
+- 1.4.4
+  - [CHANGE] timeout
+  - [FIX] y range
+  - [FIX] bug for fetching profile_image_url from twitter api
+  - [UPDATE] remove aggregated rates before 2 months
+  - [FIX] not import when out of service
+
+- 1.4.3
+  - [REFACTOR] scripts
+
+- 1.4.2
+  - [FIX] add error handling for external service error
+  - [ADD] output http response as log
+
+- 1.4.1
+  - [FIX] reverse moving average
+  - [FIX] set jst for event
+
+- 1.4.0
+  - [ADD] moving average
+
 - 1.3.0
   - [UPDATE] show rate info on display
   - [UPDATE] refactor javascript

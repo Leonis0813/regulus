@@ -1,0 +1,81 @@
+mysql:
+  host: 'localhost'
+  username: 'root'
+  password: '7QiSlC?4'
+  database: 'regulus'
+
+rate:
+  import:
+    url: 'http://info.finance.yahoo.co.jp/fx/detail'
+    pairs:
+      - 'USDJPY'
+      - 'EURJPY'
+      - 'AUDJPY'
+      - 'GBPJPY'
+      - 'NZDJPY'
+      - 'CADJPY'
+      - 'CHFJPY'
+      - 'ZARJPY'
+      - 'CNHJPY'
+      - 'EURUSD'
+      - 'GBPUSD'
+      - 'AUDUSD'
+    out_of_service:
+      from:
+        hour: 20
+        minute: 50
+      to:
+        hour: 22
+        minute: 00
+  aggregate:
+    checker:
+      min:
+        - 5
+        - 10
+        - 20
+        - 30
+      hour:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 6
+        - 12
+      day:
+        - 1
+      month:
+        - 1
+  dump:
+    backup_dir: 'backup/rates'
+    header: 'time,pair,bid,ask'
+  delete:
+    period: 2
+
+tweet:
+  import:
+    consumer_key: 'qb5wB14dXWbl5nTz7n7uWUiaE'
+    consumer_secret: 'zU9FOSNDlQccN0gkkmD9iiHpjYBVuIsLQ9xDFGWSokFP2o4hSc'
+    access_token: '3313362716-oecmOzhHQnwI7IrIb2WRRtq6LLRiVlrJpSV71oN'
+    access_token_secret: 't1n8iXnbfCiZKiwJu0RUtHjoiCGw1fFL50pqNyPlZ2Cfw'
+    query:
+      word: '為替'
+      count: 20
+      result_type: 'recent'
+      max_count: 100
+    databases:
+      - 'regulus'
+      - 'regulus_development'
+      - 'regulus_production'
+  dump:
+    backup_dir: 'backup/tweets'
+    header: 'tweet_id,user_name,profile_image_url,full_text,tweeted_at,created_at'
+  delete:
+    period: 2
+
+article:
+  import:
+    url: 'http://www.nikkeibp.co.jp/rss/index.rdf'
+    databases:
+      - 'regulus'
+      - 'regulus_development'
+      - 'regulus_production'
