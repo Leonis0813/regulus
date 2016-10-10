@@ -2,4 +2,8 @@
 <a href="/tweets" class="selected">ツイート</a><font size="5" class="separator"> | </font>
 <a href="/articles" class="not-selected">記事</a>
 <hr>
-<div id="tweet"></div>
+<table cellspacing="0" width="100%">
+  <tbody id="tweet">
+    <%= render @tweets %>
+  </tbody>
+</table>

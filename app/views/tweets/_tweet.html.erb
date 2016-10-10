@@ -1,0 +1,10 @@
+<tr>
+  <td style="padding: 5px">
+    <img width="48" height="48" src=<%= tweet.profile_image_url %> >
+  </td>
+  <td valign="top">
+    <%= escape_javascript(tweet.user_name) %><br>
+    <%= raw(tweet.full_text.gsub('\n', '</br>').gsub(/(http[s]?:\/\/[^\s]+)/){"<a href=#{$1}>#{$1}</a>"}) %><br>
+    <%= tweet.tweeted_at %><br>
+  </td>
+</tr>

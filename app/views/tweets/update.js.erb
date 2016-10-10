@@ -1,15 +1,1 @@
-<% @tweets.each do |tw| %>
-<table>
-  <tr>
-    <td><img width="48" height="48" src=<%= tw.profile_image_url %> ></td>
-    <td class="text" valign="top">
-      <font size="2">
-        <%= escape_javascript(tw.user_name) %> |
-        <%= raw(tw.full_text.gsub('\n', '</br>').gsub(/(http[s]?:\/\/[^\s]+)/){"<a href=#{$1}>#{$1}</a>"}) %> |
-        <%= tw.tweeted_at %>
-      </font>
-    </td>
-  </tr>
-</table>
-<hr>
-<% end %>
+<%= render @tweets %>
