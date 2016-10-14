@@ -19,8 +19,8 @@ shared_examples 'セレクトボックスの状態が正しいこと' do |pair, 
   end
 end
 
-shared_examples '表示されているデータが正しいこと' do |content, id|
+shared_examples '表示されているデータが正しいこと' do |content, xpath|
   it "#{content}が表示されていること" do
-    expect(page).to have_selector("div##{id}")
+    expect(page).to have_selector(xpath)
   end
 end
