@@ -12,7 +12,7 @@ describe 'グラフを変更する', :type => :request, :js => true do
     it_behaves_like 'レート画面にリダイレクトされていること'
     it_behaves_like 'リンクの状態が正しいこと', 'rate'
     it_behaves_like 'セレクトボックスの状態が正しいこと', 'USDJPY', '5-min'
-    it_behaves_like '表示されているデータが正しいこと', 'レート', 'rate'
+    it_behaves_like '表示されているデータが正しいこと', 'レート', 'div#rate'
 
     describe 'ペアを選択する' do
       before(:each) { select 'EURJPY', :from => 'pair' }
