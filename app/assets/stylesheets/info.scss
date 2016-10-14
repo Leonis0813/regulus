@@ -1,0 +1,7 @@
+tr td {
+  border-bottom: #aaaaaa 2px solid;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
