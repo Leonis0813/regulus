@@ -1,6 +1,6 @@
 class CreatePredictedRates < ActiveRecord::Migration
   def change
-    create_table :predicted_rates do |t|
+    create_table :predicted_rates, :id => false do |t|
       t.datetime :from_date
       t.datetime :to_date
       t.string :pair
@@ -11,6 +11,6 @@ class CreatePredictedRates < ActiveRecord::Migration
       t.float :low, :null => false
       t.timestamps
     end
-    execute 'ALTER TABLE rates ADD PRIMARY KEY (from_date, to_date, pair, `interval`)'
+    execute 'ALTER TABLE predicted_rates ADD PRIMARY KEY (from_date, to_date, pair, `interval`)'
   end
 end
