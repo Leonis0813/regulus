@@ -1,6 +1,13 @@
 regulus
 =======
 
+- 1.4.8
+  - [ADD] scripts for analyzing
+
+- 1.4.7
+  - [REFACTOR] view for tweet and article
+  - [UPDATE] favicon.ico
+
 - 1.4.6
   - [FIX] require settings.rb
 

@@ -3,9 +3,11 @@ require 'rails_helper'
 
 describe "articles/show", :type => :view do
   include_context 'レスポンス初期化'
+  include_context '記事を作成する', 1
+  before(:all) { assign(:articles, Article.all) }
   include_context 'View: ビューを描画'
 
-  it '<div>タグがあること' do
-    expect(@res).to have_selector('div#article')
+  it '<tbody>タグがあること' do
+    expect(@res).to have_selector('table tbody#article')
   end
 end
