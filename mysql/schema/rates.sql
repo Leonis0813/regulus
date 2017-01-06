@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS rates (
   id INTEGER PRIMARY KEY,
-  time DATETIME,
-  pair VARCHAR(6),
-  bid FLOAT,
-  ask FLOAT
+  time DATETIME NOT NULL,
+  pair VARCHAR(6) NOT NULL,
+  bid FLOAT NOT NULL,
+  ask FLOAT NOT NULL
 )
