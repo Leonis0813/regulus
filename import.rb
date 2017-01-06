@@ -1,4 +1,5 @@
 require 'csv'
+require 'fileutils'
 require 'mysql2'
 require_relative 'config/settings'
 
@@ -11,14 +12,15 @@ end
 rates.sort_by! {|rate| [rate[0], rate[1]] }
 rates.map! {|rate| [rate[0].strftime('%F %T'), rate[1], rate[2], rate[3]] }
 
-CSV.open('tmp/rate.csv', 'w') do |csv|
+CSV.open('tmp/rates.csv', 'w') do |csv|
   rates.each {|rate| csv << rate }
 end
 
 client = Mysql2::Client.new(Settings.mysql)
+
 query =<<"EOF"
 LOAD DATA LOCAL INFILE
-  'tmp/rate.csv'
+  'tmp/rates.csv'
 INTO TABLE
   rates
 FIELDS TERMINATED BY
@@ -34,11 +36,15 @@ SELECT
 FROM
   rates
 WHERE
-  DATE(time) = #{day}
-INTO OUTFILE
-  'tmp/rates_#{day}.csv'
-FIELDS TERMINATED BY
-  ','
+  DATE(time) = '#{day}'
 EOF
-client.query(query)
+result = client.query(query)
 client.close
+
+rates = result.map {|r| [r['id'], r['time'].strftime('%F %T'), r['pair'], r['bid'], r['ask']] }
+
+CSV.open("tmp/rates_#{day}.csv", 'w') do |csv|
+  rates.each {|rate| csv << rate }
+end
+
+FileUtils.rm('tmp/rates.csv')
