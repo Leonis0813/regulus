@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS candle_sticks (
   close FLOAT NOT NULL,
   high FLOAT NOT NULL,
   low FLOAT NOT NULL,
-  UNIQUE(pair, `interval`)
+  UNIQUE(`from`, `to`, pair)
 )
