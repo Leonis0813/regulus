@@ -1,11 +1,8 @@
 require 'date'
-require_relative 'helper'
-require_relative '../config/settings'
-require_relative '../lib/logger'
-require_relative '../lib/mysql_client'
+require_relative 'config/settings'
+require_relative 'lib/mysql_client'
 
 AGGREGATE = Settings.rate['aggregate']
-ENV['TZ'] = 'UTC'
 CHECKER = AGGREGATE['checker']
 
 def check(time_name, date)
@@ -43,8 +40,6 @@ def year(date)
   intervals.map {|interval| [interval, date << (12 * interval.split('-').first.to_i)] }
 end
 
-exit if out_of_service?
-
 now = Time.now
 end_date = (now - now.sec).to_datetime
 
@@ -55,22 +50,15 @@ end_date = (now - now.sec).to_datetime
       :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'),
       :interval => interval,
     }
-    %w[ regulus_development regulus_production ].each do |db|
-      begin
-        execute_sql(db, File.join(Settings.application_root, 'rates/aggregate.sql'), param)
-        Logger.write(
-          'rates',
-          File.basename(__FILE__, '.rb'),
-          {
-            :database => db,
-            :begin => begin_date.strftime('%Y-%m-%d %H:%M:%S'),
-            :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'),
-            :interval => interval,
-          }
-        )
-      rescue
-        next
-      end
+    begin
+      client = Mysql2::Client.new(Settings.mysql)
+      query = File.read(File.join(Settings.application_root, 'aggregate.sql'))
+      param.each {|key, value| query.gsub!("$#{key.upcase}", value) }
+      client.query(query)
+    rescue
+      next
+    ensure
+      client.close
     end
   end
 end
