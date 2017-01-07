@@ -6,8 +6,7 @@ require_relative 'config/settings'
 TMP_FILE = 'tmp/rates.csv'
 DAY = ARGV[1] ? ARGV[1] : Date.today.strftime('%F')
 
-rate_files = Dir["/mnt/smb/*_#{DAY}.csv"]
-rates = rate_files.inject([]) do |rates, csv|
+rates = Dir["/mnt/smb/*_#{DAY}.csv"].inject([]) do |rates, csv|
   rates += CSV.read(csv, :converters => :all)
 end
 
@@ -50,4 +49,4 @@ CSV.open("backup/#{DAY}.csv", 'w') do |csv|
   rates.each {|rate| csv << rate }
 end
 
-FileUtils.rm(rate_files << TMP_FILE)
+FileUtils.rm(TMP_FILE)
