@@ -1,40 +1,43 @@
-INSERT INTO
-  rates
+INSERT IGNORE INTO
+  candle_sticks
 (
   SELECT
-    axis.from_date,
-    axis.to_date,
+    NULL,
+    axis.from,
+    axis.to,
     axis.pair,
     axis.interval,
     open.rate AS open,
     close.rate AS close,
     high.rate AS high,
-    low.rate AS low,
-    NOW() AS created_at,
-    NOW() AS updated_at
+    low.rate AS low
   FROM (
     SELECT DISTINCT
-      '$BEGIN' AS from_date,
-      '$END' AS to_date,
+      '$BEGIN' AS 'from',
+      '$END' AS 'to',
       pair,
       '$INTERVAL' AS 'interval'
-    FROM regulus.rates
+    FROM rates
   ) AS axis
   LEFT JOIN (
     SELECT
       pair,
       bid AS rate
     FROM
-      regulus.rates
+      rates
     WHERE
       time = (
         SELECT
           MIN(time)
         FROM
-          regulus.rates
+          rates
         WHERE
           time BETWEEN '$BEGIN' AND '$END'
       )
+    ORDER BY
+      id
+    LIMIT
+      1
   ) AS open
   ON
     axis.pair = open.pair
@@ -43,16 +46,20 @@ INSERT INTO
       pair,
       bid AS rate
     FROM
-      regulus.rates
+      rates
     WHERE
       time = (
         SELECT
           MAX(time)
         FROM
-          regulus.rates
+          rates
         WHERE
           time BETWEEN '$BEGIN' AND '$END'
       )
+    ORDER BY
+      id
+    LIMIT
+      1
   ) AS close
   ON
     axis.pair = close.pair
@@ -61,7 +68,7 @@ INSERT INTO
       pair,
       MAX(bid) AS rate
     FROM
-      regulus.rates
+      rates
     WHERE
       time BETWEEN '$BEGIN' AND '$END'
     GROUP BY
@@ -74,7 +81,7 @@ INSERT INTO
       pair,
       MIN(bid) AS rate
     FROM
-      regulus.rates
+      rates
     WHERE
       time BETWEEN '$BEGIN' AND '$END'
     GROUP BY
@@ -83,9 +90,3 @@ INSERT INTO
   ON
     axis.pair = low.pair
 )
-ON DUPLICATE KEY UPDATE
-  open = VALUES(open),
-  close = VALUES(close),
-  high = VALUES(high),
-  low = VALUES(low),
-  updated_at = NOW()
