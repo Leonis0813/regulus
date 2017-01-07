@@ -3,16 +3,18 @@ require 'fileutils'
 require 'mysql2'
 require_relative 'config/settings'
 
-day = ARGV[1] ? ARGV[1] : Date.today.strftime('%F')
+TMP_FILE = 'tmp/rates.csv'
+DAY = ARGV[1] ? ARGV[1] : Date.today.strftime('%F')
 
-rates = Dir["/mnt/smb/*_#{day}.csv"].inject([]) do |rates, csv|
+rate_files = Dir["/mnt/smb/*_#{DAY}.csv"]
+rates = rate_files.inject([]) do |rates, csv|
   rates += CSV.read(csv, :converters => :all)
 end
 
 rates.sort_by! {|rate| [rate[0], rate[1]] }
 rates.map! {|rate| [rate[0].strftime('%F %T'), rate[1], rate[2], rate[3]] }
 
-CSV.open('tmp/rates.csv', 'w') do |csv|
+CSV.open(TMP_FILE, 'w') do |csv|
   rates.each {|rate| csv << rate }
 end
 
@@ -20,7 +22,7 @@ client = Mysql2::Client.new(Settings.mysql)
 
 query =<<"EOF"
 LOAD DATA LOCAL INFILE
-  'tmp/rates.csv'
+  '#{TMP_FILE}'
 INTO TABLE
   rates
 FIELDS TERMINATED BY
@@ -36,15 +38,16 @@ SELECT
 FROM
   rates
 WHERE
-  DATE(time) = '#{day}'
+  DATE(time) = '#{DAY}'
 EOF
 result = client.query(query)
+
 client.close
 
 rates = result.map {|r| [r['id'], r['time'].strftime('%F %T'), r['pair'], r['bid'], r['ask']] }
 
-CSV.open("tmp/rates_#{day}.csv", 'w') do |csv|
+CSV.open("backup/#{DAY}.csv", 'w') do |csv|
   rates.each {|rate| csv << rate }
 end
 
-FileUtils.rm('tmp/rates.csv')
+FileUtils.rm(rate_files << TMP_FILE)
