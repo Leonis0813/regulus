@@ -2,8 +2,7 @@ require 'date'
 require 'mysql2'
 require_relative 'config/settings'
 
-AGGREGATE = Settings.aggregate
-CHECKER = AGGREGATE['checker']
+CHECKER = Settings.aggregate['checker']
 
 def check(time_name, date)
   [].tap do |intervals|
@@ -40,8 +39,7 @@ def year(date)
   intervals.map {|interval| [interval, date << (12 * interval.split('-').first.to_i)] }
 end
 
-#now = Time.now
-now = Time.parse('2017-01-06 22:00:00')
+now = Time.now
 end_date = (now - now.sec).to_datetime
 
 %w[ min hour day week month year ].each do |time_name|
@@ -53,14 +51,13 @@ end_date = (now - now.sec).to_datetime
         :pair => pair,
         :interval => interval,
       }
-      p param
+
       begin
         client = Mysql2::Client.new(Settings.mysql)
         query = File.read(File.join(Settings.application_root, 'aggregate.sql'))
         param.each {|key, value| query.gsub!("$#{key.upcase}", value) }
         client.query(query)
       rescue => e
-        p e
         next
       ensure
         client.close
