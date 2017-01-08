@@ -4,7 +4,7 @@ require 'mysql2'
 require_relative 'config/settings'
 
 TMP_FILE = 'tmp/rates.csv'
-DAY = ARGV[0] ? ARGV[0] : Date.today.strftime('%F')
+DAY = ARGV[0] ? ARGV[0] : (Date.today - 2).strftime('%F')
 
 rates = Dir["/mnt/smb/*_#{DAY}.csv"].inject([]) do |rates, csv|
   rates += CSV.read(csv, :converters => :all)
