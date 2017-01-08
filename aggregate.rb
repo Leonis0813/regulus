@@ -1,8 +1,8 @@
 require 'date'
+require 'mysql2'
 require_relative 'config/settings'
-require_relative 'lib/mysql_client'
 
-AGGREGATE = Settings.rate['aggregate']
+AGGREGATE = Settings.aggregate
 CHECKER = AGGREGATE['checker']
 
 def check(time_name, date)
@@ -40,25 +40,31 @@ def year(date)
   intervals.map {|interval| [interval, date << (12 * interval.split('-').first.to_i)] }
 end
 
-now = Time.now
+#now = Time.now
+now = Time.parse('2017-01-06 22:00:00')
 end_date = (now - now.sec).to_datetime
 
 %w[ min hour day week month year ].each do |time_name|
   send(time_name, end_date).each do |interval, begin_date|
-    param = {
-      :begin => begin_date.strftime('%Y-%m-%d %H:%M:%S'),
-      :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'),
-      :interval => interval,
-    }
-    begin
-      client = Mysql2::Client.new(Settings.mysql)
-      query = File.read(File.join(Settings.application_root, 'aggregate.sql'))
-      param.each {|key, value| query.gsub!("$#{key.upcase}", value) }
-      client.query(query)
-    rescue
-      next
-    ensure
-      client.close
+    Settings.import['pairs'].each do |pair|
+      param = {
+        :begin => begin_date.strftime('%Y-%m-%d %H:%M:%S'),
+        :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'),
+        :pair => pair,
+        :interval => interval,
+      }
+      p param
+      begin
+        client = Mysql2::Client.new(Settings.mysql)
+        query = File.read(File.join(Settings.application_root, 'aggregate.sql'))
+        param.each {|key, value| query.gsub!("$#{key.upcase}", value) }
+        client.query(query)
+      rescue => e
+        p e
+        next
+      ensure
+        client.close
+      end
     end
   end
 end

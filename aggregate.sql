@@ -9,15 +9,14 @@ INSERT IGNORE INTO
     axis.interval,
     open.rate AS open,
     close.rate AS close,
-    high.rate AS high,
-    low.rate AS low
+    high_low.high AS high,
+    high_low.low AS low
   FROM (
-    SELECT DISTINCT
+    SELECT
       '$BEGIN' AS 'from',
       '$END' AS 'to',
-      pair,
+      '$PAIR' AS pair,
       '$INTERVAL' AS 'interval'
-    FROM rates
   ) AS axis
   LEFT JOIN (
     SELECT
@@ -26,16 +25,10 @@ INSERT IGNORE INTO
     FROM
       rates
     WHERE
-      time = (
-        SELECT
-          MIN(time)
-        FROM
-          rates
-        WHERE
-          time BETWEEN '$BEGIN' AND '$END'
-      )
+      time BETWEEN '$BEGIN' AND '$END'
+      AND pair = '$PAIR'
     ORDER BY
-      id
+      time
     LIMIT
       1
   ) AS open
@@ -48,16 +41,10 @@ INSERT IGNORE INTO
     FROM
       rates
     WHERE
-      time = (
-        SELECT
-          MAX(time)
-        FROM
-          rates
-        WHERE
-          time BETWEEN '$BEGIN' AND '$END'
-      )
+      time BETWEEN '$BEGIN' AND '$END'
+      AND pair = '$PAIR'
     ORDER BY
-      id
+      time DESC
     LIMIT
       1
   ) AS close
@@ -66,27 +53,14 @@ INSERT IGNORE INTO
   LEFT JOIN (
     SELECT
       pair,
-      MAX(bid) AS rate
+      MAX(bid) AS high,
+      MIN(bid) AS low
     FROM
       rates
     WHERE
       time BETWEEN '$BEGIN' AND '$END'
-    GROUP BY
-      pair
-  ) AS high
+      AND pair = '$PAIR'
+  ) AS high_low
   ON
-    axis.pair = high.pair
-  LEFT JOIN (
-    SELECT
-      pair,
-      MIN(bid) AS rate
-    FROM
-      rates
-    WHERE
-      time BETWEEN '$BEGIN' AND '$END'
-    GROUP BY
-      pair
-  ) AS low
-  ON
-    axis.pair = low.pair
+    axis.pair = high_low.pair
 )
