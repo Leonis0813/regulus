@@ -3,51 +3,49 @@ require 'mysql2'
 require_relative 'config/settings'
 
 CHECKER = Settings.aggregate['checker']
+END_DATE = (ARGV[0] ? ARGV[0] : (Date.today - 2).strftime('%F')).to_datetime
 
-def check(time_name, date)
+def check(time_name)
   [].tap do |intervals|
-    CHECKER[time_name].each {|check_time| intervals << "#{check_time}-#{time_name}" if date.send(time_name) % check_time == 0 }
+    CHECKER[time_name].each {|check_time| intervals << "#{check_time}-#{time_name}" if END_DATE.send(time_name) % check_time == 0 }
   end
 end
 
-def min(date)
-  intervals = check('min', date)
-  intervals.map {|interval| [interval, date - Rational(interval.split('-').first.to_i, 24 * 60)] }
+def min
+  intervals = check('min')
+  intervals.map {|interval| [interval, END_DATE - Rational(interval.split('-').first.to_i, 24 * 60)] }
 end
 
-def hour(date)
-  intervals = date.min == 0 ? check('hour', date) : []
-  intervals.map {|interval| [interval, date - Rational(interval.split('-').first.to_i, 24)] }
+def hour
+  intervals = END_DATE.min == 0 ? check('hour') : []
+  intervals.map {|interval| [interval, END_DATE - Rational(interval.split('-').first.to_i, 24)] }
 end
 
-def day(date)
-  intervals = (date.min == 0 and date.hour == 0) ? check('hour', date) : []
-  intervals.map {|interval| [interval, date - interval.split('-').first.to_i] }
+def day
+  intervals = (END_DATE.min == 0 and END_DATE.hour == 0) ? check('hour') : []
+  intervals.map {|interval| [interval, END_DATE - interval.split('-').first.to_i] }
 end
 
-def week(date)
-  intervals = (date.min == 0 and date.hour == 0 and date.wday == 0) ? ['1-week', date - (7 * interval.split('-').first.to_i)] : []
+def week
+  intervals = (END_DATE.min == 0 and END_DATE.hour == 0 and END_DATE.wday == 0) ? ['1-week', END_DATE - (7 * interval.split('-').first.to_i)] : []
 end
 
-def month(date)
-  intervals = (date.min == 0 and date.hour == 0 and date.day == 1) ? check('month', date) : []
-  intervals.map {|interval| [interval, date << interval.split('-').first.to_i] }
+def month
+  intervals = (END_DATE.min == 0 and END_DATE.hour == 0 and END_DATE.day == 1) ? check('month') : []
+  intervals.map {|interval| [interval, END_DATE << interval.split('-').first.to_i] }
 end
 
-def year(date)
-  intervals = (date.min == 0 and date.hour == 0 and date.day == 1 and date.month == 1) ? check('year', date) : []
-  intervals.map {|interval| [interval, date << (12 * interval.split('-').first.to_i)] }
+def year
+  intervals = (END_DATE.min == 0 and END_DATE.hour == 0 and END_DATE.day == 1 and END_DATE.month == 1) ? check('year') : []
+  intervals.map {|interval| [interval, END_DATE << (12 * interval.split('-').first.to_i)] }
 end
-
-now = Time.now
-end_date = (now - now.sec).to_datetime
 
 %w[ min hour day week month year ].each do |time_name|
-  send(time_name, end_date).each do |interval, begin_date|
+  send(time_name).each do |interval, begin_date|
     Settings.import['pairs'].each do |pair|
       param = {
         :begin => begin_date.strftime('%Y-%m-%d %H:%M:%S'),
-        :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'),
+        :end => (END_DATE - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'),
         :pair => pair,
         :interval => interval,
       }
