@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS candle_sticks (
   `from` DATETIME NOT NULL,
   `to` DATETIME NOT NULL,
   pair VARCHAR(6) NOT NULL,
+  `interval` VARCHAR(8) NOT NULL,
   open FLOAT NOT NULL,
   close FLOAT NOT NULL,
   high FLOAT NOT NULL,
