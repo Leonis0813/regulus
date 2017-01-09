@@ -4,7 +4,7 @@ Dir['aggregate/*.rb'].each {|file| require_relative file }
 
 TARGET_DATE = Date.today - 2
 
-unless Dir[File.join(Settings.csv_dir, "*_#{TARGET_DATE.strftime('%F')}.csv")].empty?
+unless Dir[rate_files(TARGET_DATE)].empty?
   import(TARGET_DATE)
   backup(TARGET_DATE)
 

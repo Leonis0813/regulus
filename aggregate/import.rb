@@ -1,10 +1,11 @@
 require 'csv'
 require 'fileutils'
 require 'mysql2'
+require_relative 'helper'
 require_relative '../config/settings'
 
 def import(date)
-  rates = Dir[File.join(Settings.csv_dir, "*_#{date.strftime('%F')}.csv")].inject([]) do |rates, csv|
+  rates = rate_files.inject([]) do |rates, csv|
     rates += CSV.read(csv, :converters => :all)
   end
 
