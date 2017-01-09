@@ -4,8 +4,8 @@ Dir['aggregate/*.rb'].each {|file| require_relative file }
 TARGET_DATE = Date.today - 2
 
 unless Dir["/mnt/smb/*_#{TARGET_DATE.strftime('%F')}.csv"].empty?
-  import
-  backup
+  import(TARGET_DATE)
+  backup(TARGET_DATE)
 
   aggregation_date = TARGET_DATE.to_datetime
   (1..1440).each do |offset|

@@ -5,10 +5,8 @@ require_relative '../config/settings'
 
 TMP_FILE = 'tmp/rates.csv'
 
-def import
-  day = (Date.today - 2).strftime('%F')
-
-  rates = Dir["/mnt/smb/*_#{day}.csv"].inject([]) do |rates, csv|
+def import(date)
+  rates = Dir["/mnt/smb/*_#{date.strftime('%F')}.csv"].inject([]) do |rates, csv|
     rates += CSV.read(csv, :converters => :all)
   end
 
