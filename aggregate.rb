@@ -13,8 +13,8 @@ aggregation_date = (Date.today - 2).to_datetime
     send(time_name, end_date).each do |interval, begin_date|
       Settings.import['pairs'].each do |pair|
         param = {
-          :begin => begin_date.strftime('%Y-%m-%d %H:%M:%S'),
-          :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'),
+          :begin => begin_date.strftime('%F %T'),
+          :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%F %T'),
           :pair => pair,
           :interval => interval,
         }
