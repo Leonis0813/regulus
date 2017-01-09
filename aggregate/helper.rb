@@ -1,5 +1,4 @@
 require 'date'
-require 'mysql2'
 require_relative '../config/settings'
 
 CHECKER = Settings.aggregate['checker']
@@ -33,30 +32,4 @@ end
 def year(end_date)
   intervals = (end_date.min == 0 and end_date.hour == 0 and end_date.day == 1 and end_date.month == 1) ? check('year', end_date) : []
   intervals.map {|interval| [interval, end_date << (12 * interval.split('-').first.to_i)] }
-end
-
-def aggregate(end_date)
-  %w[ min hour day month year ].each do |time_name|
-    send(time_name, end_date).each do |interval, begin_date|
-      Settings.import['pairs'].each do |pair|
-        param = {
-          :begin => begin_date.strftime('%Y-%m-%d %H:%M:%S'),
-          :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%Y-%m-%d %H:%M:%S'),
-          :pair => pair,
-          :interval => interval,
-        }
-
-        begin
-          client = Mysql2::Client.new(Settings.mysql)
-          query = File.read(File.join(Settings.application_root, 'aggregate.sql'))
-          param.each {|key, value| query.gsub!("$#{key.upcase}", value) }
-          client.query(query)
-        rescue => e
-          next
-        ensure
-          client.close
-        end
-      end
-    end
-  end
 end
