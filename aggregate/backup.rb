@@ -6,17 +6,9 @@ def backup
   day = (Date.today - 2).strftime('%F')
 
   client = Mysql2::Client.new(Settings.mysql)
-
-  query =<<"EOF"
-SELECT
-  *
-FROM
-  rates
-WHERE
-  DATE(time) = '#{day}'
-EOF
+  query = File.read(File.join(Settings.application_root, 'aggregate/backup.sql'))
+  client.query(query.gsub('$DAY', day))
   result = client.query(query)
-
   client.close
 
   rates = result.map {|r| [r['id'], r['time'].strftime('%F %T'), r['pair'], r['bid'], r['ask']] }

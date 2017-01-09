@@ -20,19 +20,8 @@ def import
   end
 
   client = Mysql2::Client.new(Settings.mysql)
-
-  query =<<"EOF"
-LOAD DATA LOCAL INFILE
-  '#{TMP_FILE}'
-INTO TABLE
-  rates
-FIELDS TERMINATED BY
-  ','
-(@1, @2, @3, @4)
-SET time=@1, pair=@2, bid=@3, ask=@4
-EOF
-  client.query(query)
-
+  query = File.read(File.join(Settings.application_root, 'aggregate/import.sql'))
+  client.query(query.gsub('$FILE', TMP_FILE))
   client.close
 
   FileUtils.rm(TMP_FILE)
