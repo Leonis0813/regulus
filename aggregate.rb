@@ -1,9 +1,10 @@
 require 'date'
+require_relative 'config/settings'
 Dir['aggregate/*.rb'].each {|file| require_relative file }
 
 TARGET_DATE = Date.today - 2
 
-unless Dir["/mnt/smb/*_#{TARGET_DATE.strftime('%F')}.csv"].empty?
+unless Dir[File.join(Settings.csv_dir, "*_#{TARGET_DATE.strftime('%F')}.csv")].empty?
   import(TARGET_DATE)
   backup(TARGET_DATE)
 
@@ -11,9 +12,9 @@ unless Dir["/mnt/smb/*_#{TARGET_DATE.strftime('%F')}.csv"].empty?
   (1..1440).each do |offset|
     end_date = aggregation_date + Rational(offset, 24 * 60)
 
-    %w[ min hour day month year ].each do |time_name|
+    Settings.interval.keys.each do |time_name|
       send(time_name, end_date).each do |interval, begin_date|
-        Settings.import['pairs'].each do |pair|
+        Settings.pairs.each do |pair|
           param = {
             :begin => begin_date.strftime('%F %T'),
             :end => (end_date - Rational(1, 24 * 60 * 60)).strftime('%F %T'),

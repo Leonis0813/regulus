@@ -4,32 +4,33 @@ mysql:
   password: '7QiSlC?4'
   database: 'regulus'
 
-import:
-  pairs:
-    - 'AUDJPY'
-    - 'CADJPY'
-    - 'CHFJPY'
-    - 'EURJPY'
-    - 'GBPJPY'
-    - 'NZDJPY'
-    - 'USDJPY'
-aggregate:
-  checker:
-    min:
-      - 1
-      - 5
-      - 10
-      - 15
-      - 20
-      - 30
-    hour:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 6
-      - 12
-    day:
-      - 1
-    month:
-      - 1
+csv_dir: '/mnt/smb'
+tmp_file: 'tmp/rates.csv'
+backup_dir: 'backup'
+pairs:
+  - 'AUDJPY'
+  - 'CADJPY'
+  - 'CHFJPY'
+  - 'EURJPY'
+  - 'GBPJPY'
+  - 'NZDJPY'
+  - 'USDJPY'
+interval:
+  min:
+    - 1
+    - 5
+    - 10
+    - 15
+    - 20
+    - 30
+  hour:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 6
+    - 12
+  day:
+    - 1
+  month:
+    - 1

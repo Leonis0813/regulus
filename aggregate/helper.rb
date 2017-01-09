@@ -1,11 +1,9 @@
 require 'date'
 require_relative '../config/settings'
 
-CHECKER = Settings.aggregate['checker']
-
 def check(time_name, end_date)
   [].tap do |intervals|
-    CHECKER[time_name].each {|check_time| intervals << "#{check_time}-#{time_name}" if end_date.send(time_name) % check_time == 0 }
+    Settings.interval[time_name].each {|check_time| intervals << "#{check_time}-#{time_name}" if end_date.send(time_name) % check_time == 0 }
   end
 end
 

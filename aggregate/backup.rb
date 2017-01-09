@@ -13,7 +13,7 @@ def backup(date)
 
   rates = result.map {|r| [r['id'], r['time'].strftime('%F %T'), r['pair'], r['bid'], r['ask']] }
 
-  CSV.open("backup/#{date_str}.csv", 'w') do |csv|
+  CSV.open(File.join(Settings.application_root, Settings.backup_dir, "#{date_str}.csv"), 'w') do |csv|
     rates.each {|rate| csv << rate }
   end
 end
