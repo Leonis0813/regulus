@@ -1,12 +1,12 @@
 require 'date'
-Dir['import/*.rb'].each {|file| require file }
+Dir['aggregate/*.rb'].each {|file| require_relative file }
 
 import
 backup
 delete
 
 aggregation_date = (Date.today - 2).to_datetime
-(0...1440).each do |offset|
+(1..1440).each do |offset|
   end_date = aggregation_date + Rational(offset, 24 * 60)
 
   %w[ min hour day month year ].each do |time_name|

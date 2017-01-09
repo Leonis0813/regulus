@@ -1,6 +1,6 @@
 require 'csv'
 require 'mysql2'
-require_relative '../config/setting'
+require_relative '../config/settings'
 
 def backup
   day = (Date.today - 2).strftime('%F')

@@ -20,7 +20,7 @@ def hour(end_date)
 end
 
 def day(end_date)
-  intervals = (end_date.min == 0 and end_date.hour == 0) ? check('hour', end_date) : []
+  intervals = (end_date.min == 0 and end_date.hour == 0) ? check('day', end_date) : []
   intervals.map {|interval| [interval, end_date - interval.split('-').first.to_i] }
 end
 
