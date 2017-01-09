@@ -3,7 +3,6 @@ Dir['aggregate/*.rb'].each {|file| require_relative file }
 
 import
 backup
-delete
 
 aggregation_date = (Date.today - 2).to_datetime
 (1..1440).each do |offset|
