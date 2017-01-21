@@ -5,7 +5,7 @@ require_relative 'helper'
 require_relative '../config/settings'
 
 def import(date)
-  rates = rate_files.inject([]) do |rates, csv|
+  rates = rate_files(date).inject([]) do |rates, csv|
     rates += CSV.read(csv, :converters => :all)
   end
 
