@@ -19,7 +19,7 @@ def import(date)
     start_time = Time.now
     client.query(query.gsub('$FILE', Settings.tmp_file))
     end_time = Time.now
-    Logger.write({'file_name' => rate_file, '# of rate' => rates.size, 'mysql_runtime' => (end_time - start_time)})
+    Logger.write({'file_name' => File.basename(rate_file), '# of rate' => rates.size, 'mysql_runtime' => (end_time - start_time)})
     client.close
 
     FileUtils.rm(Settings.tmp_file)
