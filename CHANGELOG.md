@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 2.0.0
+  - [REMOVE] rails app
+
 - 1.4.8
   - [ADD] scripts for analyzing
 
