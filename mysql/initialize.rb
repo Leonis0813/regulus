@@ -17,4 +17,8 @@ client = Mysql2::Client.new(Settings.mysql)
 Dir[File.join(Settings.application_root, 'mysql/schema/*.sql')].each do |sql_file|
   client.query(File.read(sql_file))
 end
+
+%w[ time pair ].each do |column|
+  client.query("ALTER TABLE rates ADD INDEX index_#{column}(#{column})")
+end
 client.close
