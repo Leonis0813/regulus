@@ -3,6 +3,7 @@ regulus
 
 - 2.0.0
   - [REMOVE] rails app
+  - [ADD] index to time, pair column
 
 - 1.4.8
   - [ADD] scripts for analyzing
