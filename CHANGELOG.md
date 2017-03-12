@@ -1,6 +1,10 @@
 regulus
 =======
 
+- 2.0.1
+  - [ADD] mql code
+  - [CREATE] mysql client
+
 - 2.0.0
   - [REMOVE] rails app
   - [ADD] index to time, pair column
