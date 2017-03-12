@@ -1,6 +1,7 @@
 require 'date'
 require_relative 'config/settings'
 require_relative 'lib/logger'
+require_relative 'lib/mysql_client'
 Dir['aggregate/*.rb'].each {|file| require_relative file }
 
 TARGET_DATE = Date.today - 2
@@ -28,20 +29,10 @@ else
             :pair => pair,
             :interval => interval,
           }
-
-          begin
-            client = Mysql2::Client.new(Settings.mysql)
-            query = File.read(File.join(Settings.application_root, 'aggregate.sql'))
-            param.each {|key, value| query.gsub!("$#{key.upcase}", value) }
-            start_time = Time.now
-            client.query(query)
-            end_time = Time.now
-            Logger.write({'param' => param, 'mysql_runtime' => (end_time - start_time)})
-          rescue => e
-            next
-          ensure
-            client.close
-          end
+          start_time = Time.now
+          create_candle_sticks(param)
+          end_time = Time.now
+          Logger.write({'param' => param, 'mysql_runtime' => (end_time - start_time)})
         end
       end
     end
