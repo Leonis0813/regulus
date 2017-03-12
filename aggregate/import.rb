@@ -1,9 +1,9 @@
 require 'csv'
 require 'fileutils'
-require 'mysql2'
 require_relative 'helper'
 require_relative '../config/settings'
 require_relative '../lib/logger'
+require_relative '../lib/mysql_client'
 
 def import(date)
   rate_files(date).each do |rate_file|
@@ -14,13 +14,10 @@ def import(date)
       rates.each {|rate| csv << rate }
     end
 
-    client = Mysql2::Client.new(Settings.mysql)
-    query = File.read(File.join(Settings.application_root, 'aggregate/import.sql'))
     start_time = Time.now
-    client.query(query.gsub('$FILE', Settings.tmp_file))
+    import_rates(Settings.tmp_file)
     end_time = Time.now
-    Logger.write({'file_name' => File.basename(rate_file), '# of rate' => rates.size, 'mysql_runtime' => (end_time - start_time)})
-    client.close
+    Logger.write('file_name' => File.basename(rate_file), '# of rate' => rates.size, 'mysql_runtime' => (end_time - start_time))
 
     FileUtils.rm(Settings.tmp_file)
   end

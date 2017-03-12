@@ -1,21 +1,20 @@
 require 'csv'
-require 'mysql2'
 require_relative 'helper'
 require_relative '../config/settings'
 require_relative '../lib/logger'
+require_relative '../lib/mysql_client'
 
 def backup(date)
-  client = Mysql2::Client.new(Settings.mysql)
-  query = File.read(File.join(Settings.application_root, 'aggregate/backup.sql'))
   start_time = Time.now
-  result = client.query(query.gsub('$DAY', date.strftime('%F')))
+  rates = get_rates(date)
   end_time = Time.now
-  client.close
 
-  rates = result.map {|r| [r['id'], r['time'].strftime('%F %T'), r['pair'], r['bid'], r['ask']] }
-
-  CSV.open(backup_file(date), 'w') do |csv|
-    rates.each {|rate| csv << rate }
+  file_name = backup_file(date)
+  CSV.open(file_name, 'w') do |csv|
+    rates.each do |rate|
+      csv << [rate['id'], rate['time'].strftime('%F %T'), rate['pair'], rate['bid'], rate['ask']]
+    end
   end
-  Logger.write({'file_name' => File.basename(backup_file(date)), '# of rate' => rates.size, 'mysql_runtime' => (end_time - start_time)})
+
+  Logger.write('file_name' => File.basename(file_name), '# of rate' => rates.size, 'mysql_runtime' => (end_time - start_time))
 end
