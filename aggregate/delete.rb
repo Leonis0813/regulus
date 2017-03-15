@@ -1,11 +1,11 @@
 require 'fileutils'
 require_relative 'helper'
 
-def delete
-  date = Date.today - 2
+TARGET_DATE = Date.today - 2
+BACKUP_FILE = backup_file(TARGET_DATE)
+REMOVED_FILES = rate_files(TARGET_DATE)
 
-  if File.exists?(backup_file(date))
-    rates_count = rate_files(date).inject {|count, csv| File.read(csv).count("\n") }
-    FileUtils.rm(rate_files) if rates_count = File.read(backup_file).count("\n")
-  end
+if File.exists?(BACKUP_FILE)
+  rates_count = REMOVED_FILES.inject {|count, csv| File.read(csv).lines.size }
+  FileUtils.rm(REMOVED_FILES) if rates_count == File.read(BACKUP_FILE).lines.size
 end
