@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 2.0.2
+  - [CREATE] script for deleting rates
+
 - 2.0.1
   - [ADD] mql code
   - [CREATE] mysql client
