@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 2.0.3
+  - [CREATE] script for compressing backup csv files
+
 - 2.0.2
   - [CREATE] script for deleting rates
 
