@@ -7,33 +7,37 @@
 #property link      "https://www.mql5.com"
 #property version   "1.00"
 #property strict
+#property indicator_chart_window
 //+------------------------------------------------------------------+
-//| Expert initialization function                                   |
+//| Custom indicator initialization function                         |
 //+------------------------------------------------------------------+
-int OnInit()
-  {
-    return(INIT_SUCCEEDED);
-  }
-//+------------------------------------------------------------------+
-//| Expert deinitialization function                                 |
-//+------------------------------------------------------------------+
-void OnDeinit(const int reason)
-  {
+int OnInit() {
+//--- indicator buffers mapping
 
-  }
+//---
+  return(INIT_SUCCEEDED);
+}
 //+------------------------------------------------------------------+
-//| Expert tick function                                             |
+//| Custom indicator iteration function                              |
 //+------------------------------------------------------------------+
-void OnTick()
-  {
-    datetime time = TimeCurrent();
-    string date_str = TimeToStr(time, TIME_DATE);
-    string datetime_str = TimeToStr(time, TIME_DATE | TIME_SECONDS);
-    StringReplace(date_str, ".", "-");
-    StringReplace(datetime_str, ".", "-");
-    int handle = FileOpen(Symbol() + "_" + date_str + ".csv", FILE_CSV | FILE_READ | FILE_WRITE, ',');
-    FileSeek(handle, 0, SEEK_END);
-    FileWrite(handle, datetime_str, Symbol(), Bid, Ask);
-    FileClose(handle);
-  }
+int OnCalculate(const int rates_total, const int prev_calculated, const datetime &time[],
+                const double &open[], const double &high[], const double &low[], const double &close[],
+                const long &tick_volume[], const long &volume[], const int &spread[]) {
+//---
+  datetime now = TimeCurrent();
+  string date_str = TimeToStr(now, TIME_DATE);
+  string datetime_str = TimeToStr(now, TIME_DATE | TIME_SECONDS);
+  StringReplace(date_str, ".", "-");
+  StringReplace(datetime_str, ".", "-");
+
+  MqlTick tick;
+  SymbolInfoTick(Symbol(), tick);
+
+  int handle = FileOpen(Symbol() + "_" + date_str + ".csv", FILE_CSV | FILE_READ | FILE_WRITE, ',');
+  FileSeek(handle, 0, SEEK_END);
+  FileWrite(handle, datetime_str, Symbol(), tick.bid, tick.ask);
+  FileClose(handle);
+//--- return value of prev_calculated for next call
+  return(rates_total);
+}
 //+------------------------------------------------------------------+
