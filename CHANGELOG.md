@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 2.0.4
+  - [UPDATE] change collection script to custom indicator
+
 - 2.0.3
   - [CREATE] script for compressing backup csv files
 
