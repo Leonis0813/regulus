@@ -1,6 +1,23 @@
 regulus
 =======
 
+- 2.0.4
+  - [UPDATE] change collection script to custom indicator
+
+- 2.0.3
+  - [CREATE] script for compressing backup csv files
+
+- 2.0.2
+  - [CREATE] script for deleting rates
+
+- 2.0.1
+  - [ADD] mql code
+  - [CREATE] mysql client
+
+- 2.0.0
+  - [REMOVE] rails app
+  - [ADD] index to time, pair column
+
 - 1.4.8
   - [ADD] scripts for analyzing
 

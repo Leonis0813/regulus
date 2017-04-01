@@ -1,28 +1,36 @@
-pairs:
-  - USDJPY
-  - EURJPY
-  - AUDJPY
-  - GBPJPY
-  - NZDJPY
-  - CADJPY
-  - CHFJPY
-  - ZARJPY
-  - CNHJPY
-  - EURUSD
-  - GBPUSD
-  - AUDUSD
+mysql:
+  host: 'localhost'
+  username: 'root'
+  password: '7QiSlC?4'
+  database: 'regulus'
 
-intervals:
-  - 5-min
-  - 10-min
-  - 20-min
-  - 30-min
-  - 1-hour
-  - 2-hour
-  - 3-hour
-  - 4-hour
-  - 6-hour
-  - 12-hour
-  - 1-day
-  - 1-week
-  - 1-month
+csv_dir: '/mnt/smb'
+tmp_file: 'tmp/rates.csv'
+backup_dir: 'backup'
+pairs:
+  - 'AUDJPY'
+  - 'CADJPY'
+  - 'CHFJPY'
+  - 'EURJPY'
+  - 'GBPJPY'
+  - 'NZDJPY'
+  - 'USDJPY'
+interval:
+  min:
+    - 1
+    - 5
+    - 10
+    - 15
+    - 20
+    - 30
+  hour:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 6
+    - 12
+  day:
+    - 1
+  month:
+    - 1
