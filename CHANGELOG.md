@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 2.0.5
+  - [CREATE] script for backup to compute server
+
 - 2.0.4
   - [UPDATE] change collection script to custom indicator
 
