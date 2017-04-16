@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'minitar'
 require 'zlib'
+require_relative 'logger'
 require_relative '../config/settings'
 
 TARGET_MONTH = (Date.today << 1).strftime('%Y-%m')
@@ -15,9 +16,14 @@ Zlib::GzipWriter.open(File.join(BACKUP_DIR, "#{TARGET_MONTH}.tar.gz"), Zlib::BES
 
   FileUtils.cp(Dir[File.join(BACKUP_DIR, "#{TARGET_MONTH}-*.csv")], COMPRESSED_DIR)
   Dir::chdir(TMP_DIR)
-  Dir["#{TARGET_MONTH}/*"].each {|file| Minitar::pack_file(file, out) }
+  Dir["#{TARGET_MONTH}/*"].each do |file|
+    Minitar::pack_file(file, out)
+    Logger.write('compressed_file' => File.basename(file))
+  end
 
   out.close
 end
 
 FileUtils.rm_rf(COMPRESSED_DIR)
+
+Logger.write('gzip_file' => "#{TARGET_MONTH}.tar.gz")
