@@ -18,7 +18,7 @@ Zlib::GzipWriter.open(File.join(BACKUP_DIR, "#{TARGET_MONTH}.tar.gz"), Zlib::BES
   Dir::chdir(TMP_DIR)
   Dir["#{TARGET_MONTH}/*"].each do |file|
     Minitar::pack_file(file, out)
-    Logger.write('compressed_file' => File.basename(file))
+    Logger.write(:compressed_file => File.basename(file))
   end
 
   out.close
@@ -26,4 +26,4 @@ end
 
 FileUtils.rm_rf(COMPRESSED_DIR)
 
-Logger.write('gzip_file' => "#{TARGET_MONTH}.tar.gz")
+Logger.write(:gzip_file => "#{TARGET_MONTH}.tar.gz")

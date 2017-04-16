@@ -32,7 +32,7 @@ else
           start_time = Time.now
           create_candle_sticks(param)
           end_time = Time.now
-          Logger.write({'param' => param, 'mysql_runtime' => (end_time - start_time)})
+          Logger.write(:param => param, :mysql_runtime => (end_time - start_time))
         end
       end
     end

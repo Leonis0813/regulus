@@ -16,5 +16,5 @@ def backup(date)
     end
   end
 
-  Logger.write('file_name' => File.basename(file_name), '# of rate' => rates.size, 'mysql_runtime' => (end_time - start_time))
+  Logger.write(:file_name => File.basename(file_name), :num_of_rate => rates.size, :mysql_runtime => (end_time - start_time))
 end

@@ -17,7 +17,7 @@ def import(date)
     start_time = Time.now
     import_rates(Settings.tmp_file)
     end_time = Time.now
-    Logger.write('file_name' => File.basename(rate_file), '# of rate' => rates.size, 'mysql_runtime' => (end_time - start_time))
+    Logger.write(:file_name => File.basename(rate_file), :num_of_rate => rates.size, :mysql_runtime => (end_time - start_time))
 
     FileUtils.rm(Settings.tmp_file)
   end

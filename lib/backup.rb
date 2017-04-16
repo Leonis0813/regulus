@@ -10,4 +10,4 @@ copied_files = src_files - dst_files
 
 copied_files.each {|file_name| FileUtils.cp(File.join(SRC_DIR, file_name), DST_DIR) }
 
-Logger.write('copied_files' => copied_files)
+Logger.write(:copied_files => copied_files)
