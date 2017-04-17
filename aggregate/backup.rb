@@ -5,16 +5,13 @@ require_relative '../lib/logger'
 require_relative '../lib/mysql_client'
 
 def backup(date)
-  start_time = Time.now
-  rates = get_rates(date)
-  end_time = Time.now
-
   file_name = backup_file(date)
-  CSV.open(file_name, 'w') do |csv|
-    rates.each do |rate|
-      csv << [rate['id'], rate['time'].strftime('%F %T'), rate['pair'], rate['bid'], rate['ask']]
+
+  Logger.write_with_runtime(:file_name => File.basename(file_name)) do
+    CSV.open(file_name, 'w') do |csv|
+      get_rates(date).each do |rate|
+        csv << [rate['id'], rate['time'].strftime('%F %T'), rate['pair'], rate['bid'], rate['ask']]
+      end
     end
   end
-
-  Logger.write(:file_name => File.basename(file_name), :num_of_rate => rates.size, :mysql_runtime => (end_time - start_time))
 end
