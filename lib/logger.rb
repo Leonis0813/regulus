@@ -11,9 +11,9 @@ module Logger
       File.open(FILE_PATH, 'a') {|file| file.puts(body) }
     end
 
-    def write_with_runtime
+    def write_with_runtime(text)
       start_time = Time.now
-      text = yield
+      yield
       end_time = Time.now
       write text.merge(:runtime => end_time - start_time)
     end
