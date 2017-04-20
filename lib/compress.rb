@@ -7,7 +7,7 @@ require_relative '../config/settings'
 TARGET_MONTH = (Date.today << 1).strftime('%Y-%m')
 TMP_DIR = File.join(Settings.application_root, 'tmp')
 COMPRESSED_DIR = File.join(TMP_DIR, TARGET_MONTH)
-EXPORT_DIR = File.join(Settings.application_root, 'export')
+EXPORT_DIR = File.join(Settings.application_root, 'backup')
 COMPRESSED_FILES = Dir[File.join(EXPORT_DIR, "#{TARGET_MONTH}-*.csv")]
 GZIP_FILE = "#{TARGET_MONTH}.tar.gz"
 
