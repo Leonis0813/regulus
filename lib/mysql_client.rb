@@ -25,14 +25,14 @@ class MySQLClient
   end
 
   def get_rates(date)
-    query = File.read(File.join(SQL_PATH, 'backup.sql'))
+    query = File.read(File.join(SQL_PATH, 'export.sql'))
     day = date.strftime('%F')
 
     start_time = Time.now
     rates = execute_query(query.gsub('$DAY', day))
     end_time = Time.now
     body = {
-      :sql => 'backup.sql',
+      :sql => 'export.sql',
       :param => {:day => day},
       :num_of_rates => rates.size,
       :mysql_runtime => (end_time - start_time),

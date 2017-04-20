@@ -36,6 +36,6 @@ def rate_files(date)
   Dir[File.join(Settings.csv_dir, "*_#{date.strftime('%F')}.csv")]
 end
 
-def backup_file(date)
+def export_file(date)
   File.join(Settings.application_root, Settings.backup_dir, "#{date.strftime('%F')}.csv")
 end

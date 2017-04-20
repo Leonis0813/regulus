@@ -8,7 +8,7 @@ TARGET_DATE = Date.today - 2
 
 unless rate_files(TARGET_DATE).empty?
   import(TARGET_DATE)
-  backup(TARGET_DATE)
+  export(TARGET_DATE)
 
   aggregation_date = TARGET_DATE.to_datetime
 
