@@ -7,9 +7,9 @@ require_relative '../lib/mysql_client'
 def backup(date)
   file_name = backup_file(date)
 
-  Logger.write_with_runtime(:file_name => File.basename(file_name)) do
+  Logger.write_with_runtime(:module => 'backup', :file_name => File.basename(file_name)) do
     CSV.open(file_name, 'w') do |csv|
-      get_rates(date).each do |rate|
+      MySQLClient.new.get_rates(date).each do |rate|
         csv << [rate['id'], rate['time'].strftime('%F %T'), rate['pair'], rate['bid'], rate['ask']]
       end
     end

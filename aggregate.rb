@@ -12,9 +12,9 @@ unless rate_files(TARGET_DATE).empty?
 
   aggregation_date = TARGET_DATE.to_datetime
 
-  @client = MySQLClient.new
+  client = MySQLClient.new
 
-  Logger.write_with_runtime(:date => TARGET_DATE.strftime('%F')) do
+  Logger.write_with_runtime(:module => 'aggregate', :date => TARGET_DATE.strftime('%F')) do
     (1..1440).each do |offset|
       end_date = aggregation_date + Rational(offset, 24 * 60)
 
@@ -27,7 +27,7 @@ unless rate_files(TARGET_DATE).empty?
               :pair => pair,
               :interval => interval,
             }
-            @client.create_candle_sticks(param)
+            client.create_candle_sticks(param)
           end
         end
       end
