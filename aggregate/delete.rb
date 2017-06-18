@@ -10,6 +10,6 @@ if File.exists?(EXPORT_FILE) and not REMOVED_FILES.empty?
   rates_count = REMOVED_FILES.inject(0) {|count, csv| count + File.read(csv).lines.size }
   if rates_count == File.read(EXPORT_FILE).lines.size
     FileUtils.rm(REMOVED_FILES)
-    Logger.write(:export_file => EXPORT_FILE, :removed_files => REMOVED_FILES, :num_of_rates => rates_count)
+    Logger.info(:export_file => EXPORT_FILE, :removed_files => REMOVED_FILES, :num_of_rates => rates_count)
   end
 end
