@@ -1,6 +1,9 @@
 regulus
 =======
 
+- 2.0.7
+  - [CHANGE] mothod name to info
+
 - 2.0.6
   - [ADD] logging to backup
   - [ADD] logging to compress
