@@ -7,7 +7,7 @@ dbconnector <- dbConnect(driver, dbname="regulus", user=config$mysql$user, passw
 
 outliers <- function(x, conf.level = 0.95) {
   x <- x[!is.na(x)]
-  del.val <- NULL
+  y <- c(rep(0.0, length(x)))
 
   while (TRUE) {
     n <- length(x)
@@ -22,23 +22,20 @@ outliers <- function(x, conf.level = 0.95) {
 
     if (t[1] < t[2]) {
       if (p[2] < 1 - conf.level) {
-        del.val <- c(del.val, r[2])
-        x <- x[x != r[2]]
+        y[which(x == r[2])] <- 1.0
         next
       }
     } else {
       if (p[1] < 1 - conf.level) {
-        del.val <- c(del.val, r[1])
-        x <- x[x != r[1]]
+        y[which(x == r[1])] <- 1.0
         next
       }
     }
     break
   }
-  return(list(x = x, del.val = del.val))
+  return(list(x = x, y = y))
 }
 
 sql <- paste("SELECT time, ask, bid FROM rates WHERE pair = 'USDJPY' LIMIT 200")
 training_data <- dbGetQuery(dbconnector, sql)
-outliers(training_data$bid)
-outliers(training_data$ask)
+training_data <- outliers(training_data$bid)
