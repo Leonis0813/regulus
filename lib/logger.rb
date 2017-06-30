@@ -1,10 +1,21 @@
+require 'json'
 require_relative '../config/settings'
 
 module Logger
-  def self.write(text)
-    operate = File.basename(caller[0][/^([^:]+):\d+:in `[^']*'$/, 1], '.rb')
-    file_path = File.join(Settings.application_root, 'log/aggregate.log')
-    body = ["[#{Time.now.strftime('%F %T.%6N')}]", "[#{operate}]", text.to_s].join(' ')
-    File.open(file_path, 'a') {|file| file.puts(body) }
+  FILE_PATH = File.join(Settings.application_root, 'log/aggregate.log')
+
+  class << self
+    def info(body)
+      body = ['[I]', "[#{Time.now.strftime('%F %T.%6N')}]", body.to_json].join('')
+      File.open(FILE_PATH, 'a') {|file| file.puts(body) }
+    end
+
+    def write_with_runtime(body)
+      start_time = Time.now
+      result = yield
+      end_time = Time.now
+      info body.merge(:runtime => end_time - start_time)
+      result
+    end
   end
 end

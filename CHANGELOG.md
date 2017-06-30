@@ -1,6 +1,18 @@
 regulus
 =======
 
+- 2.0.7
+  - [CHANGE] mothod name to info
+
+- 2.0.6
+  - [ADD] logging to backup
+  - [ADD] logging to compress
+  - [UPDATE] logger for runtime
+  - [CHANGE] method name to info
+
+- 2.0.5
+  - [CREATE] script for backup to compute server
+
 - 2.0.4
   - [UPDATE] change collection script to custom indicator
 
