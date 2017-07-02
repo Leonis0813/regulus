@@ -1,94 +1,94 @@
 # 2.0.7
-  - [CHANGE] mothod name to info
+- [CHANGE] mothod name to info
 
 # 2.0.6
-  - [ADD] logging to backup
-  - [ADD] logging to compress
-  - [UPDATE] logger for runtime
-  - [CHANGE] method name to info
+- [ADD] logging to backup
+- [ADD] logging to compress
+- [UPDATE] logger for runtime
+- [CHANGE] method name to info
 
 # 2.0.5
-  - [CREATE] script for backup to compute server
+- [CREATE] script for backup to compute server
 
 # 2.0.4
-  - [UPDATE] change collection script to custom indicator
+- [UPDATE] change collection script to custom indicator
 
 # 2.0.3
-  - [CREATE] script for compressing backup csv files
+- [CREATE] script for compressing backup csv files
 
 # 2.0.2
-  - [CREATE] script for deleting rates
+- [CREATE] script for deleting rates
 
 # 2.0.1
-  - [ADD] mql code
-  - [CREATE] mysql client
+- [ADD] mql code
+- [CREATE] mysql client
 
 # 2.0.0
-  - [REMOVE] rails app
-  - [ADD] index to time, pair column
+- [REMOVE] rails app
+- [ADD] index to time, pair column
 
 # 1.4.8
-  - [ADD] scripts for analyzing
+- [ADD] scripts for analyzing
 
 # 1.4.7
-  - [REFACTOR] view for tweet and article
-  - [UPDATE] favicon.ico
+- [REFACTOR] view for tweet and article
+- [UPDATE] favicon.ico
 
 # 1.4.6
-  - [FIX] require settings.rb
+- [FIX] require settings.rb
 
 # 1.4.5
-  - [FIX] not aggregate when out pf service
+- [FIX] not aggregate when out pf service
 
 # 1.4.4
-  - [CHANGE] timeout
-  - [FIX] y range
-  - [FIX] bug for fetching profile_image_url from twitter api
-  - [UPDATE] remove aggregated rates before 2 months
-  - [FIX] not import when out of service
+- [CHANGE] timeout
+- [FIX] y range
+- [FIX] bug for fetching profile_image_url from twitter api
+- [UPDATE] remove aggregated rates before 2 months
+- [FIX] not import when out of service
 
 # 1.4.3
-  - [REFACTOR] scripts
+- [REFACTOR] scripts
 
 # 1.4.2
-  - [FIX] add error handling for external service error
-  - [ADD] output http response as log
+- [FIX] add error handling for external service error
+- [ADD] output http response as log
 
 # 1.4.1
-  - [FIX] reverse moving average
-  - [FIX] set jst for event
+- [FIX] reverse moving average
+- [FIX] set jst for event
 
 # 1.4.0
-  - [ADD] moving average
+- [ADD] moving average
 
 # 1.3.0
-  - [UPDATE] show rate info on display
-  - [UPDATE] refactor javascript
+- [UPDATE] show rate info on display
+- [UPDATE] refactor javascript
 
 # 1.2.0
-  - [UPDATE] add select tag for pair & interval
-  - [UPDATE] use d3.js instead of jqplot
-  - [UPDATE] use gem 'mysql2' in external scripts
+- [UPDATE] add select tag for pair & interval
+- [UPDATE] use d3.js instead of jqplot
+- [UPDATE] use gem 'mysql2' in external scripts
 
 # 1.1.1
-  - [UPDATE] write style to scss
-  - [UPDATE] change currencies to rates
-  - [UPDATE] modify interval for updating tweets
+- [UPDATE] write style to scss
+- [UPDATE] change currencies to rates
+- [UPDATE] modify interval for updating tweets
 
 # 1.1.0
-  - [UPDATE] create each view for rates, tweets and articles
+- [UPDATE] create each view for rates, tweets and articles
 
 # 1.0.3
-  - [UPDATE] scripts
-  - [ADD] rspec
+- [UPDATE] scripts
+- [ADD] rspec
 
 # 1.0.2
-  - [UPDATE] table schema of currency
-  - [FIX] bug when deploying for production environment
+- [UPDATE] table schema of currency
+- [FIX] bug when deploying for production environment
 
 # 1.0.1
-  - [ADD] module and functional test
-  - [FIX] controllers and models
+- [ADD] module and functional test
+- [FIX] controllers and models
 
 # 1.0.0
-  - [NEW] create app
+- [NEW] create app
