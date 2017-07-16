@@ -1,3 +1,6 @@
+# 2.0.8 (2017/07/16)
+- [UPDATE] logger to stdout
+
 # 2.0.7 (2017/06/18)
 - [CHANGE] mothod name to info
 
