@@ -8,6 +8,7 @@ module Logger
     def info(body)
       body = ['[I]', "[#{Time.now.strftime('%F %T.%6N')}]", body.to_json].join('')
       File.open(FILE_PATH, 'a') {|file| file.puts(body) }
+      puts body if ENV['STDOUT'].to_s == 'on'
     end
 
     def write_with_runtime(body)
