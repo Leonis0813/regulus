@@ -40,3 +40,6 @@ training_data$y = as.factor(training_data$y)
 
 library(randomForest)
 model <- randomForest(y~., data=training_data, ntree=500, mtry=1)
+
+timestamp <- format(Sys.time(), "%Y%m%d%H%M%S")
+save(model, file=paste("results/", timestamp, ".rf", sep=""))
