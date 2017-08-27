@@ -1,8 +1,11 @@
+# 2.0.9 (2017/08/27)
+- [ADD] learning script
+
 # 2.0.8 (2017/07/16)
 - [UPDATE] logger to stdout
 
 # 2.0.7 (2017/06/18)
-- [CHANGE] mothod name to info
+- [CHANGE] method name to info
 
 # 2.0.6 (2017/04/20)
 - [ADD] logging to backup
