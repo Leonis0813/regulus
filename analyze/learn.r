@@ -35,5 +35,3 @@ for (i in 1:length(training_data$x)) {
     training_data$y[i] = 0
   }
 }
-
-print(training_data)
