@@ -35,3 +35,8 @@ for (i in 1:length(training_data$x)) {
     training_data$y[i] = 0
   }
 }
+
+training_data$y = as.factor(training_data$y)
+
+library(randomForest)
+model <- randomForest(y~., data=training_data, ntree=500, mtry=1)
