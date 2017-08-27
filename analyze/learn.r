@@ -14,13 +14,26 @@ training_data$y = rep(0, length(training_data$x))
 
 for (i in 1:length(training_data$x)) {
   after_5_min = as.POSIXlt(rates$time[i]) + 300
-  rate_after_5 = rates$bid[as.POSIXlt(rates$time) == after_5_min]
+  future_rates = rates$bid[as.POSIXlt(rates$time) == after_5_min]
+  if(length(future_rates) == 0) {
+    j = 0
+    while(TRUE) {
+      before_x_min = as.POSIXlt(rates$time[i]) + 300 - j
+      after_x_min = as.POSIXlt(rates$time[i]) + 300 + j
+      future_rates = rates$bid[before_x_min < as.POSIXlt(rates$time) & as.POSIXlt(rates$time) < after_x_min]
 
-  if(length(rate_after_5) == 0) {
-    training_data$y[i] = 0
-  } else if(rate_after_5[1] > rates$bid[i]) {
+      if(length(future_rates) > 0) {
+        break
+      }
+      j = j + 1
+    }
+  }
+
+  if(future_rates[1] > rates$bid[i]) {
     training_data$y[i] = 1
   }  else {
     training_data$y[i] = 0
   }
 }
+
+print(training_data)
