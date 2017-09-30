@@ -1,97 +1,100 @@
-regulus
-=======
+# 2.0.9 (2017/08/27)
+- [ADD] learning script
 
-- 2.0.7
-  - [CHANGE] mothod name to info
+# 2.0.8 (2017/07/16)
+- [UPDATE] logger to stdout
 
-- 2.0.6
-  - [ADD] logging to backup
-  - [ADD] logging to compress
-  - [UPDATE] logger for runtime
-  - [CHANGE] method name to info
+# 2.0.7 (2017/06/18)
+- [CHANGE] method name to info
 
-- 2.0.5
-  - [CREATE] script for backup to compute server
+# 2.0.6 (2017/04/20)
+- [ADD] logging to backup
+- [ADD] logging to compress
+- [UPDATE] logger for runtime
+- [CHANGE] method name to info
 
-- 2.0.4
-  - [UPDATE] change collection script to custom indicator
+# 2.0.5 (2017/04/08)
+- [CREATE] script for backup to compute server
 
-- 2.0.3
-  - [CREATE] script for compressing backup csv files
+# 2.0.4 (2017/03/27)
+- [UPDATE] change collection script to custom indicator
 
-- 2.0.2
-  - [CREATE] script for deleting rates
+# 2.0.3 (2017/03/25)
+- [CREATE] script for compressing backup csv files
 
-- 2.0.1
-  - [ADD] mql code
-  - [CREATE] mysql client
+# 2.0.2 (2017/03/18)
+- [CREATE] script for deleting rates
 
-- 2.0.0
-  - [REMOVE] rails app
-  - [ADD] index to time, pair column
+# 2.0.1 (2017/03/12)
+- [ADD] mql code
+- [CREATE] mysql client
 
-- 1.4.8
-  - [ADD] scripts for analyzing
+# 2.0.0 (2017/03/05)
+- [REMOVE] rails app
+- [ADD] index to time, pair column
 
-- 1.4.7
-  - [REFACTOR] view for tweet and article
-  - [UPDATE] favicon.ico
+# 1.4.8 (2016/10/31)
+- [ADD] scripts for analyzing
 
-- 1.4.6
-  - [FIX] require settings.rb
+# 1.4.7 (2016/10/14)
+- [REFACTOR] view for tweet and article
+- [UPDATE] favicon.ico
 
-- 1.4.5
-  - [FIX] not aggregate when out pf service
+# 1.4.6 (2016/09/19)
+- [FIX] require settings.rb
 
-- 1.4.4
-  - [CHANGE] timeout
-  - [FIX] y range
-  - [FIX] bug for fetching profile_image_url from twitter api
-  - [UPDATE] remove aggregated rates before 2 months
-  - [FIX] not import when out of service
+# 1.4.5 (2016/09/18)
+- [FIX] not aggregate when out pf service
 
-- 1.4.3
-  - [REFACTOR] scripts
+# 1.4.4 (2016/09/15)
+- [CHANGE] timeout
+- [FIX] y range
+- [FIX] bug for fetching profile_image_url from twitter api
+- [UPDATE] remove aggregated rates before 2 months
+- [FIX] not import when out of service
 
-- 1.4.2
-  - [FIX] add error handling for external service error
-  - [ADD] output http response as log
+# 1.4.3 (2016/08/27)
+- [REFACTOR] scripts
 
-- 1.4.1
-  - [FIX] reverse moving average
-  - [FIX] set jst for event
+# 1.4.2 (2016/07/30)
+- [FIX] add error handling for external service error
+- [ADD] output http response as log
 
-- 1.4.0
-  - [ADD] moving average
+# 1.4.1 (2016/07/05)
+- [FIX] reverse moving average
+- [FIX] set jst for event
 
-- 1.3.0
-  - [UPDATE] show rate info on display
-  - [UPDATE] refactor javascript
+# 1.4.0 (2016/07/04)
+- [ADD] moving average
 
-- 1.2.0
-  - [UPDATE] add select tag for pair & interval
-  - [UPDATE] use d3.js instead of jqplot
-  - [UPDATE] use gem 'mysql2' in external scripts
+# 1.3.0 (2016/06/27)
+- [UPDATE] show rate info on display
+- [UPDATE] refactor javascript
 
-- 1.1.1
-  - [UPDATE] write style to scss
-  - [UPDATE] change currencies to rates
-  - [UPDATE] modify interval for updating tweets
+# 1.2.0 (2016/05/22)
+- [UPDATE] add select tag for pair & interval
+- [UPDATE] use d3.js instead of jqplot
+- [UPDATE] use gem 'mysql2' in external scripts
 
-- 1.1.0
-  - [UPDATE] create each view for rates, tweets and articles
+# 1.1.1 (2016/04/16)
+- [UPDATE] write style to scss
+- [UPDATE] change currencies to rates
+- [UPDATE] modify interval for updating tweets
 
-- 1.0.3
-  - [UPDATE] scripts
-  - [ADD] rspec
+# 1.1.0 (2016/04/10)
+- [UPDATE] create each view for rates, tweets and articles
 
-- 1.0.2
-  - [UPDATE] table schema of currency
-  - [FIX] bug when deploying for production environment
+# 1.0.3 (2016/01/31)
+- [UPDATE] scripts
+- [ADD] rspec
 
-- 1.0.1
-  - [ADD] module and functional test
-  - [FIX] controllers and models
+# 1.0.2 (2015/12/19)
+- [UPDATE] table schema of currency
+- [FIX] bug when deploying for production environment
 
-- 1.0.0:
-  - [NEW] create app
+# 1.0.1 (2015/10/18)
+- [ADD] module and functional test
+- [FIX] controllers and models
+
+# 1.0.0 (2015/08/23)
+- [NEW] create app
