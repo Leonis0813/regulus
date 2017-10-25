@@ -1,3 +1,6 @@
+# 2.0.10 (2017/10/25)
+- [UPDATE] learning algorithm to lm
+
 # 2.0.9 (2017/08/27)
 - [ADD] learning script
 
