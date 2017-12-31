@@ -4,7 +4,7 @@ period <- as.integer(args[2])
 length <- 10
 
 library(yaml)
-config <- yaml.load_file("analyze/settings.yml")
+config <- yaml.load_file("scripts/analyze/settings.yml")
 
 library(RMySQL)
 driver <- dbDriver("MySQL")
@@ -26,7 +26,7 @@ model = lm(y ~ x[,1] + x[,2] + x[,3] + x[,4] + x[,5] + x[,6] + x[,7] + x[,8] + x
 timestamp <- format(Sys.time(), "%Y%m%d%H%M%S")
 
 basename <- paste(timestamp, num_training_data, period, sep="_")
-yml_filename <- paste("results/", basename, ".yml", sep="")
+yml_filename <- paste("scripts/results/", basename, ".yml", sep="")
 write("coefficients:", file=paste(yml_filename))
 coefs <- as.vector(coef(model))
 for (i in 2:(length+1)) {
