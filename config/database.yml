@@ -1,0 +1,21 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  host: localhost
+  password:
+
+development:
+  <<: *default
+  username: development
+  database: regulus
+
+test:
+  <<: *default
+  username: test
+  database: regulus
+
+production:
+  <<: *default
+  username: production
+  database: regulus
