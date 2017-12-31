@@ -1,5 +1,5 @@
 # coding: utf-8
-class Analysis < ApplicationMailer
+class AnalysisMailer < ApplicationMailer
   default :from => 'Leonis.0813@gmail.com'
 
   def finished(is_success)
