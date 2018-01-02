@@ -15,7 +15,7 @@ describe Analysis, :type => :model do
 
   describe '#validates' do
     describe '正常系' do
-      include_context 'Analysisオブジェクトを検証する', {:num_data => 1, :interval => 1}
+      include_context 'Analysisオブジェクトを検証する', {:num_data => 1, :interval => 1, :state => 'processing'}
       it_behaves_like '検証結果が正しいこと', true
     end
 
@@ -23,6 +23,7 @@ describe Analysis, :type => :model do
       invalid_params = {
         :num_data => ['invalid', 1.0, 0],
         :interval => ['invalid', 1.0, 0],
+        :state => ['invalid', 1.0, 0],
       }
 
       CommonHelper.generate_test_case(invalid_params).each do |params|
