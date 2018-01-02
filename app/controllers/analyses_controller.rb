@@ -1,6 +1,7 @@
-class AnalysisController < ApplicationController
+class AnalysesController < ApplicationController
   def manage
     @analysis = Analysis.new
+    @analyses = Analysis.all.order(:created_at => :desc)
   end
 
   def learn
