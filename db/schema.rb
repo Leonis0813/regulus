@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 20180102083542) do
+
+  create_table "analyses", force: :cascade do |t|
+    t.integer  "num_data",   limit: 4
+    t.integer  "interval",   limit: 4
+    t.string   "state",      limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
 
   create_table "candle_sticks", force: :cascade do |t|
     t.datetime "from",                null: false
