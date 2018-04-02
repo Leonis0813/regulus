@@ -1,8 +1,11 @@
 class AnalysisJob < ActiveJob::Base
-  queue_as :default
+  queue_as :regulus
 
-  def perform(num_data, interval)
-    ret = system "Rscript #{Rails.root}/scripts/analyze/learn.r #{num_data} #{interval}"
+  def perform(analysis_id)
+    analysis = Analysis.find(analysis_id)
+    args = [analysis.num_data, analysis.interval]
+    ret = system "Rscript #{Rails.root}/scripts/learn.r #{args.join(' ')}"
+    analysis.update!(:state => 'completed')
     AnalysisMailer.finished(ret).deliver_now
   end
 end

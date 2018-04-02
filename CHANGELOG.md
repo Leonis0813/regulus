@@ -1,3 +1,9 @@
+# 3.0.1 (2018/01/21)
+- [REMOVE] scripts except analyzing
+
+# 3.0.0 (2018/01/02)
+- [ADD] list view to confirm analysis jobs
+
 # 2.1.0 (2017/12/31)
 - [ADD] view to manage analysis
 
