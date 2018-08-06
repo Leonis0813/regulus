@@ -13,7 +13,7 @@ describe AnalysesController, :type => :controller do
       end
     end
 
-    after(:all) { Analysis.where(default_params).last.destroy }
+    after(:all) { Analysis.where(default_params).destroy_all }
 
     it_behaves_like 'ステータスコードが正しいこと', '200'
 
