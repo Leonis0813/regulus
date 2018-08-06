@@ -4,6 +4,8 @@ require 'rails_helper'
 describe AnalysesController, :type => :controller do
   default_params = {:num_data => 1000, :interval => 100, :state => 'processing'}
 
+  after(:all) { Analysis.destroy_all }
+
   describe '正常系' do
     before(:all) do
       RSpec::Mocks.with_temporary_scope do
@@ -12,8 +14,6 @@ describe AnalysesController, :type => :controller do
         @pbody = JSON.parse(@res.body) rescue nil
       end
     end
-
-    after(:all) { Analysis.where(default_params).destroy_all }
 
     it_behaves_like 'ステータスコードが正しいこと', '200'
 
