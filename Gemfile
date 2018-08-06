@@ -31,8 +31,7 @@ gem 'minitar-cli'
 # Use Unicorn as the app server
 gem 'unicorn'
 
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
+gem 'kaminari'
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
