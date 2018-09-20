@@ -1,6 +1,6 @@
 <tr class='<%= analysis.state == 'completed' ? 'success' : 'warning' %>'>
   <td><%= analysis.created_at.strftime('%Y/%m/%d %H:%M:%S') %></td>
-  <td><%= analysis.num_data %></td>
-  <td><%= analysis.interval %></td>
+  <td><%= analysis.from.strftime('%Y/%m/%d %T') %> 〜 <%= analysis.to.strftime('%Y/%m/%d %T') %></td>
+  <td><%= analysis.batch_size %></td>
   <td><%= analysis.state == 'completed' ? '完了' : '実行中' %></td>
 </tr>
