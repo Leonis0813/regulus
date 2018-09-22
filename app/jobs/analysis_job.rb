@@ -6,6 +6,6 @@ class AnalysisJob < ActiveJob::Base
     args = [analysis.from, analysis.to, analysis.batch_size]
     ret = system "pyenv global 3.6.0 && pyenv rehash && python #{Rails.root}/scripts/learn.py #{args.join(' ')}"
     analysis.update!(:state => 'completed')
-    AnalysisMailer.finished(ret).deliver_now
+    AnalysisMailer.finished(analysis, ret).deliver_now
   end
 end
