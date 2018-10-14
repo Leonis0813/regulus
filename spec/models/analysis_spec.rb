@@ -20,8 +20,14 @@ describe Analysis, :type => :model do
   describe '#validates' do
     describe '正常系' do
       valid_params = {
-        :from => %w[ 1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101 ],
-        :to => %w[ 1001-01-01 1001/01/01 01-01-1001 01/01/1001 10010101 ],
+        :from => [
+          '1000-01-01', '1000/01/01', '01-01-1000', '01/01/1000', '10000101',
+          '1000-01-01 00:00:00', '1000/01/01 00:00:00', '01-01-1000 00:00:00', '01/01/1000 00:00:00', '10000101 00:00:00',
+        ],
+        :to => [
+          '1001-01-01', '1001/01/01', '01-01-1001', '01/01/1001', '10010101',
+          '1001-01-01 00:00:00', '1001/01/01 00:00:00', '01-01-1001 00:00:00', '01/01/1001 00:00:00', '10010101 00:00:00',
+        ],
         :batch_size => 100,
         :state => %w[ processing completed ],
       }
@@ -38,12 +44,7 @@ describe Analysis, :type => :model do
 
     describe '異常系' do
       valid_params = {:from => '1000-01-01', :to => '1001-01-01', :batch_size => 100, :state => 'processing'}
-      invalid_params = {
-        :from => ['invalid', '1000-13-01', '1000-01-00', '1000-13-00', 1.0, 0, true, nil],
-        :to => ['invalid', '1000-13-01', '1000-01-00', '1000-13-00', 1.0, 0, true, nil],
-        :batch_size => ['invalid', -1, 0, true, nil],
-        :state => ['invalid', 1.0, 0],
-      }
+      invalid_params = {:from => [nil], :to => [nil], :batch_size => [-1, 0], :state => 'invalid'}
 
       CommonHelper.generate_test_case(invalid_params).each do |params|
         context "フォームに#{params.keys.join(',')}を指定した場合" do
