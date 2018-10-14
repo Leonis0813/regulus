@@ -3,23 +3,39 @@ require 'rails_helper'
 
 describe 'analyses/manage', :type => :view do
   per_page = 1
-  total_jobs = 10
 
   shared_context '分析ジョブを登録する' do |num|
     before(:all) do
-      param = {:num_data => 10000, :interval => 10}
-      num.times { Analysis.create!(param.merge(:state => %w[processing completed].sample)) }
+      param = {:from => 2.month.ago, :to => 1.month.ago, :batch_size => 100}
+      num.times { Analysis.create!(param.merge(:state => %w[ processing completed ].sample)) }
       @analyses = Analysis.order(:created_at => :desc).page(1)
     end
 
     after(:all) { Analysis.destroy_all }
   end
 
+  shared_examples 'ヘッダーが表示されていること' do
+    it do
+      base_xpath = '//div[@class="navbar navbar-default navbar-static-top"]/div[@class="container"]'
+      title_xpath = [base_xpath, 'span[@class="navbar-brand"]'].join('/')
+
+      expect(@html).to have_selector(title_xpath, :text => 'FX Rate Estimator')
+
+      ul_xpath = [
+        base_xpath,
+        'div[@class="navbar-collapse collapse navbar-responsive-collapse"]',
+        'ul[@class="nav navbar-nav"]',
+      ].join('/')
+
+      expect(@html).to have_selector("#{ul_xpath}/li/a[@href='/analyses']", :text => '分析画面')
+    end
+  end
+
   shared_examples '入力フォームが表示されていること' do
     form_xpath = '//form[@id="new_analysis"]'
 
-    %w[ num_data interval ].each do |param|
-      input_xpath = "#{form_xpath}/span[@class='input-custom']"
+    %w[ from to batch_size ].each do |param|
+      input_xpath = "#{form_xpath}/div[@class='form-group']"
 
       it "analysis_#{param}を含む<label>タグがあること" do
         expect(@html).to have_selector("#{input_xpath}/label[for='analysis_#{param}']")
@@ -32,13 +48,13 @@ describe 'analyses/manage', :type => :view do
 
     %w[ submit reset ].each do |type|
       it "typeが#{type}のボタンがあること" do
-        expect(@html).to have_selector("#{form_xpath}/span[@class='pull-right']/input[type='#{type}']")
+        expect(@html).to have_selector("#{form_xpath}/input[type='#{type}']")
       end
     end
   end
 
   shared_examples 'ジョブ実行履歴が表示されていること' do |expected_size: per_page, total: 0, from: 1, to: 1|
-    base_xpath = '/html/body'
+    base_xpath = '/html/body/div[@id="main-content"]/div[@class="row center-block"]/div[@class="col-lg-8"]'
 
     it 'タイトルが表示されていること' do
       expect(@html).to have_selector("#{base_xpath}/h3", :text => 'ジョブ実行履歴')
@@ -48,7 +64,7 @@ describe 'analyses/manage', :type => :view do
       expect(@html).to have_selector("#{base_xpath}/h4", :text => "#{total}件中#{from}〜#{to}件を表示")
     end
 
-    paging_xpath = "#{base_xpath}/div/nav/ul[@class='pagination']"
+    paging_xpath = "#{base_xpath}/nav/ul[@class='pagination']"
 
     it '先頭のページへのボタンが表示されていないこと' do
       xpath = "#{paging_xpath}/li[@class='pagination']/span[@class='first']/a"
@@ -80,15 +96,15 @@ describe 'analyses/manage', :type => :view do
       expect(@html).to have_selector(xpath, :text => I18n.t('views.pagination.last'))
     end
 
-    %w[ 実行開始日時 学習データ数 予測先(期間) 状態 ].each do |header|
+    %w[ 実行開始日時 期間 バッチサイズ 状態 ].each do |header|
       it "ヘッダー(#{header})があること" do
-        xpath = "#{base_xpath}/div/table[@class='table table-hover']/thead/th"
+        xpath = "#{base_xpath}/table[@class='table table-hover']/thead/th"
         expect(@html).to have_selector(xpath, :text => header)
       end
     end
 
     it 'データの数が正しいこと' do
-      xpath = "#{base_xpath}/div/table[@class='table table-hover']/tbody/tr"
+      xpath = "#{base_xpath}/table[@class='table table-hover']/tbody/tr"
       expect(@html).to have_xpath(xpath, :count => expected_size)
     end
 
@@ -114,8 +130,14 @@ describe 'analyses/manage', :type => :view do
   end
 
   describe '<html><body>' do
-    include_context '分析ジョブを登録する', total_jobs
+    include_context '分析ジョブを登録する', 10
+    it_behaves_like 'ヘッダーが表示されていること'
     it_behaves_like '入力フォームが表示されていること'
-    it_behaves_like 'ジョブ実行履歴が表示されていること', {:total => total_jobs}
+    it_behaves_like 'ジョブ実行履歴が表示されていること', {
+                      :expected_size => 1,
+                      :total => 10,
+                      :from => 1,
+                      :to => 1,
+                    }
   end
 end
