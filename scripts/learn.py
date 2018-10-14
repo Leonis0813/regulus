@@ -23,7 +23,7 @@ cursor.execute(
   'SELECT bid FROM rates '\
   'WHERE pair = "USDJPY" AND '\
     'WEEKDAY(time) BETWEEN 0 AND 4 AND '\
-    'time BETWEEN "' + FROM + '" "' + TO + '" '\
+    'time BETWEEN "' + FROM + '" AND "' + TO + '" '\
   'ORDER BY time'
 )
 
@@ -75,7 +75,7 @@ with tf.Session() as sess:
   for i in range(10000):
     step = i + 1
 
-    indices = np.random.randint(len(data), size=BATCH_SIZE)
+    indices = np.random.randint(0, len(data), int(BATCH_SIZE), int)
     batch_data = data[indices]
     batch_label = label[indices]
     sess.run(train_step, feed_dict={x:batch_data, y:batch_label})
