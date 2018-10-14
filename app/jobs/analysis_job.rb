@@ -4,14 +4,7 @@ class AnalysisJob < ActiveJob::Base
   def perform(analysis_id)
     analysis = Analysis.find(analysis_id)
     args = [analysis.from, analysis.to, analysis.batch_size]
-    commands = [
-      'export PYENV_ROOT=/usr/local/pyenv',
-      'export PATH=/usr/local/pyenv/versions/3.6.0/bin:/usr/local/pyenv/bin:/usr/bin:/bin',
-      'pyenv global 3.6.0',
-      'pyenv rehash',
-      "python #{Rails.root}/scripts/learn.py #{args.join(' ')}",
-    ]
-    ret = system commands.join(' && ')
+    ret = system "sudo docker exec regulus python /opt/scripts/learn.py #{args.join(' ')}"
     analysis.update!(:state => 'completed')
     AnalysisMailer.finished(analysis, ret).deliver_now
   end
