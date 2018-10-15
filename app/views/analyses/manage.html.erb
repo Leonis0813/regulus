@@ -1,34 +1,40 @@
-<%= form_for @analysis, {:url => analyses_learn_path, :remote => true, :html => {:class => 'form-inline'}} do |f| %>
-  <% {:num_data => '学習データ数', :interval => '予測先(期間)'}.each do |param, text| %>
-    <span class='input-custom'>
-      <%= f.label param, "#{text}：" %>
-      <%= f.text_field param, {:class => 'form-control', :name => param, :required => true} %>
-    </span>
-  <% end %>
-  <span class='pull-right'>
-    <%= f.submit '実行', :class => 'btn btn-primary btn-sm' %>
-    <%= f.submit 'リセット', :type => 'reset', :class => 'btn btn-default btn-sm' %>
-  </span>
-<% end %>
-
-<hr>
-
-<h3 style='padding: 0px 50px'>ジョブ実行履歴</h3>
-<% from = @analyses.total_count == 0 ? 0 : @analyses.offset_value + 1 %>
-<% info = {:total_count => @analyses.total_count, :from => from, :to => @analyses.offset_value + @analyses.size} %>
-<h4 style='padding: 10px 50px 0px 50px'><%= t('views.pagination.info', info) %></h4>
-<div style='padding: 0px 50px'>
-  <%= paginate @analyses %>
-</div>
-<div style='padding: 0px 50px'>
-  <table class='table table-hover'>
-    <thead>
-      <% %w[ 実行開始日時 学習データ数 予測先(期間) 状態 ].each do |header| %>
-        <th><%= header %></th>
+<div class='row center-block'>
+  <div class='col-lg-4'>
+    <div id='new-analysis' class='well tab-pane active'>
+      <h3>レートを分析</h3>
+      <%= form_for @analysis, {:url => analyses_path, :remote => true} do |f| %>
+        <%= label_tag '期間' %>
+        <div class='form-group'>
+          <%= f.label :from, '開始', {:class => 'period-label'} %>
+          <%= f.datetime_local_field :from, {:class => 'period-form form-control', :name => :from, :step => 1} %>
+          <%= f.label :to, '終了', {:class => 'period-label'} %>
+          <%= f.datetime_local_field :to, {:class => 'form-control period-form', :name => :to, :step => 1} %>
+        </div>
+        <div class='form-group'>
+          <%= f.label :batch_size, 'バッチサイズ' %>
+          <%= f.text_field :batch_size, {:class => 'form-control', :name => 'batch_size', :required => true} %>
+        </div>
+        <%= f.submit '実行', :class => 'btn btn-primary btn-sm' %>
+        <%= f.submit 'リセット', :type => 'reset', :class => 'btn btn-default btn-sm' %>
       <% end %>
-    </thead>
-    <tbody>
-      <%= render @analyses %>
-    </tbody>
-  </table>
+    </div>
+  </div>
+
+  <div class='col-lg-8'>
+    <h3 style='padding: 10px 0px'>ジョブ実行履歴</h3>
+    <% from = @analyses.total_count == 0 ? 0 : @analyses.offset_value + 1 %>
+    <% info = {:total_count => @analyses.total_count, :from => from, :to => @analyses.offset_value + @analyses.size} %>
+    <h4 style='padding: 10px 0px;display: inline'><%= t('views.pagination.info', info) %></h4>
+    <%= paginate @analyses %>
+    <table class='table table-hover'>
+      <thead>
+        <% {'実行開始日時' => 25, '期間' => 45, 'バッチサイズ' => 15, '状態' => 15}.each do |header, width| %>
+          <th style='width:<%= width %>%'><%= header %></th>
+        <% end %>
+      </thead>
+      <tbody>
+        <%= render @analyses %>
+      </tbody>
+    </table>
+  </div>
 </div>

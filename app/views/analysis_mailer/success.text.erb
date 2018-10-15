@@ -1,1 +1,4 @@
-success
+分析開始日時: <%= @analysis.created_at %>
+分析終了日時: <%= @analysis.updated_at %>
+分析対象期間: <%= @analysis.from.strftime('%Y/%m/%d %T') %> 〜 <%= @analysis.to.strftime('%Y/%m/%d %T') %>
+バッチサイズ: <%= @analysis.batch_size %>

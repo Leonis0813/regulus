@@ -1,3 +1,7 @@
+# 3.2.0 (2018/10/15)
+- [UPDATE] analysis view for deep learning
+- [UPDATE] scripts for deep learning
+
 # 3.1.0 (2018/08/06)
 - [ADD] paging to analysis view
 

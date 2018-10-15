@@ -20,9 +20,10 @@ describe 'ブラウザで分析する', :type => :request do
 
   describe '不正な値を入力する' do
     before(:all) do
-      @driver.find_element(:id, 'analysis_num_data').send_keys('invalid')
-      @driver.find_element(:id, 'analysis_interval').send_keys(1)
-      @driver.find_element(:xpath, '//form/span/input[@value="実行"]').click
+      @driver.find_element(:id, 'analysis_from').send_keys('invalid')
+      @driver.find_element(:id, 'analysis_to').send_keys('invalid')
+      @driver.find_element(:id, 'analysis_batch_size').send_keys(1)
+      @driver.find_element(:xpath, '//form/input[@value="実行"]').click
       @wait.until { @driver.find_element(:class, 'modal-body').displayed? }
     end
 

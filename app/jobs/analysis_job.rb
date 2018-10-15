@@ -3,9 +3,13 @@ class AnalysisJob < ActiveJob::Base
 
   def perform(analysis_id)
     analysis = Analysis.find(analysis_id)
-    args = [analysis.num_data, analysis.interval]
-    ret = system "Rscript #{Rails.root}/scripts/learn.r #{args.join(' ')}"
+    args = [
+      "'#{analysis.from.strftime('%F %T')}'",
+      "'#{analysis.to.strftime('%F %T')}'",
+      analysis.batch_size,
+    ]
+    ret = system "sudo docker exec regulus python /opt/scripts/learn.py #{args.join(' ')}"
     analysis.update!(:state => 'completed')
-    AnalysisMailer.finished(ret).deliver_now
+    AnalysisMailer.finished(analysis, ret).deliver_now
   end
 end
