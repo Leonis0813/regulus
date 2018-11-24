@@ -8,7 +8,7 @@ class AnalysisJob < ActiveJob::Base
       "'#{analysis.to.strftime('%F %T')}'",
       analysis.batch_size,
     ]
-    script_dir = '/opt/scripts'
+    script_dir = File.join(Rails.root, 'scripts')
     FileUtils.mkdir(File.join(script_dir, 'tmp'))
     ret = system "sudo docker exec regulus python #{File.join(script_dir, 'learn.py')} #{args.join(' ')}"
     FileUtils.mv(File.join(script_dir, 'tmp'), File.join(Rails.root, 'tmp/models', analysis_id))
