@@ -53,7 +53,7 @@ for i in range(0, len(candle_sticks) - 450, 150):
 
   data = np.append(data, np.array([candle_sticks[i:i+300]]), axis=0)
 
-zx = tf.placeholder(tf.float32, [None, 300])
+x = tf.placeholder(tf.float32, [None, 300])
 
 w_1 = tf.Variable(tf.truncated_normal([300, 100], stddev=0.1), name="w1")
 b_1 = tf.Variable(tf.zeros([100]), name="b1")
