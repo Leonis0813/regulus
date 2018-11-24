@@ -9,7 +9,7 @@ args = sys.argv
 FROM = args[1]
 TO = args[2]
 BATCH_SIZE = args[3]
-SETTINGS = yaml.load(open(os.path.dirname(os.path.abspath(sys.argv[0])) + '/settings.yml', 'r+'))
+SETTINGS = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
 
 connection = mysql.connect(
   host = SETTINGS['mysql']['host'],
@@ -20,15 +20,15 @@ connection = mysql.connect(
 
 cursor = connection.cursor(dictionary=True)
 cursor.execute(
-  'SELECT bid FROM rates '\
+  'SELECT open FROM candle_sticks '\
   'WHERE pair = "USDJPY" AND '\
-    'WEEKDAY(time) BETWEEN 0 AND 4 AND '\
-    'time BETWEEN "' + FROM + '" AND "' + TO + '" '\
-  'ORDER BY time'
+    'WEEKDAY(`to`) BETWEEN 0 AND 4 AND '\
+    '`to` BETWEEN "' + FROM + '" AND "' + TO + '" '\
+  'ORDER BY `to`'
 )
 
-def bid(rate):
-  return rate['bid']
+def open(candle_stick):
+  return candle_stick['open']
 
 def min_max(x):
   min = x.min(axis=0, keepdims=True)
@@ -36,9 +36,9 @@ def min_max(x):
   result = 2.0 * ((x - min) / (max - min) - 0.5)
   return result
 
-vfunc = np.vectorize(bid)
-rates = vfunc(cursor.fetchall())
-rates = min_max(rates)
+vfunc = np.vectorize(open)
+candle_sticks = vfunc(cursor.fetchall())
+candle_sticks = min_max(candle_sticks)
 
 data = np.empty((0, 300), float)
 label = np.empty((0, 3), int)
