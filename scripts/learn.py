@@ -43,15 +43,15 @@ candle_sticks = min_max(candle_sticks)
 data = np.empty((0, 300), float)
 label = np.empty((0, 3), int)
 
-for i in range(0, len(rates) - 450, 150):
-  if (rates[i+300] + 0.01) < rates[i+450]:
+for i in range(0, len(cande_sticks) - 450, 150):
+  if (candle_sticks[i+300] + 0.01) < candle_sticks[i+450]:
     label = np.append(label, np.array([[1,0,0]]), axis=0)
-  elif (rates[i+300] - 0.01 ) > rates[i+450]:
+  elif (candle_sticks[i+300] - 0.01 ) > candle_sticks[i+450]:
     label = np.append(label, np.array([[0,1,0]]), axis=0)
   else:
     label = np.append(label, np.array([[0,0,1]]), axis=0)
 
-  data = np.append(data, np.array([rates[i:i+300]]), axis=0)
+  data = np.append(data, np.array([candle_sticks[i:i+300]]), axis=0)
 
 x = tf.placeholder(tf.float32, [None, 300])
 
