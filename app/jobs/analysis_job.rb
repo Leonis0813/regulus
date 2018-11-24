@@ -8,7 +8,7 @@ class AnalysisJob < ActiveJob::Base
       "'#{analysis.to.strftime('%F %T')}'",
       analysis.batch_size,
     ]
-    ret = system "sudo docker exec regulus python /opt/scripts/learn.py #{args.join(' ')}"
+    ret = system "sudo docker exec regulus python /opt/regulus/scripts/learn.py #{args.join(' ')}"
     analysis.update!(:state => 'completed')
     AnalysisMailer.finished(analysis, ret).deliver_now
   end

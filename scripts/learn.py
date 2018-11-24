@@ -69,6 +69,8 @@ train_step = tf.train.GradientDescentOptimizer(0.5).minimize(loss)
 
 init = tf.global_variables_initializer()
 
+saver = tf.train.Saver()
+
 with tf.Session() as sess:
   sess.run(init)
 
@@ -79,3 +81,5 @@ with tf.Session() as sess:
     batch_data = data[indices]
     batch_label = label[indices]
     sess.run(train_step, feed_dict={x:batch_data, y:batch_label})
+
+  saver.save(sess, "/opt/regulus/tmp/model.ckpt")
