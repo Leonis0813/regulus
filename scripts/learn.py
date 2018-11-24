@@ -9,7 +9,7 @@ args = sys.argv
 FROM = args[1]
 TO = args[2]
 BATCH_SIZE = args[3]
-SETTINGS = yaml.load(open(os.path.dirname(os.path.abspath(sys.argv[0])) + '/settings.yml', 'r+'))
+SETTINGS = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
 
 connection = mysql.connect(
   host = SETTINGS['mysql']['host'],
@@ -20,15 +20,15 @@ connection = mysql.connect(
 
 cursor = connection.cursor(dictionary=True)
 cursor.execute(
-  'SELECT bid FROM rates '\
+  'SELECT open FROM candle_sticks '\
   'WHERE pair = "USDJPY" AND '\
-    'WEEKDAY(time) BETWEEN 0 AND 4 AND '\
-    'time BETWEEN "' + FROM + '" AND "' + TO + '" '\
-  'ORDER BY time'
+    'WEEKDAY(`to`) BETWEEN 0 AND 4 AND '\
+    '`to` BETWEEN "' + FROM + '" AND "' + TO + '" '\
+  'ORDER BY `to`'
 )
 
-def bid(rate):
-  return rate['bid']
+def open(candle_stick):
+  return candle_stick['open']
 
 def min_max(x):
   min = x.min(axis=0, keepdims=True)
@@ -36,22 +36,22 @@ def min_max(x):
   result = 2.0 * ((x - min) / (max - min) - 0.5)
   return result
 
-vfunc = np.vectorize(bid)
-rates = vfunc(cursor.fetchall())
-rates = min_max(rates)
+vfunc = np.vectorize(open)
+candle_sticks = vfunc(cursor.fetchall())
+candle_sticks = min_max(candle_sticks)
 
 data = np.empty((0, 300), float)
 label = np.empty((0, 3), int)
 
-for i in range(0, len(rates) - 450, 150):
-  if (rates[i+300] + 0.01) < rates[i+450]:
+for i in range(0, len(candle_sticks) - 450, 150):
+  if (candle_sticks[i+300] + 0.01) < candle_sticks[i+450]:
     label = np.append(label, np.array([[1,0,0]]), axis=0)
-  elif (rates[i+300] - 0.01 ) > rates[i+450]:
+  elif (candle_sticks[i+300] - 0.01 ) > candle_sticks[i+450]:
     label = np.append(label, np.array([[0,1,0]]), axis=0)
   else:
     label = np.append(label, np.array([[0,0,1]]), axis=0)
 
-  data = np.append(data, np.array([rates[i:i+300]]), axis=0)
+  data = np.append(data, np.array([candle_sticks[i:i+300]]), axis=0)
 
 x = tf.placeholder(tf.float32, [None, 300])
 
@@ -69,6 +69,8 @@ train_step = tf.train.GradientDescentOptimizer(0.5).minimize(loss)
 
 init = tf.global_variables_initializer()
 
+saver = tf.train.Saver()
+
 with tf.Session() as sess:
   sess.run(init)
 
@@ -79,3 +81,5 @@ with tf.Session() as sess:
     batch_data = data[indices]
     batch_label = label[indices]
     sess.run(train_step, feed_dict={x:batch_data, y:batch_label})
+
+  saver.save(sess, "/opt/scripts/tmp/model.ckpt")

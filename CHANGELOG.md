@@ -1,3 +1,6 @@
+# 3.2.1 (2018/11/24)
+- [UPDATE] learning script to use candle sticks and save model
+
 # 3.2.0 (2018/10/15)
 - [UPDATE] analysis view for deep learning
 - [UPDATE] scripts for deep learning
