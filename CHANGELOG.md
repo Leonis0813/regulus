@@ -1,3 +1,6 @@
+# 3.3.0 (2018/12/15)
+- [ADD] attachments to email for notification of analysis result
+
 # 3.2.1 (2018/11/24)
 - [UPDATE] learning script to use candle sticks and save model
 
