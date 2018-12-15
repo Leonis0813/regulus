@@ -13,7 +13,8 @@ class AnalysisMailer < ApplicationMailer
 
       Zip::File.open(zip_file_name, Zip::File::CREATE) do |zip|
         Dir[File.join(tmp_dir, '*')].each do |file_name|
-          zip.add(File.basename(file_name), File.join(tmp_dir, file_name))
+          file_name = File.basename(file_name)
+          zip.add(file_name, File.join(tmp_dir, file_name))
         end
       end
 
