@@ -14,5 +14,6 @@ class AnalysisJob < ActiveJob::Base
     FileUtils.mv(File.join(script_dir, 'tmp'), File.join(Rails.root, "tmp/models/#{analysis_id}"))
     analysis.update!(:state => 'completed')
     AnalysisMailer.finished(analysis, ret).deliver_now
+    FileUtils.rm_rf("#{Rails.root}/tmp/models/#{analysis_id}")
   end
 end

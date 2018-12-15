@@ -8,16 +8,17 @@ class AnalysisMailer < ApplicationMailer
     template_name = is_success ? 'success' : 'failer'
     tmp_dir = File.join(Rails.root, "tmp/models/#{analysis.id}")
 
-    file_names = %w[ model.ckpt ]
-    zip_file_name = File.join(tmp_dir, 'analysis.zip')
+    Dir.mktmpdir(nil, File.join(Rails.root, 'tmp/files')) do |dir|
+      zip_file_name = File.join(dir, 'analysis.zip')
 
-    Zip::File.open(zip_file_name, Zip::File::CREATE) do |zip|
-      file_names.each do |file_name|
-        zip.add(file_name, File.join(tmp_dir, file_name))
+      Zip::File.open(zip_file_name, Zip::File::CREATE) do |zip|
+        Dir[File.join(tmp_dir, '*')].each do |file_name|
+          zip.add(file_name, File.join(tmp_dir, file_name))
+        end
       end
-    end
 
-    attachments['analysis.zip'] = File.read(zip_file_name)
-    mail(:to => 'Leonis.0813@gmail.com', :subject => subject, :template_name => template_name)
+      attachments['analysis.zip'] = File.read(zip_file_name)
+      mail(:to => 'Leonis.0813@gmail.com', :subject => subject, :template_name => template_name)
+    end
   end
 end
