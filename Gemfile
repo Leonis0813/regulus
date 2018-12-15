@@ -22,9 +22,6 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
-gem 'minitar'
-gem 'minitar-cli'
-
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
@@ -32,6 +29,7 @@ gem 'minitar-cli'
 gem 'unicorn'
 
 gem 'kaminari'
+gem 'rubyzip'
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
