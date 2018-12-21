@@ -1,3 +1,6 @@
+# 3.3.1 (2018/12/21)
+- [UPDATE] gems
+
 # 3.3.0 (2018/12/15)
 - [ADD] attachments to email for notification of analysis result
 
