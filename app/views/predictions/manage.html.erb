@@ -1,0 +1,33 @@
+<div class='row center-block'>
+  <div class='col-lg-4'>
+    <div id='new-prediction' class='well tab-pane active'>
+      <h3>レートを予測</h3>
+      <%= form_for @prediction, :html => {:multipart => true}, :url => predictions_path, :remote => true do |f| %>
+        <div class='form-group'>
+          <%= f.label :model, 'モデル' %><br>
+          <%= f.file_field :model, {:class => 'form-control', :name => :model, :required => true} %>
+        </div>
+        <%= f.submit '実行', :class => 'btn btn-primary btn-sm' %>
+        <%= f.submit 'リセット', :type => 'reset', :class => 'btn btn-default btn-sm' %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class='col-lg-8'>
+    <h4 style='padding: 10px 0px'>ジョブ実行履歴</h4>
+    <% from = @predictions.total_count == 0 ? 0 : @predictions.offset_value + 1 %>
+    <% info = {:total_count => @predictions.total_count, :from => from, :to => @predictions.offset_value + @predictions.size} %>
+    <h4 style='padding: 10px 0px;display: inline'><%= t('views.pagination.info', info) %></h4>
+    <%= paginate @predictions %>
+    <table class='table table-hover'>
+      <thead>
+        <% {'実行開始日時' => 25, 'モデル' => 20, '期間' => 45, '結果' => 10}.each do |header, width| %>
+          <th style='width:<%= width %>%'><%= header %></th>
+        <% end %>
+      </thead>
+      <tbody>
+        <%= render @predictions %>
+      </tbody>
+    </table>
+  </div>
+</div>

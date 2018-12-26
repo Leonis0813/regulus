@@ -1,0 +1,18 @@
+<tr class='<%= prediction.state == 'completed' ? 'success' : 'warning' %>'>
+  <td><%= prediction.created_at.strftime('%Y/%m/%d %H:%M:%S') %></td>
+  <td><%= prediction.model %></td>
+  <td><%= prediction.from.strftime('%Y/%m/%d %T') %> 〜 <%= prediction.to.strftime('%Y/%m/%d %T') %></td>
+  <%
+    icon_class = case prediction.result
+                 when 'up'
+                   'glyphicon-circle-arrow-up'
+                 when 'down'
+                   'glyphicon-circle-arrow-down'
+                 when 'range'
+                   'glyphicon-circle-arrow-right'
+                 else
+                   'glyphicon-question-sign'
+                 end
+  %>
+  <td><span class='glyphicon <%= icon_class %>' /></td>
+</tr>
