@@ -11,12 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180919111425) do
+ActiveRecord::Schema.define(version: 20181224063445) do
 
   create_table "analyses", force: :cascade do |t|
     t.datetime "from",                   null: false
     t.datetime "to",                     null: false
     t.integer  "batch_size", limit: 4,   null: false
+    t.string   "state",      limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  create_table "predictions", force: :cascade do |t|
+    t.string   "model",      limit: 255
+    t.datetime "from"
+    t.datetime "to"
+    t.string   "result",     limit: 255
     t.string   "state",      limit: 255
     t.datetime "created_at",             null: false
     t.datetime "updated_at",             null: false
