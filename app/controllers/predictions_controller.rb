@@ -14,7 +14,7 @@ class PredictionsController < ApplicationController
       PredictionJob.perform_later(prediction.id)
       render :status => :ok, :json => {}
     else
-      raise BadRequest.new(analysis.errors.messages.keys.map {|key| "invalid_param_#{key}" })
+      raise BadRequest.new(prediction.errors.messages.keys.map {|key| "invalid_param_#{key}" })
     end
   end
 

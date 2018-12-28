@@ -38,9 +38,8 @@ describe AnalysesController, :type => :controller do
           end
         end
 
-        it '400エラーが返ること' do
-          is_asserted_by { @res.status == 400 }
-        end
+        it_behaves_like 'ステータスコードが正しいこと', '400'
+        it_behaves_like 'エラーコードが正しいこと', error_keys.map {|key| "absent_param_#{key}" }
       end
 
       context "#{error_keys.join(',')}が不正な場合" do
@@ -54,9 +53,8 @@ describe AnalysesController, :type => :controller do
           end
         end
 
-        it '400エラーが返ること' do
-          is_asserted_by { @res.status == 400 }
-        end
+        it_behaves_like 'ステータスコードが正しいこと', '400'
+        it_behaves_like 'エラーコードが正しいこと', error_keys.map {|key| "invalid_param_#{key}" }
       end
     end
   end
