@@ -6,9 +6,7 @@ import sys
 import yaml
 
 args = sys.argv
-MODEL = args[1]
 SETTINGS = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
-TMP_DIR = "/opt/scripts/tmp"
 
 connection = mysql.connect(
   host = SETTINGS['mysql']['host'],
@@ -19,15 +17,18 @@ connection = mysql.connect(
 
 cursor = connection.cursor(dictionary=True)
 cursor.execute(
-  'SELECT open FROM candle_sticks '\
+  'SELECT `to`, open FROM candle_sticks '\
   'WHERE pair = "USDJPY" AND '\
     'WEEKDAY(`to`) BETWEEN 0 AND 4 '\
-  'ORDER BY `to` desc '\
+  'ORDER BY `to` DESC '\
   'LIMIT 300'
 )
 
-def open(candle_stick):
-  return candle_stick['open']
+def open(records):
+  return records['open']
+
+def to(records):
+  return records['to']
 
 def min_max(x):
   min = x.min(axis=0, keepdims=True)
@@ -35,8 +36,12 @@ def min_max(x):
   result = 2.0 * ((x - min) / (max - min) - 0.5)
   return result
 
-vfunc = np.vectorize(open)
-candle_sticks = vfunc(cursor.fetchall())
+vfunc_open = np.vectorize(open)
+vfunc_time = np.vectorize(to)
+records = cursor.fetchall()
+candle_sticks = vfunc_open(records)
+time = vfunc_time(records)
+
 candle_sticks = min_max(candle_sticks)
 
 x = tf.placeholder(tf.float32, [None, 300])
@@ -52,5 +57,10 @@ out = tf.nn.softmax(tf.matmul(h_1, w_2) + b_2)
 saver = tf.train.Saver()
 
 with tf.Session() as sess:
-  saver.restore(sess, TMP_DIR + "/model.ckpt")
-  open(TMP_DIR + "/result.txt", mode='w').write(sess.run(out, feed_dict={x:candle_sticks}))
+  saver.restore(sess, "/opt/scripts/tmp/model.ckpt")
+  result = sess.run(out, feed_dict={x:candle_sticks})
+
+  with open("/opt/scripts/tmp/result.yml", mode='w') as file:
+    file.write("from: " + time[-1] + "\n")
+    file.write("to: " + time[0] + "\n")
+    file.write("result: " + result + "\n")

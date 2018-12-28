@@ -9,8 +9,18 @@ class PredictionsController < ApplicationController
     absent_keys = prediction_params - attributes.symbolize_keys.keys
     raise BadRequest.new(absent_keys.map {|key| "absent_param_#{key}" }) unless absent_keys.empty?
 
+    model = attributes[:model]
+    if model.respond_to?(:original_filename)
+      attributes[:model] = model.original_filename
+    end
+
     prediction = Prediction.new(attributes.merge(:state => 'processing'))
     if prediction.save
+      output_dir = File.join(Rails.root, "tmp/models/#{prediction.id}")
+      FileUtils.mkdir_p(output_dir)
+      File.open(File.join(output_dir, prediction.model), 'w+b') do |file|
+        file.write(model.read)
+      end
       PredictionJob.perform_later(prediction.id)
       render :status => :ok, :json => {}
     else
