@@ -1,7 +1,14 @@
 <tr class='<%= prediction.state == 'completed' ? 'success' : 'warning' %>'>
   <td><%= prediction.created_at.strftime('%Y/%m/%d %H:%M:%S') %></td>
   <td><%= prediction.model %></td>
-  <td><%= prediction.from.strftime('%Y/%m/%d %T') %> 〜 <%= prediction.to.strftime('%Y/%m/%d %T') %></td>
+  <%
+    period = if prediction.from and prediction.to
+               from = prediction.from.strftime('%Y/%m/%d %T')
+               to = prediction.to.strftime('%Y/%m/%d %T')
+               "#{from} 〜 #{to}"
+             end
+  %>
+  <td><%= period %></td>
   <%
     icon_class = case prediction.result
                  when 'up'

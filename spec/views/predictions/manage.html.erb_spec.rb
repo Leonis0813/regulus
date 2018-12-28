@@ -1,31 +1,36 @@
 # coding: utf-8
 require 'rails_helper'
 
-describe 'analyses/manage', :type => :view do
+describe 'predictions/manage', :type => :view do
   per_page = 1
 
-  shared_context '分析ジョブを登録する' do |num|
+  shared_context '予測ジョブを登録する' do |num|
     before(:all) do
-      param = {:from => 2.month.ago, :to => 1.month.ago, :batch_size => 100}
-      num.times { Analysis.create!(param.merge(:state => %w[ processing completed ].sample)) }
-      @analyses = Analysis.order(:created_at => :desc).page(1)
+      num.times do
+        prediction = Prediction.new(:model => 'analysis.zip', :state => %w[ processing completed ].sample)
+        prediction.result = %w[ up down range ].sample if prediction.state == 'completed'
+        prediction.save!
+      end
+      @predictions = Prediction.order(:created_at => :desc).page(1)
     end
 
-    after(:all) { Analysis.destroy_all }
+    after(:all) do
+      Prediction.destroy_all
+    end
   end
 
   shared_examples '入力フォームが表示されていること' do
-    form_xpath = '//form[@id="new_analysis"]'
+    form_xpath = '//form[@id="new_prediction"]'
 
-    %w[ from to batch_size ].each do |param|
+    %w[ model ].each do |param|
       input_xpath = "#{form_xpath}/div[@class='form-group']"
 
-      it "analysis_#{param}を含む<label>タグがあること" do
-        expect(@html).to have_selector("#{input_xpath}/label[for='analysis_#{param}']")
+      it "prediction_#{param}を含む<label>タグがあること" do
+        expect(@html).to have_selector("#{input_xpath}/label[for='prediction_#{param}']")
       end
 
-      it "analysis_#{param}を含む<input>タグがあること" do
-        expect(@html).to have_selector("#{input_xpath}/input[id='analysis_#{param}']")
+      it "prediction_#{param}を含む<input>タグがあること" do
+        expect(@html).to have_selector("#{input_xpath}/input[id='prediction_#{param}']")
       end
     end
 
@@ -40,7 +45,7 @@ describe 'analyses/manage', :type => :view do
     base_xpath = '/html/body/div[@id="main-content"]/div[@class="row center-block"]/div[@class="col-lg-8"]'
 
     it 'タイトルが表示されていること' do
-      expect(@html).to have_selector("#{base_xpath}/h3", :text => 'ジョブ実行履歴')
+      expect(@html).to have_selector("#{base_xpath}/h4", :text => 'ジョブ実行履歴')
     end
 
     it '件数情報が表示されていること' do
@@ -65,12 +70,12 @@ describe 'analyses/manage', :type => :view do
     end
 
     it '2ページ目が表示されていること' do
-      xpath = "#{paging_xpath}/li[@class='page-item']/a[href='/analyses?page=2']"
+      xpath = "#{paging_xpath}/li[@class='page-item']/a[href='/predictions?page=2']"
       expect(@html).to have_selector(xpath, :text => 2)
     end
 
     it '次のページへのボタンが表示されていること' do
-      xpath = "#{paging_xpath}/li[@class='page-item']/span[@class='next']/a[href='/analyses?page=2']"
+      xpath = "#{paging_xpath}/li[@class='page-item']/span[@class='next']/a[href='/predictions?page=2']"
       expect(@html).to have_selector(xpath, :text => I18n.t('views.pagination.next'))
     end
 
@@ -79,7 +84,7 @@ describe 'analyses/manage', :type => :view do
       expect(@html).to have_selector(xpath, :text => I18n.t('views.pagination.last'))
     end
 
-    %w[ 実行開始日時 期間 バッチサイズ 状態 ].each do |header|
+    %w[ 実行開始日時 モデル 期間 結果 ].each do |header|
       it "ヘッダー(#{header})があること" do
         xpath = "#{base_xpath}/table[@class='table table-hover']/thead/th"
         expect(@html).to have_selector(xpath, :text => header)
@@ -91,29 +96,27 @@ describe 'analyses/manage', :type => :view do
       expect(@html).to have_xpath(xpath, :count => expected_size)
     end
 
-    it '背景色が正しいこと', :if => expected_size > 0 do
-      matched_data = @html.gsub("\n", '').match(/<tr\s*class='(?<color>.*?)'\s*>(?<data>.*?)<\/tr>/)
-      case matched_data[:color]
-      when 'warning'
-        is_asserted_by { matched_data[:data].include?('実行中') }
-      when 'success'
-        is_asserted_by { matched_data[:data].include?('完了') }
+    it '背景色と結果が正しいこと', :if => expected_size > 0 do
+      row = @html.gsub("\n", '').scan(/<tr.*?tr>/).first
+
+      is_asserted_by do
+        row.match(/warning.*question-sign/) or row.match(/success.*arrow-(up|down|right)/)
       end
     end
   end
 
   before(:all) do
     Kaminari.config.default_per_page = per_page
-    @analysis = Analysis.new
+    @prediction = Prediction.new
   end
 
   before(:each) do
-    render :template => 'analyses/manage', :layout => 'layouts/application'
+    render :template => 'predictions/manage', :layout => 'layouts/application'
     @html ||= response
   end
 
   describe '<html><body>' do
-    include_context '分析ジョブを登録する', 10
+    include_context '予測ジョブを登録する', 10
     it_behaves_like 'ヘッダーが表示されていること'
     it_behaves_like '入力フォームが表示されていること'
     it_behaves_like 'ジョブ実行履歴が表示されていること', {
