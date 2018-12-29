@@ -20,6 +20,7 @@ describe Prediction, :type => :model do
   describe '#validates' do
     describe '正常系' do
       valid_params = {
+        :model => ['analysis.zip'],
         :from => [
           nil, '1000-01-01', '1000/01/01', '01-01-1000', '01/01/1000', '10000101',
           '1000-01-01 00:00:00', '1000/01/01 00:00:00', '01-01-1000 00:00:00', '01/01/1000 00:00:00', '10000101 00:00:00',
@@ -45,8 +46,8 @@ describe Prediction, :type => :model do
     end
 
     describe '異常系' do
-      valid_params = {:state => 'processing'}
-      invalid_params = {:result => %w[ invalid ], :state => [nil, 'invalid']}
+      valid_params = {:model => 'analysis.zip', :state => 'processing'}
+      invalid_params = {:model => [nil], :result => %w[ invalid ], :state => [nil, 'invalid']}
 
       CommonHelper.generate_test_case(invalid_params).each do |params|
         context "フォームに#{params.keys.join(',')}を指定した場合" do
