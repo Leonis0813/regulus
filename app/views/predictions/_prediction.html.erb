@@ -1,0 +1,25 @@
+<tr class='<%= prediction.state == 'completed' ? 'success' : 'warning' %>'>
+  <td><%= prediction.created_at.strftime('%Y/%m/%d %H:%M:%S') %></td>
+  <td><%= prediction.model %></td>
+  <%
+    period = if prediction.from and prediction.to
+               from = prediction.from.strftime('%Y/%m/%d %T')
+               to = prediction.to.strftime('%Y/%m/%d %T')
+               "#{from} 〜 #{to}"
+             end
+  %>
+  <td><%= period %></td>
+  <%
+    icon_class, icon_color = case prediction.result
+                             when 'up'
+                               ['glyphicon-circle-arrow-up', 'blue']
+                             when 'down'
+                               ['glyphicon-circle-arrow-down', 'red']
+                             when 'range'
+                               ['glyphicon-circle-arrow-right', 'orange']
+                             else
+                               ['glyphicon-question-sign', 'black']
+                             end
+  %>
+  <td><span class='glyphicon <%= icon_class %>' style='color: <%= icon_color %>'/></td>
+</tr>
