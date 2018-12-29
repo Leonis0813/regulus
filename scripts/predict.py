@@ -7,6 +7,7 @@ import yaml
 
 args = sys.argv
 SETTINGS = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
+result_file = open("/opt/scripts/tmp/result.yml", 'w')
 
 connection = mysql.connect(
   host = SETTINGS['mysql']['host'],
@@ -43,6 +44,8 @@ candle_sticks = vfunc_open(records)
 time = vfunc_time(records)
 
 candle_sticks = min_max(candle_sticks)
+test_data = np.empty((0, 300), float)
+test_data = np.append(data, np.array([candle_sticks[0:300]]), axis=0)
 
 x = tf.placeholder(tf.float32, [None, 300])
 
@@ -58,9 +61,16 @@ saver = tf.train.Saver()
 
 with tf.Session() as sess:
   saver.restore(sess, "/opt/scripts/tmp/model.ckpt")
-  result = sess.run(out, feed_dict={x:candle_sticks})
+  result = sess.run(out, feed_dict={x:test_data})
 
-  with open("/opt/scripts/tmp/result.yml", mode='w') as file:
-    file.write("from: " + time[-1] + "\n")
-    file.write("to: " + time[0] + "\n")
-    file.write("result: " + result + "\n")
+  result_file.write("from: " + time[-1].strftime('%Y-%m-%d %H:%M:%S') + "\n")
+  result_file.write("to: " + time[0].strftime('%Y-%m-%d %H:%M:%S') + "\n")
+
+  prediction = result[0].argmax()
+  if prediction == 0:
+    result_file.write("result: up\n")
+  elif prediction == 1:
+    result_file.write("result: range\n")
+  else:
+    result_file.write("result: down\n")
+  result_file.close()
