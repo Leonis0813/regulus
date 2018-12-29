@@ -45,7 +45,7 @@ time = vfunc_time(records)
 
 candle_sticks = min_max(candle_sticks)
 test_data = np.empty((0, 300), float)
-test_data = np.append(data, np.array([candle_sticks[0:300]]), axis=0)
+test_data = np.append(test_data, np.array([candle_sticks[0:300]]), axis=0)
 
 x = tf.placeholder(tf.float32, [None, 300])
 
