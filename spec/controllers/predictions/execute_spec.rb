@@ -2,9 +2,13 @@
 require 'rails_helper'
 
 describe PredictionsController, :type => :controller do
-  default_params = {:model => 'analysis.zip'}
+  zip_file_path = File.join(Rails.root, '/spec/fixtures/analysis.zip')
+  default_params = {:model => Rack::Test::UploadedFile.new(File.open(zip_file_path))}
 
-  after(:all) { Prediction.destroy_all }
+  after(:all) do
+    Prediction.destroy_all
+    FileUtils.rm_rf(Dir[File.join(Rails.root, 'tmp/models/*')])
+  end
 
   describe '正常系' do
     before(:all) do

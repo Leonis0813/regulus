@@ -12,6 +12,8 @@ class PredictionsController < ApplicationController
     model = attributes[:model]
     if model.respond_to?(:original_filename)
       attributes[:model] = model.original_filename
+    else
+      raise BadRequest.new(['invalid_param_model'])
     end
 
     prediction = Prediction.new(attributes.merge(:state => 'processing'))
