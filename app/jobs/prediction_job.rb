@@ -4,6 +4,7 @@ class PredictionJob < ActiveJob::Base
   def perform(prediction_id)
     prediction = Prediction.find(prediction_id)
     tmp_dir = File.join(Rails.root, 'scripts/tmp')
+    FileUtils.rm_rf(tmp_dir)
     FileUtils.mkdir_p(tmp_dir)
 
     model_dir = File.join(Rails.root, "tmp/models/#{prediction.id}")
