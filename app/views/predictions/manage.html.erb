@@ -2,7 +2,7 @@
   <div class='col-lg-4'>
     <div id='new-prediction' class='well tab-pane active'>
       <h3>レートを予測</h3>
-      <%= form_for @prediction, :html => {:multipart => true}, :url => predictions_path, :remote => true do |f| %>
+      <%= form_for @prediction, :url => predictions_path, :remote => true do |f| %>
         <div class='form-group'>
           <%= f.label :model, 'モデル' %><br>
           <%= f.file_field :model, {:class => 'form-control', :name => :model, :required => true} %>
