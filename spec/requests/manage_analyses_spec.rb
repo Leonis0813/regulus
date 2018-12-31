@@ -2,13 +2,7 @@
 require 'rails_helper'
 
 describe 'ブラウザで分析する', :type => :request do
-  user_id, password = 'test_user_id', 'test_user_pass'
-  before(:all) do
-    @driver = Selenium::WebDriver.for :firefox
-    @driver.get("#{base_url}/404_path")
-    @driver.manage.add_cookie(:name => 'algieba', :value => Base64.strict_encode64("#{user_id}:#{password}"))
-    @wait = Selenium::WebDriver::Wait.new(:timeout => 30)
-  end
+  include_context 'WebDriverを起動してCookieをセットする'
 
   describe '分析画面を開く' do
     before(:all) { @driver.get("#{base_url}/analyses") }
@@ -20,9 +14,10 @@ describe 'ブラウザで分析する', :type => :request do
 
   describe '不正な値を入力する' do
     before(:all) do
-      @driver.find_element(:id, 'analysis_num_data').send_keys('invalid')
-      @driver.find_element(:id, 'analysis_interval').send_keys(1)
-      @driver.find_element(:xpath, '//form/span/input[@value="実行"]').click
+      @driver.find_element(:id, 'analysis_from').send_keys('invalid')
+      @driver.find_element(:id, 'analysis_to').send_keys('invalid')
+      @driver.find_element(:id, 'analysis_batch_size').send_keys(1)
+      @driver.find_element(:xpath, '//form/input[@value="実行"]').click
       @wait.until { @driver.find_element(:class, 'modal-body').displayed? }
     end
 

@@ -4,12 +4,12 @@ class AnalysesController < ApplicationController
     @analyses = Analysis.all.order(:created_at => :desc).page(params[:page])
   end
 
-  def learn
+  def execute
     attributes = params.permit(*analysis_params)
     absent_keys = analysis_params - attributes.symbolize_keys.keys
     raise BadRequest.new(absent_keys.map {|key| "absent_param_#{key}" }) unless absent_keys.empty?
 
-    analysis = Analysis.new(attributes.merge(:state => 'completed'))
+    analysis = Analysis.new(attributes.merge(:state => 'processing'))
     if analysis.save
       AnalysisJob.perform_later(analysis.id)
       render :status => :ok, :json => {}
@@ -21,6 +21,6 @@ class AnalysesController < ApplicationController
   private
 
   def analysis_params
-    %i[ num_data interval ]
+    %i[ from to batch_size ]
   end
 end

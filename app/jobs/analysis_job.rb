@@ -3,9 +3,17 @@ class AnalysisJob < ActiveJob::Base
 
   def perform(analysis_id)
     analysis = Analysis.find(analysis_id)
-    args = [analysis.num_data, analysis.interval]
-    ret = system "Rscript #{Rails.root}/scripts/learn.r #{args.join(' ')}"
+    args = [
+      "'#{analysis.from.strftime('%F %T')}'",
+      "'#{analysis.to.strftime('%F %T')}'",
+      analysis.batch_size,
+    ]
+    script_dir = File.join(Rails.root, 'scripts')
+    FileUtils.mkdir_p(File.join(script_dir, 'tmp'))
+    ret = system "sudo docker exec regulus python /opt/scripts/learn.py #{args.join(' ')}"
+    FileUtils.mv(File.join(script_dir, 'tmp'), File.join(Rails.root, "tmp/models/#{analysis_id}"))
     analysis.update!(:state => 'completed')
-    AnalysisMailer.finished(ret).deliver_now
+    AnalysisMailer.finished(analysis, ret).deliver_now
+    FileUtils.rm_rf("#{Rails.root}/tmp/models/#{analysis_id}")
   end
 end

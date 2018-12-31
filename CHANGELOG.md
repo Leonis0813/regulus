@@ -1,3 +1,22 @@
+# 4.0.0 (2018/12/30)
+- [ADD] new feature to predict the FX rate
+
+# 3.3.2 (2018/12/23)
+- [UPDATE] gems
+
+# 3.3.1 (2018/12/22)
+- [UPDATE] gems
+
+# 3.3.0 (2018/12/15)
+- [ADD] attachments to email for notification of analysis result
+
+# 3.2.1 (2018/11/24)
+- [UPDATE] learning script to use candle sticks and save model
+
+# 3.2.0 (2018/10/15)
+- [UPDATE] analysis view for deep learning
+- [UPDATE] scripts for deep learning
+
 # 3.1.0 (2018/08/06)
 - [ADD] paging to analysis view
 
