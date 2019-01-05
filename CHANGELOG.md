@@ -1,3 +1,6 @@
+# 4.0.1 (2019/01/05)
+- [UPDATE] gems
+
 # 4.0.0 (2018/12/30)
 - [ADD] new feature to predict the FX rate
 
