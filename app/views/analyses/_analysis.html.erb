@@ -5,8 +5,8 @@
   <td class='<%= state_class %>'><%= analysis.batch_size %></td>
   <td class='<%= state_class %>'><%= analysis.state == 'completed' ? '完了' : '実行中' %></td>
   <td class='rebuild'>
-    <button class='btn btn-default'>
+    <%= button_tag(:type => 'button', :class => 'btn btn-default rebuild') do %>
       <span class='glyphicon glyphicon-repeat' />
-    </button>
+    <% end %>
   </td>
 </tr>
