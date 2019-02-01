@@ -1,3 +1,6 @@
+# 4.1.4 (2019/02/01)
+- [UPDATE] rails version
+
 # 4.1.3 (2019/01/18)
 - [UPDATE] gems
 
