@@ -6,6 +6,9 @@ $ ->
     bootbox.alert({
       title: '予測を開始しました',
       message: '終了後、実行履歴に結果が表示されます',
+      callback: ->
+        $('.btn-submit').prop('disabled', false)
+        return
     })
     return
 
@@ -13,5 +16,8 @@ $ ->
     bootbox.alert({
       title: 'エラーが発生しました',
       message: '入力値を見直してください',
+      callback: ->
+        $('.btn-submit').prop('disabled', false)
+        return
     })
     return
