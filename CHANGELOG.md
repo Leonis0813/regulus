@@ -1,3 +1,7 @@
+# 4.1.6 (2019/03/02)
+- [UPDATE] ruby version to 2.3.7
+- [UPDATE] gems
+
 # 4.1.5 (2019/02/04)
 - [UPDATE] submit button not to push twice
 
