@@ -9,26 +9,27 @@ args = sys.argv
 FROM = args[1]
 TO = args[2]
 BATCH_SIZE = args[3]
-SETTINGS = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
+Settings = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
 
 connection = mysql.connect(
-  host = SETTINGS['mysql']['host'],
-  user = SETTINGS['mysql']['user'],
-  password = SETTINGS['mysql']['password'],
-  database = SETTINGS['mysql']['database'],
+  host = Settings['mysql']['host'],
+  user = Settings['mysql']['user'],
+  password = Settings['mysql']['password'],
+  database = Settings['mysql']['database'],
 )
 
 cursor = connection.cursor(dictionary=True)
 cursor.execute(
-  'SELECT open FROM candle_sticks '\
-  'WHERE pair = "USDJPY" AND '\
-    'WEEKDAY(`to`) BETWEEN 0 AND 4 AND '\
-    '`to` BETWEEN "' + FROM + '" AND "' + TO + '" '\
-  'ORDER BY `to`'
+  'SELECT value FROM moving_averages '\
+  'WHERE `time` BETWEEN "' + FROM + '" AND "' + TO + '" AND '\
+    'pair = "USDJPY" AND '\
+    'time_frame = "H1" AND '\
+    'period = 25'\
+  'ORDER BY `time`'
 )
 
-def open(candle_stick):
-  return candle_stick['open']
+def value(moving_average):
+  return moving_average['value']
 
 def min_max(x):
   min = x.min(axis=0, keepdims=True)
@@ -36,22 +37,22 @@ def min_max(x):
   result = 2.0 * ((x - min) / (max - min) - 0.5)
   return result
 
-vfunc = np.vectorize(open)
-candle_sticks = vfunc(cursor.fetchall())
-candle_sticks = min_max(candle_sticks)
+vfunc = np.vectorize(value)
+moving_averages = vfunc(cursor.fetchall())
+moving_averages = min_max(moving_averages)
 
 data = np.empty((0, 300), float)
 label = np.empty((0, 3), int)
 
-for i in range(0, len(candle_sticks) - 450, 150):
-  if (candle_sticks[i+300] + 0.01) < candle_sticks[i+450]:
+for i in range(0, len(moving_averages) - 450, 150):
+  if (moving_averages[i+300] + 0.01) < moving_averages[i+450]:
     label = np.append(label, np.array([[1,0,0]]), axis=0)
-  elif (candle_sticks[i+300] - 0.01 ) > candle_sticks[i+450]:
+  elif (moving_averages[i+300] - 0.01 ) > moving_averages[i+450]:
     label = np.append(label, np.array([[0,1,0]]), axis=0)
   else:
     label = np.append(label, np.array([[0,0,1]]), axis=0)
 
-  data = np.append(data, np.array([candle_sticks[i:i+300]]), axis=0)
+  data = np.append(data, np.array([moving_averages[i:i+300]]), axis=0)
 
 x = tf.placeholder(tf.float32, [None, 300])
 
