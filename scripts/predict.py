@@ -6,56 +6,69 @@ import sys
 import yaml
 
 args = sys.argv
-SETTINGS = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
-result_file = open("/opt/scripts/tmp/result.yml", 'w')
+PERIODS = ['25', '75', '200']
+PAIRS = ['USDJPY', 'EURJPY', 'EURUSD', 'AUDJPY', 'GBPJPY', 'CADJPY', 'CHFJPY', 'NZDJPY']
+Settings = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
+result_file = open('/opt/scripts/tmp/result.yml', 'w')
 
-connection = mysql.connect(
-  host = SETTINGS['mysql']['host'],
-  user = SETTINGS['mysql']['user'],
-  password = SETTINGS['mysql']['password'],
-  database = SETTINGS['mysql']['database'],
-)
-
-cursor = connection.cursor(dictionary=True)
-cursor.execute(
-  'SELECT `to`, open FROM candle_sticks '\
-  'WHERE pair = "USDJPY" AND '\
-    'WEEKDAY(`to`) BETWEEN 0 AND 4 '\
-  'ORDER BY `to` DESC '\
-  'LIMIT 300'
-)
-
-def open(records):
-  return records['open']
-
-def to(records):
-  return records['to']
+def value(record):
+  return record['value']
 
 def min_max(x):
   min = x.min(axis=0, keepdims=True)
   max = x.max(axis=0, keepdims=True)
-  result = 2.0 * ((x - min) / (max - min) - 0.5)
-  return result
+  return 2.0 * ((x - min) / (max - min) - 0.5)
 
-vfunc_open = np.vectorize(open)
-vfunc_time = np.vectorize(to)
-records = cursor.fetchall()
-candle_sticks = vfunc_open(records)
-time = vfunc_time(records)
+connection = mysql.connect(
+  host = Settings['mysql']['host'],
+  user = Settings['mysql']['user'],
+  password = Settings['mysql']['password'],
+  database = Settings['mysql']['database'],
+)
 
-candle_sticks = min_max(candle_sticks)
-test_data = np.empty((0, 300), float)
-test_data = np.append(test_data, np.array([candle_sticks[0:300]]), axis=0)
+cursor = connection.cursor(dictionary=True)
+vfunc = np.vectorize(value)
+test_data = np.empty((0, 720), float)
+input = np.empty(0, float)
 
-x = tf.placeholder(tf.float32, [None, 300])
+for pair in PAIRS:
+  for period in PERIODS:
+    cursor.execute(
+      'SELECT value FROM moving_averages ' \
+      'WHERE pair = "' + pair + '" AND ' \
+        'time_frame = "H1" AND ' \
+        'period = ' + period + ' ' \
+      'ORDER BY `time` DESC ' \
+      'LIMIT 30'
+    )
+    values = vfunc(cursor.fetchall())
+    values = values[::-1]
+    values = min_max(values)
+    input = np.append(input, np.array(values))
 
-w_1 = tf.Variable(tf.truncated_normal([300, 100], stddev=0.1), name="w1")
-b_1 = tf.Variable(tf.zeros([100]), name="b1")
+test_data = np.append(test_data, np.array([input]), axis=0)
+
+x = tf.placeholder(tf.float32, [None, 720])
+
+w_1 = tf.Variable(tf.truncated_normal([720, 512], stddev=0.1), name="w1")
+b_1 = tf.Variable(tf.zeros([512]), name="b1")
 h_1 = tf.nn.relu(tf.matmul(x, w_1) + b_1)
 
-w_2 = tf.Variable(tf.truncated_normal([100, 3], stddev=0.1), name="w2")
-b_2 = tf.Variable(tf.zeros([3]), name="b2")
-out = tf.nn.softmax(tf.matmul(h_1, w_2) + b_2)
+w_2 = tf.Variable(tf.truncated_normal([512, 128], stddev=0.1), name="w2")
+b_2 = tf.Variable(tf.zeros([128]), name="b2")
+h_2 = tf.nn.relu(tf.matmul(h_1, w_2) + b_2)
+
+w_3 = tf.Variable(tf.truncated_normal([128, 32], stddev=0.1), name="w3")
+b_3 = tf.Variable(tf.zeros([32]), name="b3")
+h_3 = tf.nn.relu(tf.matmul(h_2, w_3) + b_3)
+
+w_4 = tf.Variable(tf.truncated_normal([32, 8], stddev=0.1), name="w4")
+b_4 = tf.Variable(tf.zeros([8]), name="b4")
+h_4 = tf.nn.relu(tf.matmul(h_3, w_4) + b_4)
+
+w_5 = tf.Variable(tf.truncated_normal([8, 1], stddev=0.1), name="w5")
+b_5 = tf.Variable(tf.zeros([1]), name="b5")
+out = tf.nn.softmax(tf.matmul(h_4, w_5) + b_5)
 
 saver = tf.train.Saver()
 
@@ -63,14 +76,21 @@ with tf.Session() as sess:
   saver.restore(sess, "/opt/scripts/tmp/model.ckpt")
   result = sess.run(out, feed_dict={x:test_data})
 
-  result_file.write("from: " + time[-1].strftime('%Y-%m-%d %H:%M:%S') + "\n")
-  result_file.write("to: " + time[0].strftime('%Y-%m-%d %H:%M:%S') + "\n")
+  cursor.execute(
+    'SELECT `time` FROM moving_averages ' \
+    'WHERE pair = "USDJPY" AND ' \
+      'time_frame = "H1" AND ' \
+      'period = 25 ' \
+    'ORDER BY `time` DESC ' \
+    'LIMIT 30'
+  )
+  records = cursor.fetchall()
+  result_file.write("from: " + records[-1]['time'].strftime('%Y-%m-%d %H:%M:%S') + "\n")
+  result_file.write("to: " + records[0]['time'].strftime('%Y-%m-%d %H:%M:%S') + "\n")
 
-  prediction = result[0].argmax()
-  if prediction == 0:
+  prediction = result[0][0]
+  if prediction > 0.5:
     result_file.write("result: up\n")
-  elif prediction == 1:
-    result_file.write("result: range\n")
   else:
     result_file.write("result: down\n")
   result_file.close()
