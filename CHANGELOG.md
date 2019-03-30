@@ -1,3 +1,6 @@
+# 4.1.7 (2019/03/30)
+- [UPDATE] neural network
+
 # 4.1.6 (2019/03/02)
 - [UPDATE] ruby version to 2.3.7
 - [UPDATE] gems
