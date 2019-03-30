@@ -76,8 +76,17 @@ with tf.Session() as sess:
   saver.restore(sess, "/opt/scripts/tmp/model.ckpt")
   result = sess.run(out, feed_dict={x:test_data})
 
-  result_file.write("from: " + time[-1].strftime('%Y-%m-%d %H:%M:%S') + "\n")
-  result_file.write("to: " + time[0].strftime('%Y-%m-%d %H:%M:%S') + "\n")
+  cursor.execute(
+    'SELECT `time` FROM moving_averages ' \
+    'WHERE pair = "USDJPY" AND ' \
+      'time_frame = "H1" AND ' \
+      'period = 25 ' \
+    'ORDER BY `time` DESC ' \
+    'LIMIT 30'
+  )
+  records = cursor.fetchall()
+  result_file.write("from: " + records[-1]['time'].strftime('%Y-%m-%d %H:%M:%S') + "\n")
+  result_file.write("to: " + records[0]['time'].strftime('%Y-%m-%d %H:%M:%S') + "\n")
 
   prediction = result[0][0]
   if prediction > 0.5:
