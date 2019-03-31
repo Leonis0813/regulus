@@ -14,7 +14,7 @@
           <%= f.label :batch_size, 'バッチサイズ' %>
           <%= f.text_field :batch_size, {:class => 'form-control', :name => 'batch_size', :required => true} %>
         </div>
-        <%= f.submit '実行', :class => 'btn btn-primary btn-sm' %>
+        <%= f.submit '実行', :class => 'btn btn-primary btn-sm btn-submit' %>
         <%= f.submit 'リセット', :type => 'reset', :class => 'btn btn-default btn-sm' %>
       <% end %>
     </div>
@@ -31,6 +31,7 @@
         <% {'実行開始日時' => 25, '期間' => 45, 'バッチサイズ' => 15, '状態' => 15}.each do |header, width| %>
           <th style='width:<%= width %>%'><%= header %></th>
         <% end %>
+        <th class='rebuild'></th>
       </thead>
       <tbody>
         <%= render @analyses %>

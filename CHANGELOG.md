@@ -1,3 +1,32 @@
+# 4.1.7 (2019/03/30)
+- [UPDATE] neural network
+- [UPDATE] gems
+
+# 4.1.6 (2019/03/02)
+- [UPDATE] ruby version to 2.3.7
+- [UPDATE] gems
+
+# 4.1.5 (2019/02/04)
+- [UPDATE] submit button not to push twice
+
+# 4.1.4 (2019/02/01)
+- [UPDATE] rails version
+
+# 4.1.3 (2019/01/18)
+- [UPDATE] gems
+
+# 4.1.2 (2019/01/14)
+- [UPDATE] gems
+
+# 4.1.1 (2019/01/13)
+- [UPDATE] gems
+
+# 4.1.0 (2019/01/06)
+- [ADD] rebuild button to analysis view
+
+# 4.0.1 (2019/01/05)
+- [UPDATE] gems
+
 # 4.0.0 (2018/12/30)
 - [ADD] new feature to predict the FX rate
 
