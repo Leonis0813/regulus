@@ -1,3 +1,6 @@
+# 4.1.8 (2019/04/01)
+- [UPDATE] gems
+
 # 4.1.7 (2019/03/30)
 - [UPDATE] neural network
 - [UPDATE] gems
