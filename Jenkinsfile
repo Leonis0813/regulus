@@ -3,6 +3,7 @@ pipeline {
 
   environment {
     PATH = '/usr/local/rvm/bin:/usr/bin:/bin'
+    RUBY_VERSION = '2.3.7'
   }
 
   parameters {
@@ -18,15 +19,16 @@ pipeline {
           def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
           version = version.replaceFirst(/^.+\//, '')
           git url: 'https://github.com/Leonis0813/regulus.git', branch: version
-          sh 'rvm 2.3.7 do bundle install --path=vendor/bundle'
+          sh "rvm ${RUBY_VERSION} do bundle install --path=vendor/bundle"
         }
       }
     }
 
     stage('Test') {
       steps {
-        sh 'rvm 2.3.7 do bundle exec rake spec:models'
-        sh 'rvm 2.3.7 do bundle exec rake spec:controllers spec:views'
+        sh "rvm ${RUBY_VERSION} do bundle exec rake spec:models"
+        sh "rvm ${RUBY_VERSION} do bundle exec rake spec:controllers"
+        sh "rvm ${RUBY_VERSION} do bundle exec rake spec:views"
       }
     }
 
@@ -46,7 +48,7 @@ pipeline {
 
     stage('System Test') {
       steps {
-        sh 'rvm 2.3.7 do env REMOTE_HOST=http://localhost/regulus bundle exec rake spec:requests'
+        sh "rvm ${RUBY_VERSION} do env REMOTE_HOST=http://localhost/regulus bundle exec rake spec:requests"
       }
     }
   }
