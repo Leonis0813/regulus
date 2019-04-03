@@ -14,6 +14,10 @@ pipeline {
 
   stages {
     stage('Install Gems') {
+      when {
+        expression { return env.ENVIRONMENT == 'development' }
+      }
+
       steps {
         script {
           def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
@@ -25,6 +29,10 @@ pipeline {
     }
 
     stage('Test') {
+      when {
+        expression { return env.ENVIRONMENT == 'development' }
+      }
+
       steps {
         sh "rvm ${RUBY_VERSION} do bundle exec rake spec:models"
         sh "rvm ${RUBY_VERSION} do bundle exec rake spec:controllers"
@@ -47,6 +55,10 @@ pipeline {
     }
 
     stage('System Test') {
+      when {
+        expression { return env.ENVIRONMENT == 'development' }
+      }
+
       steps {
         sh "rvm ${RUBY_VERSION} do env REMOTE_HOST=http://localhost/regulus bundle exec rake spec:requests"
       }
