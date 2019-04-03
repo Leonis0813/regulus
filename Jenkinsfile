@@ -30,7 +30,7 @@ pipeline {
 
     stage('Test') {
       when {
-        expression { return env.ENVIRONMENT == 'developmentaaaa' }
+        expression { return env.ENVIRONMENT == 'development' }
       }
 
       steps {
