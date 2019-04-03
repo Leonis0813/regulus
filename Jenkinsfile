@@ -9,7 +9,9 @@ pipeline {
 
   stages {
     stage('Test') {
-      sh 'touch test'
+      steps {
+        sh 'touch test'
+      }
     }
 
     stage('Clone Chef') {
