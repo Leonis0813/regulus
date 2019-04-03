@@ -10,7 +10,7 @@ pipeline {
   stages {
     stage('Install gems') {
       steps {
-        scripts {
+        script {
           sh 'ls -a'
           def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
           git url: 'https://github.com/Leonis0813/regulus.git', branch: version
