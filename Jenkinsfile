@@ -26,6 +26,7 @@ pipeline {
           def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
           version = version.replaceFirst(/^.+\//, '')
           def recipe = ('app' == params.SCOPE ? 'app' : 'default')
+          deleteDir()
           //sh "sudo REGULUS_VERSION=${version} chef-client -z -r regulus::${recipe} -E ${env.ENVIRONMENT}"
         }
       }
