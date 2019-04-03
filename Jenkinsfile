@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  environment {
+    PATH = '/usr/local/rvm/bin:/usr/bin:$PATH'
+  }
+
   parameters {
     string(name: 'REGULUS_VERSION', defaultValue: '', description: 'デプロイするバージョン')
     string(name: 'SUBRA_BRANCH', defaultValue: 'master', description: 'Chefのブランチ')
@@ -11,17 +15,17 @@ pipeline {
     stage('Install gems') {
       steps {
         script {
-          sh 'ls -a'
           def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
           version = version.replaceFirst(/^.+\//, '')
           git url: 'https://github.com/Leonis0813/regulus.git', branch: version
+          sh 'bundle install --path=vendor/bundle'
         }
       }
     }
 
     stage('Test') {
       steps {
-        sh 'ls -a'
+        sh 'rvm 2.3.7 do bundle exec rake spec:models'
       }
     }
 
