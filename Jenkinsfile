@@ -8,14 +8,23 @@ pipeline {
   }
 
   stages {
+    stage('Install gems') {
+      steps {
+        sh 'ls -a'
+        git url: 'https://github.com/Leonis0813/regulus.git', branch: params.REGULUS_VERSION
+      }
+    }
+
     stage('Test') {
       steps {
-        sh 'touch test'
+        sh 'ls -a'
       }
     }
 
     stage('Clone Chef') {
       steps {
+        sh "sudo rm -rf ${env.WORKSPACE}/* ${env.WORKSPACE}/.chef* ${env.WORKSPACE}/.git*"
+        sh 'ls -a'
         git url: 'https://github.com/Leonis0813/subra.git', branch: params.SUBRA_BRANCH
       }
     }
@@ -26,7 +35,6 @@ pipeline {
           def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
           version = version.replaceFirst(/^.+\//, '')
           def recipe = ('app' == params.SCOPE ? 'app' : 'default')
-          sh "sudo rm -rf ${env.WORKSPACE}/* ${env.WORKSPACE}/.*"
           //sh "sudo REGULUS_VERSION=${version} chef-client -z -r regulus::${recipe} -E ${env.ENVIRONMENT}"
         }
       }
