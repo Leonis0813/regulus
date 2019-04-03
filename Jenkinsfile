@@ -19,7 +19,7 @@ pipeline {
             def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
             version = version.replaceFirst(/^.+\//, '')
             git url: 'https://github.com/Leonis0813/regulus.git', branch: version
-            sh 'bundle install --path=vendor/bundle'
+            sh 'rvm 2.3.7 do bundle install --path=vendor/bundle'
           }
         }
       }
@@ -42,7 +42,7 @@ pipeline {
             def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
             version = version.replaceFirst(/^.+\//, '')
             def recipe = ('app' == params.SCOPE ? 'app' : 'default')
-            //sh "sudo REGULUS_VERSION=${version} chef-client -z -r regulus::${recipe} -E ${env.ENVIRONMENT}"
+            sh "sudo REGULUS_VERSION=${version} chef-client -z -r regulus::${recipe} -E ${env.ENVIRONMENT}"
           }
         }
       }
