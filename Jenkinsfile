@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    PATH = '/usr/local/rvm/bin:/usr/bin:$PATH'
+    PATH = '/usr/local/rvm/bin:/usr/bin:/bin'
   }
 
   parameters {
@@ -12,38 +12,46 @@ pipeline {
   }
 
   stages {
-    stage('Install gems') {
+    stage('Install Gems') {
       steps {
-        script {
-          def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
-          version = version.replaceFirst(/^.+\//, '')
-          git url: 'https://github.com/Leonis0813/regulus.git', branch: version
-          sh 'bundle install --path=vendor/bundle'
+        ws("${env.WORKSPACE}/regulus") {
+          script {
+            def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
+            version = version.replaceFirst(/^.+\//, '')
+            git url: 'https://github.com/Leonis0813/regulus.git', branch: version
+            sh 'bundle install --path=vendor/bundle'
+          }
         }
       }
     }
 
     stage('Test') {
       steps {
-        sh 'rvm 2.3.7 do bundle exec rake spec:models'
-      }
-    }
-
-    stage('Clone Chef') {
-      steps {
-        sh "sudo rm -rf ${env.WORKSPACE}/* ${env.WORKSPACE}/.chef* ${env.WORKSPACE}/.git*"
-        sh 'ls -a'
-        git url: 'https://github.com/Leonis0813/subra.git', branch: params.SUBRA_BRANCH
+        ws("${env.WORKSPACE}/regulus") {
+          sh 'rvm 2.3.7 do bundle exec rake spec:models'
+          sh 'rvm 2.3.7 do bundle exec rake spec:controllers spec:views'
+        }
       }
     }
 
     stage('Deploy') {
       steps {
-        script {
-          def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
-          version = version.replaceFirst(/^.+\//, '')
-          def recipe = ('app' == params.SCOPE ? 'app' : 'default')
-          //sh "sudo REGULUS_VERSION=${version} chef-client -z -r regulus::${recipe} -E ${env.ENVIRONMENT}"
+        ws("${env.WORKSPACE}/subra") {
+          script {
+            git url: 'https://github.com/Leonis0813/subra.git', branch: params.SUBRA_BRANCH
+            def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
+            version = version.replaceFirst(/^.+\//, '')
+            def recipe = ('app' == params.SCOPE ? 'app' : 'default')
+            //sh "sudo REGULUS_VERSION=${version} chef-client -z -r regulus::${recipe} -E ${env.ENVIRONMENT}"
+          }
+        }
+      }
+    }
+
+    stage('System Test') {
+      steps {
+        ws("${env.WORKSPACE}/regulus") {
+          sh 'rvm 2.3.7 do env REMOTE_HOST=http://localhost/regulus bundle exec rake spec:requests'
         }
       }
     }
