@@ -14,29 +14,25 @@ pipeline {
   stages {
     stage('Install Gems') {
       steps {
-        ws("${env.WORKSPACE}/regulus") {
-          script {
-            def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
-            version = version.replaceFirst(/^.+\//, '')
-            git url: 'https://github.com/Leonis0813/regulus.git', branch: version
-            sh 'rvm 2.3.7 do bundle install --path=vendor/bundle'
-          }
+        script {
+          def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
+          version = version.replaceFirst(/^.+\//, '')
+          git url: 'https://github.com/Leonis0813/regulus.git', branch: version
+          sh 'rvm 2.3.7 do bundle install --path=vendor/bundle'
         }
       }
     }
 
     stage('Test') {
       steps {
-        ws("${env.WORKSPACE}/regulus") {
-          sh 'rvm 2.3.7 do bundle exec rake spec:models'
-          sh 'rvm 2.3.7 do bundle exec rake spec:controllers spec:views'
-        }
+        sh 'rvm 2.3.7 do bundle exec rake spec:models'
+        sh 'rvm 2.3.7 do bundle exec rake spec:controllers spec:views'
       }
     }
 
     stage('Deploy') {
       steps {
-        ws("${env.WORKSPACE}/subra") {
+        ws("${env.WORKSPACE}/../chef") {
           script {
             git url: 'https://github.com/Leonis0813/subra.git', branch: params.SUBRA_BRANCH
             def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
@@ -50,9 +46,7 @@ pipeline {
 
     stage('System Test') {
       steps {
-        ws("${env.WORKSPACE}/regulus") {
-          sh 'rvm 2.3.7 do env REMOTE_HOST=http://localhost/regulus bundle exec rake spec:requests'
-        }
+        sh 'rvm 2.3.7 do env REMOTE_HOST=http://localhost/regulus bundle exec rake spec:requests'
       }
     }
   }
