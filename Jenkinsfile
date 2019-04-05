@@ -20,9 +20,6 @@ pipeline {
 
       steps {
         script {
-          def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
-          version = version.replaceFirst(/^.+\//, '')
-          git url: 'https://github.com/Leonis0813/regulus.git', branch: version
           sh "rvm ${RUBY_VERSION} do bundle install --path=vendor/bundle"
         }
       }
@@ -45,8 +42,7 @@ pipeline {
         ws("${env.WORKSPACE}/../chef") {
           script {
             git url: 'https://github.com/Leonis0813/subra.git', branch: params.SUBRA_BRANCH
-            def version = (params.REGULUS_VERSION == '' ? env.GIT_BRANCH : params.REGULUS_VERSION)
-            version = version.replaceFirst(/^.+\//, '')
+            def version = params.REGULUS_VERSION.replaceFirst(/^.+\//, '')
             def recipe = ('app' == params.SCOPE ? 'app' : 'default')
             sh "sudo REGULUS_VERSION=${version} chef-client -z -r regulus::${recipe} -E ${env.ENVIRONMENT}"
           }
