@@ -44,6 +44,17 @@ pipeline {
 
       steps {
         sh "rvm ${RUBY_VERSION} do env COVERAGE=on bundle exec rake spec:models"
+        publishHTML(
+          target:[
+            allowMissing: false,
+            alwaysLinkToLastBuild: false,
+            keepAll: false,
+            reportDir: 'coverage/rcov',
+            reportFiles: 'index.html',
+            reportName: 'RCov Report',
+            reportTitles: ''
+          ]
+        )
       }
     }
 
@@ -55,6 +66,17 @@ pipeline {
       steps {
         sh "rvm ${RUBY_VERSION} do env COVERAGE=on bundle exec rake spec:controllers"
         sh "rvm ${RUBY_VERSION} do env COVERAGE=on bundle exec rake spec:views"
+        publishHTML(
+          target:[
+            allowMissing: false,
+            alwaysLinkToLastBuild: false,
+            keepAll: false,
+            reportDir: 'coverage/rcov',
+            reportFiles: 'index.html',
+            reportName: 'RCov Report',
+            reportTitles: ''
+          ]
+        )
       }
     }
 
