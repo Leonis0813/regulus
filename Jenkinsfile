@@ -49,7 +49,7 @@ pipeline {
             allowMissing: false,
             alwaysLinkToLastBuild: false,
             keepAll: false,
-            reportDir: 'coverage/rcov',
+            reportDir: 'coverage',
             reportFiles: 'index.html',
             reportName: 'RCov Report',
             reportTitles: ''
@@ -71,7 +71,7 @@ pipeline {
             allowMissing: false,
             alwaysLinkToLastBuild: false,
             keepAll: false,
-            reportDir: 'coverage/rcov',
+            reportDir: 'coverage',
             reportFiles: 'index.html',
             reportName: 'RCov Report',
             reportTitles: ''
