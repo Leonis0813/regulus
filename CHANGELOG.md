@@ -1,3 +1,6 @@
+# 4.1.9 (2019/05/02)
+- [UPDATE] ruby version to 2.3.8
+
 # 4.1.8 (2019/04/21)
 - [UPDATE] gems
 
