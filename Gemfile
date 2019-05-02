@@ -35,5 +35,7 @@ group :development, :test do
   gem 'fuubar'
   gem 'pry'
   gem 'byebug'
+  gem 'simplecov'
+  gem 'simplecov-rcov'
   gem 'spring'
 end
