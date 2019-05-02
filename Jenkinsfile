@@ -44,17 +44,6 @@ pipeline {
 
       steps {
         sh "rvm ${RUBY_VERSION} do env COVERAGE=on bundle exec rake spec:models"
-        publishHTML(
-          target:[
-            allowMissing: false,
-            alwaysLinkToLastBuild: false,
-            keepAll: false,
-            reportDir: 'coverage',
-            reportFiles: 'index.html',
-            reportName: 'RCov Report',
-            reportTitles: ''
-          ]
-        )
       }
     }
 
@@ -66,8 +55,20 @@ pipeline {
       steps {
         sh "rvm ${RUBY_VERSION} do env COVERAGE=on bundle exec rake spec:controllers"
         sh "rvm ${RUBY_VERSION} do env COVERAGE=on bundle exec rake spec:views"
+      }
+    }
+
+    stage('Coverage') {
+      when {
+        expression {
+          return env.ENVIRONMENT == 'development' &&
+            (params.ModuleTest || params.FunctionalTest)
+        }
+      }
+
+      steps {
         publishHTML(
-          target:[
+          target: [
             allowMissing: false,
             alwaysLinkToLastBuild: false,
             keepAll: false,
