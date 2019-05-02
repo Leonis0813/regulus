@@ -21,13 +21,17 @@ pipeline {
   }
 
   stages {
-    stage('Install Gems') {
+    stage('Test Setting') {
       when {
-        expression { return env.ENVIRONMENT == 'development' }
+        expression {
+          return env.ENVIRONMENT == 'development' &&
+            (params.ModuleTest || params.FunctionalTest || params.SystemTest)
+        }
       }
 
       steps {
         script {
+          sh 'sudo rm -rf coverage'
           sh "rvm ${RUBY_VERSION} do bundle install --path=vendor/bundle"
         }
       }
@@ -39,7 +43,7 @@ pipeline {
       }
 
       steps {
-        sh "rvm ${RUBY_VERSION} do bundle exec rake spec:models"
+        sh "rvm ${RUBY_VERSION} do env COVERAGE=on bundle exec rake spec:models"
       }
     }
 
@@ -49,8 +53,8 @@ pipeline {
       }
 
       steps {
-        sh "rvm ${RUBY_VERSION} do bundle exec rake spec:controllers"
-        sh "rvm ${RUBY_VERSION} do bundle exec rake spec:views"
+        sh "rvm ${RUBY_VERSION} do env COVERAGE=on bundle exec rake spec:controllers"
+        sh "rvm ${RUBY_VERSION} do env COVERAGE=on bundle exec rake spec:views"
       }
     }
 
