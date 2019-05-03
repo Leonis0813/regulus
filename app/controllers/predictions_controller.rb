@@ -7,7 +7,10 @@ class PredictionsController < ApplicationController
   def execute
     attributes = params.permit(*prediction_params)
     absent_keys = prediction_params - attributes.symbolize_keys.keys
-    raise BadRequest, absent_keys.map {|key| "absent_param_#{key}" } unless absent_keys.empty?
+    unless absent_keys.empty?
+      error_codes = absent_keys.map {|key| "absent_param_#{key}" }
+      raise BadRequest, error_codes
+    end
 
     model = attributes[:model]
     raise BadRequest, ['invalid_param_model'] unless model.respond_to?(:original_filename)
@@ -15,7 +18,10 @@ class PredictionsController < ApplicationController
     attributes[:model] = model.original_filename
 
     prediction = Prediction.new(attributes.merge(state: 'processing'))
-    raise BadRequest, prediction.errors.messages.keys.map {|key| "invalid_param_#{key}" } unless prediction.save
+    unless prediction.save
+      error_codes = prediction.errors.messages.keys.map {|key| "invalid_param_#{key}" }
+      raise BadRequest, error_codes
+    end
 
     output_dir = File.join(Rails.root, "tmp/models/#{prediction.id}")
     FileUtils.mkdir_p(output_dir)

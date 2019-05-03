@@ -31,6 +31,8 @@ describe AnalysesController, type: :controller do
     test_cases.each do |error_keys|
       context "#{error_keys.join(',')}がない場合" do
         selected_keys = default_params.keys - error_keys
+        error_codes = error_keys.map {|key| "absent_param_#{key}" }
+
         before(:all) do
           RSpec::Mocks.with_temporary_scope do
             allow(AnalysisJob).to receive(:perform_later).and_return(true)
@@ -40,10 +42,12 @@ describe AnalysesController, type: :controller do
         end
 
         it_behaves_like 'ステータスコードが正しいこと', '400'
-        it_behaves_like 'エラーコードが正しいこと', error_keys.map {|key| "absent_param_#{key}" }
+        it_behaves_like 'エラーコードが正しいこと', error_codes
       end
 
       context "#{error_keys.join(',')}が不正な場合" do
+        error_codes = error_keys.map {|key| "invalid_param_#{key}" }
+
         before(:all) do
           RSpec::Mocks.with_temporary_scope do
             allow(AnalysisJob).to receive(:perform_later).and_return(true)
@@ -55,7 +59,7 @@ describe AnalysesController, type: :controller do
         end
 
         it_behaves_like 'ステータスコードが正しいこと', '400'
-        it_behaves_like 'エラーコードが正しいこと', error_keys.map {|key| "invalid_param_#{key}" }
+        it_behaves_like 'エラーコードが正しいこと', error_codes
       end
     end
   end
