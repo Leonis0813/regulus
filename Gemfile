@@ -22,6 +22,8 @@ gem 'kaminari'
 gem 'rubyzip'
 
 group :development do
+  gem 'rubocop'
+  gem 'rubocop-performance'
   gem 'web-console', '~> 2.0'
 end
 
