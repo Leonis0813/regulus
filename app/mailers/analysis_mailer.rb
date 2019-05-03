@@ -1,4 +1,5 @@
 # coding: utf-8
+
 class AnalysisMailer < ApplicationMailer
   default from: 'Leonis.0813@gmail.com'
 

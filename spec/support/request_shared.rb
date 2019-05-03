@@ -1,4 +1,5 @@
 # coding: utf-8
+
 shared_context 'WebDriverを起動してCookieをセットする' do
   user_id = 'test_user_id'
   password = 'test_user_pass'
