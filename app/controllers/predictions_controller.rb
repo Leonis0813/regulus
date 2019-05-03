@@ -13,7 +13,7 @@ class PredictionsController < ApplicationController
     end
 
     model = attributes[:model]
-    raise BadRequest, ['invalid_param_model'] unless model.respond_to?(:original_filename)
+    raise BadRequest, 'invalid_param_model' unless model.respond_to?(:original_filename)
 
     attributes[:model] = model.original_filename
 

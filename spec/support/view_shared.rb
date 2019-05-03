@@ -1,7 +1,8 @@
 # coding: utf-8
 
 shared_examples 'ヘッダーが表示されていること' do
-  base_xpath = '//div[@class="navbar navbar-default navbar-static-top"]/div[@class="container"]'
+  base_xpath =
+    '//div[@class="navbar navbar-default navbar-static-top"]/div[@class="container"]'
 
   it do
     title_xpath = [base_xpath, 'span[@class="navbar-brand"]'].join('/')

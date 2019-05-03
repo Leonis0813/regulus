@@ -8,7 +8,10 @@ describe 'predictions/manage', type: :view do
   shared_context '予測ジョブを登録する' do |num|
     before(:all) do
       num.times do
-        prediction = Prediction.new(model: 'analysis.zip', state: %w[processing completed].sample)
+        prediction = Prediction.new(
+          model: 'analysis.zip',
+          state: %w[processing completed].sample,
+        )
         prediction.result = %w[up down range].sample if prediction.state == 'completed'
         prediction.save!
       end
@@ -42,27 +45,31 @@ describe 'predictions/manage', type: :view do
     end
   end
 
-  shared_examples 'ジョブ実行履歴が表示されていること' do |expected_size: per_page, total: 0, from: 1, to: 1|
-    base_xpath = '/html/body/div[@id="main-content"]/div[@class="row center-block"]/div[@class="col-lg-8"]'
+  shared_examples 'ジョブ実行履歴が表示されていること' do |expected: {}|
+    base_xpath = '/html/body/div[@id="main-content"]/div[@class="row center-block"]' \
+                 '/div[@class="col-lg-8"]'
 
     it 'タイトルが表示されていること' do
       expect(@html).to have_selector("#{base_xpath}/h4", text: 'ジョブ実行履歴')
     end
 
     it '件数情報が表示されていること' do
-      expect(@html).to have_selector("#{base_xpath}/h4", text: "#{total}件中#{from}〜#{to}件を表示")
+      text = "#{expected[:total]}件中#{expected[:from]}〜#{expected[:to]}件を表示"
+      expect(@html).to have_selector("#{base_xpath}/h4", text: text)
     end
 
     paging_xpath = "#{base_xpath}/nav/ul[@class='pagination']"
 
     it '先頭のページへのボタンが表示されていないこと' do
       xpath = "#{paging_xpath}/li[@class='pagination']/span[@class='first']/a"
-      expect(@html).not_to have_selector(xpath, text: I18n.t('views.list.pagination.first'))
+      text = I18n.t('views.list.pagination.first')
+      expect(@html).not_to have_selector(xpath, text: text)
     end
 
     it '前のページへのボタンが表示されていないこと' do
       xpath = "#{paging_xpath}/li[@class='pagination']/span[@class='prev']/a"
-      expect(@html).not_to have_selector(xpath, text: I18n.t('views.list.pagination.previous'))
+      text = I18n.t('views.list.pagination.previous')
+      expect(@html).not_to have_selector(xpath, text: text)
     end
 
     it '1ページ目が表示されていること' do
@@ -76,7 +83,8 @@ describe 'predictions/manage', type: :view do
     end
 
     it '次のページへのボタンが表示されていること' do
-      xpath = "#{paging_xpath}/li[@class='page-item']/span[@class='next']/a[href='/predictions?page=2']"
+      xpath = "#{paging_xpath}/li[@class='page-item']/span[@class='next']" \
+              '/a[href="/predictions?page=2"]'
       expect(@html).to have_selector(xpath, text: I18n.t('views.pagination.next'))
     end
 
@@ -94,14 +102,15 @@ describe 'predictions/manage', type: :view do
 
     it 'データの数が正しいこと' do
       xpath = "#{base_xpath}/table[@class='table table-hover']/tbody/tr"
-      expect(@html).to have_xpath(xpath, count: expected_size)
+      expect(@html).to have_xpath(xpath, count: expected[:size])
     end
 
-    it '背景色と結果が正しいこと', if: expected_size > 0 do
+    it '背景色と結果が正しいこと', if: expected[:size] > 0 do
       row = @html.gsub("\n", '').scan(/<tr.*?tr>/).first
 
       is_asserted_by do
-        row.match(/warning.*question-sign/) or row.match(/success.*arrow-(up|down|right)/)
+        row.match(/warning.*question-sign/) or
+          row.match(/success.*arrow-(up|down|right)/)
       end
     end
   end
@@ -121,9 +130,6 @@ describe 'predictions/manage', type: :view do
     it_behaves_like 'ヘッダーが表示されていること'
     it_behaves_like '入力フォームが表示されていること'
     it_behaves_like 'ジョブ実行履歴が表示されていること',
-                    expected_size: 1,
-                    total: 10,
-                    from: 1,
-                    to: 1
+                    size: 1, total: 10, from: 1, to: 1
   end
 end

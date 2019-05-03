@@ -3,7 +3,11 @@
 require 'rails_helper'
 
 describe AnalysesController, type: :controller do
-  default_params = {from: 2.months.ago.strftime('%F'), to: 1.month.ago.strftime('%F'), batch_size: 100}
+  default_params = {
+    from: 2.months.ago.strftime('%F'),
+    to: 1.month.ago.strftime('%F'),
+    batch_size: 100,
+  }
 
   after(:all) { Analysis.destroy_all }
 
@@ -25,7 +29,9 @@ describe AnalysesController, type: :controller do
 
   describe '異常系' do
     test_cases = [].tap do |tests|
-      (default_params.keys.size - 1).times {|i| tests << default_params.keys.combination(i + 1).to_a }
+      (default_params.keys.size - 1).times do |i|
+        tests << default_params.keys.combination(i + 1).to_a
+      end
     end.flatten(1)
 
     test_cases.each do |error_keys|
