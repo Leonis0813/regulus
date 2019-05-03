@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe AnalysesController, type: :controller do
-  default_params = {from: 2.month.ago.strftime('%F'), to: 1.month.ago.strftime('%F'), batch_size: 100}
+  default_params = {from: 2.months.ago.strftime('%F'), to: 1.month.ago.strftime('%F'), batch_size: 100}
 
   after(:all) { Analysis.destroy_all }
 

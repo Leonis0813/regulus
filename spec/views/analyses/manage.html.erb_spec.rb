@@ -7,7 +7,7 @@ describe 'analyses/manage', type: :view do
 
   shared_context '分析ジョブを登録する' do |num|
     before(:all) do
-      param = {from: 2.month.ago, to: 1.month.ago, batch_size: 100}
+      param = {from: 2.months.ago, to: 1.month.ago, batch_size: 100}
       num.times { Analysis.create!(param.merge(state: %w[processing completed].sample)) }
       @analyses = Analysis.order(created_at: :desc).page(1)
     end
