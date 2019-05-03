@@ -100,10 +100,10 @@ describe 'analyses/manage', type: :view do
 
     it 'データの数が正しいこと' do
       xpath = "#{base_xpath}/table[@class='table table-hover']/tbody/tr"
-      expect(@html).to have_xpath(xpath, count: expected_size)
+      expect(@html).to have_xpath(xpath, count: expected[:size])
     end
 
-    it '背景色が正しいこと', if: expected_size > 0 do
+    it '背景色が正しいこと', if: expected[:size] > 0 do
       regexp =
         %r{<td\s*class='(?<color>(warning|success))'\s*>(?<state>(実行中|完了))</td>}
       matched_data = @html.gsub("\n", '').match(regexp)
@@ -127,6 +127,6 @@ describe 'analyses/manage', type: :view do
     it_behaves_like 'ヘッダーが表示されていること'
     it_behaves_like '入力フォームが表示されていること'
     it_behaves_like 'ジョブ実行履歴が表示されていること',
-                    size: 1, total: 10, from: 1, to: 1
+                    expected: {size: 1, total: 10, from: 1, to: 1}
   end
 end
