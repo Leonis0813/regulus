@@ -1,26 +1,30 @@
 class AnalysesController < ApplicationController
   def manage
     @analysis = Analysis.new
-    @analyses = Analysis.all.order(:created_at => :desc).page(params[:page])
+    @analyses = Analysis.all.order(created_at: :desc).page(params[:page])
   end
 
   def execute
     attributes = params.permit(*analysis_params)
     absent_keys = analysis_params - attributes.symbolize_keys.keys
-    raise BadRequest.new(absent_keys.map {|key| "absent_param_#{key}" }) unless absent_keys.empty?
-
-    analysis = Analysis.new(attributes.merge(:state => 'processing'))
-    if analysis.save
-      AnalysisJob.perform_later(analysis.id)
-      render :status => :ok, :json => {}
-    else
-      raise BadRequest.new(analysis.errors.messages.keys.map {|key| "invalid_param_#{key}" })
+    unless absent_keys.empty?
+      error_codes = absent_keys.map {|key| "absent_param_#{key}" }
+      raise BadRequest, error_codes
     end
+
+    analysis = Analysis.new(attributes.merge(state: 'processing'))
+    unless analysis.save
+      error_codes = analysis.errors.messages.keys.map {|key| "invalid_param_#{key}" }
+      raise BadRequest, error_codes
+    end
+
+    AnalysisJob.perform_later(analysis.id)
+    render status: :ok, json: {}
   end
 
   private
 
   def analysis_params
-    %i[ from to batch_size ]
+    %i[from to batch_size]
   end
 end

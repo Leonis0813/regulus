@@ -1,6 +1,15 @@
 class RemoveNumDataAndIntervalFromAnalyses < ActiveRecord::Migration
-  def change
-    remove_column :analyses, :num_data
-    remove_column :analyses, :interval
+  def up
+    change_table :analyses, bulk: true do |t|
+      t.remove :num_data
+      t.remove :interval
+    end
+  end
+
+  def down
+    change_table :analyses, bulk: true do |t|
+      t.integer :num_data
+      t.integer :interval
+    end
   end
 end

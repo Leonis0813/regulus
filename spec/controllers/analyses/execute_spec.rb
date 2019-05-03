@@ -1,8 +1,13 @@
 # coding: utf-8
+
 require 'rails_helper'
 
-describe AnalysesController, :type => :controller do
-  default_params = {:from => 2.month.ago.strftime('%F'), :to => 1.month.ago.strftime('%F'), :batch_size => 100}
+describe AnalysesController, type: :controller do
+  default_params = {
+    from: 2.months.ago.strftime('%F'),
+    to: 1.month.ago.strftime('%F'),
+    batch_size: 100,
+  }
 
   after(:all) { Analysis.destroy_all }
 
@@ -24,12 +29,16 @@ describe AnalysesController, :type => :controller do
 
   describe '異常系' do
     test_cases = [].tap do |tests|
-      (default_params.keys.size - 1).times {|i| tests << default_params.keys.combination(i + 1).to_a }
+      (default_params.keys.size - 1).times do |i|
+        tests << default_params.keys.combination(i + 1).to_a
+      end
     end.flatten(1)
 
     test_cases.each do |error_keys|
       context "#{error_keys.join(',')}がない場合" do
         selected_keys = default_params.keys - error_keys
+        error_codes = error_keys.map {|key| "absent_param_#{key}" }
+
         before(:all) do
           RSpec::Mocks.with_temporary_scope do
             allow(AnalysisJob).to receive(:perform_later).and_return(true)
@@ -39,10 +48,12 @@ describe AnalysesController, :type => :controller do
         end
 
         it_behaves_like 'ステータスコードが正しいこと', '400'
-        it_behaves_like 'エラーコードが正しいこと', error_keys.map {|key| "absent_param_#{key}" }
+        it_behaves_like 'エラーコードが正しいこと', error_codes
       end
 
       context "#{error_keys.join(',')}が不正な場合" do
+        error_codes = error_keys.map {|key| "invalid_param_#{key}" }
+
         before(:all) do
           RSpec::Mocks.with_temporary_scope do
             allow(AnalysisJob).to receive(:perform_later).and_return(true)
@@ -54,7 +65,7 @@ describe AnalysesController, :type => :controller do
         end
 
         it_behaves_like 'ステータスコードが正しいこと', '400'
-        it_behaves_like 'エラーコードが正しいこと', error_keys.map {|key| "invalid_param_#{key}" }
+        it_behaves_like 'エラーコードが正しいこと', error_codes
       end
     end
   end
