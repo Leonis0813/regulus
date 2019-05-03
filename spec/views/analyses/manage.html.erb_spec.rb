@@ -88,8 +88,8 @@ describe 'analyses/manage', type: :view do
     end
 
     it '再実行ボタンが配置されている列があること' do
-        xpath = "#{base_xpath}/table[@class='table table-hover']/thead/th[@class='rebuild']"
-        expect(@html).to have_selector(xpath, text: '')
+      xpath = "#{base_xpath}/table[@class='table table-hover']/thead/th[@class='rebuild']"
+      expect(@html).to have_selector(xpath, text: '')
     end
 
     it 'データの数が正しいこと' do
