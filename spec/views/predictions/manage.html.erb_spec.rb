@@ -7,8 +7,8 @@ describe 'predictions/manage', type: :view do
   shared_context '予測ジョブを登録する' do |num|
     before(:all) do
       num.times do
-        prediction = Prediction.new(model: 'analysis.zip', state: %w[ processing completed ].sample)
-        prediction.result = %w[ up down range ].sample if prediction.state == 'completed'
+        prediction = Prediction.new(model: 'analysis.zip', state: %w[processing completed].sample)
+        prediction.result = %w[up down range].sample if prediction.state == 'completed'
         prediction.save!
       end
       @predictions = Prediction.order(created_at: :desc).page(1)
@@ -22,7 +22,7 @@ describe 'predictions/manage', type: :view do
   shared_examples '入力フォームが表示されていること' do
     form_xpath = '//form[@id="new_prediction"]'
 
-    %w[ model ].each do |param|
+    %w[model].each do |param|
       input_xpath = "#{form_xpath}/div[@class='form-group']"
 
       it "prediction_#{param}を含む<label>タグがあること" do
@@ -34,7 +34,7 @@ describe 'predictions/manage', type: :view do
       end
     end
 
-    %w[ submit reset ].each do |type|
+    %w[submit reset].each do |type|
       it "typeが#{type}のボタンがあること" do
         expect(@html).to have_selector("#{form_xpath}/input[type='#{type}']")
       end
@@ -84,7 +84,7 @@ describe 'predictions/manage', type: :view do
       expect(@html).to have_selector(xpath, text: I18n.t('views.pagination.last'))
     end
 
-    %w[ 実行開始日時 モデル 期間 結果 ].each do |header|
+    %w[実行開始日時 モデル 期間 結果].each do |header|
       it "ヘッダー(#{header})があること" do
         xpath = "#{base_xpath}/table[@class='table table-hover']/thead/th"
         expect(@html).to have_selector(xpath, text: header)

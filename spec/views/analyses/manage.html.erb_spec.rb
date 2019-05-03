@@ -7,7 +7,7 @@ describe 'analyses/manage', type: :view do
   shared_context '分析ジョブを登録する' do |num|
     before(:all) do
       param = {from: 2.month.ago, to: 1.month.ago, batch_size: 100}
-      num.times { Analysis.create!(param.merge(state: %w[ processing completed ].sample)) }
+      num.times { Analysis.create!(param.merge(state: %w[processing completed].sample)) }
       @analyses = Analysis.order(created_at: :desc).page(1)
     end
 
@@ -17,7 +17,7 @@ describe 'analyses/manage', type: :view do
   shared_examples '入力フォームが表示されていること' do
     form_xpath = '//form[@id="new_analysis"]'
 
-    %w[ from to batch_size ].each do |param|
+    %w[from to batch_size].each do |param|
       input_xpath = "#{form_xpath}/div[@class='form-group']"
 
       it "analysis_#{param}を含む<label>タグがあること" do
@@ -29,7 +29,7 @@ describe 'analyses/manage', type: :view do
       end
     end
 
-    %w[ submit reset ].each do |type|
+    %w[submit reset].each do |type|
       it "typeが#{type}のボタンがあること" do
         expect(@html).to have_selector("#{form_xpath}/input[type='#{type}']")
       end
@@ -79,7 +79,7 @@ describe 'analyses/manage', type: :view do
       expect(@html).to have_selector(xpath, text: I18n.t('views.pagination.last'))
     end
 
-    %w[ 実行開始日時 期間 バッチサイズ 状態 ].each do |header|
+    %w[実行開始日時 期間 バッチサイズ 状態].each do |header|
       it "ヘッダー(#{header})があること" do
         xpath = "#{base_xpath}/table[@class='table table-hover']/thead/th"
         expect(@html).to have_selector(xpath, text: header)
