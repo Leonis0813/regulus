@@ -44,7 +44,7 @@ describe PredictionsController, type: :controller do
       before(:all) do
         RSpec::Mocks.with_temporary_scope do
           allow(PredictionJob).to receive(:perform_later).and_return(true)
-          @res = client.post('/predictions', {model: 'invalid.txt'})
+          @res = client.post('/predictions', model: 'invalid.txt')
           @pbody = JSON.parse(@res.body) rescue nil
         end
       end
