@@ -12,7 +12,7 @@ class AnalysisJob < ActiveJob::Base
     FileUtils.mkdir_p(File.join(script_dir, 'tmp'))
     ret = system "sudo docker exec regulus python /opt/scripts/learn.py #{args.join(' ')}"
     FileUtils.mv(File.join(script_dir, 'tmp'), File.join(Rails.root, "tmp/models/#{analysis_id}"))
-    analysis.update!(:state => 'completed')
+    analysis.update!(state: 'completed')
     AnalysisMailer.finished(analysis, ret).deliver_now
     FileUtils.rm_rf("#{Rails.root}/tmp/models/#{analysis_id}")
   end

@@ -1,9 +1,9 @@
 # coding: utf-8
 require 'rails_helper'
 
-describe PredictionsController, :type => :controller do
+describe PredictionsController, type: :controller do
   zip_file_path = File.join(Rails.root, '/spec/fixtures/analysis.zip')
-  default_params = {:model => Rack::Test::UploadedFile.new(File.open(zip_file_path))}
+  default_params = {model: Rack::Test::UploadedFile.new(File.open(zip_file_path))}
 
   after(:all) do
     Prediction.destroy_all
@@ -44,7 +44,7 @@ describe PredictionsController, :type => :controller do
       before(:all) do
         RSpec::Mocks.with_temporary_scope do
           allow(PredictionJob).to receive(:perform_later).and_return(true)
-          @res = client.post('/predictions', {:model => 'invalid.txt'})
+          @res = client.post('/predictions', {model: 'invalid.txt'})
           @pbody = JSON.parse(@res.body) rescue nil
         end
       end

@@ -1,7 +1,7 @@
 # coding: utf-8
 require 'rails_helper'
 
-describe Analysis, :type => :model do
+describe Analysis, type: :model do
   shared_context 'Analysisオブジェクトを検証する' do |params|
     before(:all) do
       @analysis = Analysis.new(params)
@@ -20,16 +20,16 @@ describe Analysis, :type => :model do
   describe '#validates' do
     describe '正常系' do
       valid_params = {
-        :from => [
+        from: [
           '1000-01-01', '1000/01/01', '01-01-1000', '01/01/1000', '10000101',
           '1000-01-01 00:00:00', '1000/01/01 00:00:00', '01-01-1000 00:00:00', '01/01/1000 00:00:00', '10000101 00:00:00',
         ],
-        :to => [
+        to: [
           '1001-01-01', '1001/01/01', '01-01-1001', '01/01/1001', '10010101',
           '1001-01-01 00:00:00', '1001/01/01 00:00:00', '01-01-1001 00:00:00', '01/01/1001 00:00:00', '10010101 00:00:00',
         ],
-        :batch_size => 100,
-        :state => %w[ processing completed ],
+        batch_size: 100,
+        state: %w[ processing completed ],
       }
 
       test_cases = CommonHelper.generate_test_case(valid_params).select do |test_case|
@@ -45,8 +45,8 @@ describe Analysis, :type => :model do
     end
 
     describe '異常系' do
-      valid_params = {:from => '1000-01-01', :to => '1001-01-01', :batch_size => 100, :state => 'processing'}
-      invalid_params = {:from => [nil], :to => [nil], :batch_size => [-1, 0], :state => [nil, 'invalid']}
+      valid_params = {from: '1000-01-01', to: '1001-01-01', batch_size: 100, state: 'processing'}
+      invalid_params = {from: [nil], to: [nil], batch_size: [-1, 0], state: [nil, 'invalid']}
 
       CommonHelper.generate_test_case(invalid_params).each do |params|
         context "フォームに#{params.keys.join(',')}を指定した場合" do
@@ -57,8 +57,8 @@ describe Analysis, :type => :model do
       end
 
       invalid_period = {
-        :from => %w[ 1000-01-02 1000/01/02 02-01-1000 02/01/1000 10000102 ],
-        :to => %w[ 1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101 ],
+        from: %w[ 1000-01-02 1000/01/02 02-01-1000 02/01/1000 10000102 ],
+        to: %w[ 1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101 ],
       }
 
       test_cases = CommonHelper.generate_test_case(invalid_params.merge(invalid_period)).select do |test_case|

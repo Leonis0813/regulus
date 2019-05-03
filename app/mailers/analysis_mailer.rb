@@ -1,6 +1,6 @@
 # coding: utf-8
 class AnalysisMailer < ApplicationMailer
-  default :from => 'Leonis.0813@gmail.com'
+  default from: 'Leonis.0813@gmail.com'
 
   def finished(analysis, is_success)
     @analysis = analysis
@@ -19,7 +19,7 @@ class AnalysisMailer < ApplicationMailer
       end
 
       attachments['analysis.zip'] = File.read(zip_file_name)
-      mail(:to => 'Leonis.0813@gmail.com', :subject => subject, :template_name => template_name)
+      mail(to: 'Leonis.0813@gmail.com', subject: subject, template_name: template_name)
     end
   end
 end

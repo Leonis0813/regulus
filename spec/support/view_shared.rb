@@ -4,7 +4,7 @@ shared_examples 'ヘッダーが表示されていること' do
 
   it do
     title_xpath = [base_xpath, 'span[@class="navbar-brand"]'].join('/')
-    expect(@html).to have_selector(title_xpath, :text => 'FX Rate Estimator')
+    expect(@html).to have_selector(title_xpath, text: 'FX Rate Estimator')
   end
 
   ul_xpath = [
@@ -18,7 +18,7 @@ shared_examples 'ヘッダーが表示されていること' do
     ['/predictions', '予測画面'],
   ].each do |href, text|
     it do
-      expect(@html).to have_selector("#{ul_xpath}/li/a[@href='#{href}']", :text => text)
+      expect(@html).to have_selector("#{ul_xpath}/li/a[@href='#{href}']", text: text)
     end
   end
 end
