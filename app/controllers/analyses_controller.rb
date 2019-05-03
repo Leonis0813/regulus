@@ -19,6 +19,6 @@ class AnalysesController < ApplicationController
   private
 
   def analysis_params
-    %i[ from to batch_size ]
+    %i[from to batch_size]
   end
 end

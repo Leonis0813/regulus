@@ -1,7 +1,7 @@
 class Analysis < ActiveRecord::Base
   validate :valid_period?
   validates :batch_size, numericality: {only_integer: true, greater_than: 0, message: 'invalid'}
-  validates :state, inclusion: {in: %w[ processing completed ], message: 'invalid'}
+  validates :state, inclusion: {in: %w[processing completed], message: 'invalid'}
 
   private
 

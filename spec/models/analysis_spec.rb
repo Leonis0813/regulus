@@ -45,7 +45,7 @@ describe Analysis, type: :model do
           '10010101 00:00:00',
         ],
         batch_size: 100,
-        state: %w[ processing completed ],
+        state: %w[processing completed],
       }
 
       test_cases = CommonHelper.generate_test_case(valid_params).select do |test_case|
@@ -73,8 +73,8 @@ describe Analysis, type: :model do
       end
 
       invalid_period = {
-        from: %w[ 1000-01-02 1000/01/02 02-01-1000 02/01/1000 10000102 ],
-        to: %w[ 1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101 ],
+        from: %w[1000-01-02 1000/01/02 02-01-1000 02/01/1000 10000102],
+        to: %w[1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101],
       }
 
       test_cases = CommonHelper.generate_test_case(invalid_params.merge(invalid_period)).select do |test_case|

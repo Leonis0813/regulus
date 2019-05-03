@@ -48,7 +48,7 @@ describe Prediction, type: :model do
           '10010101 00:00:00',
         ],
         result: [nil, 'up', 'down', 'range'],
-        state: %w[ processing completed ],
+        state: %w[processing completed],
       }
 
       test_cases = CommonHelper.generate_test_case(valid_params).select do |test_case|
@@ -65,7 +65,7 @@ describe Prediction, type: :model do
 
     describe '異常系' do
       valid_params = {model: 'analysis.zip', state: 'processing'}
-      invalid_params = {model: [nil], result: %w[ invalid ], state: [nil, 'invalid']}
+      invalid_params = {model: [nil], result: %w[invalid], state: [nil, 'invalid']}
 
       CommonHelper.generate_test_case(invalid_params).each do |params|
         context "フォームに#{params.keys.join(',')}を指定した場合" do
@@ -76,8 +76,8 @@ describe Prediction, type: :model do
       end
 
       invalid_period = {
-        from: %w[ 1000-01-02 1000/01/02 02-01-1000 02/01/1000 10000102 ],
-        to: %w[ 1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101 ],
+        from: %w[1000-01-02 1000/01/02 02-01-1000 02/01/1000 10000102],
+        to: %w[1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101],
       }
 
       test_cases = CommonHelper.generate_test_case(invalid_params.merge(invalid_period)).select do |test_case|

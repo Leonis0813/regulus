@@ -29,6 +29,6 @@ class PredictionsController < ApplicationController
   private
 
   def prediction_params
-    %i[ model ]
+    %i[model]
   end
 end
