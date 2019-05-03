@@ -8,10 +8,10 @@ class AnalysisJob < ActiveJob::Base
       "'#{analysis.to.strftime('%F %T')}'",
       analysis.batch_size,
     ]
-    script_dir = File.join(Rails.root, 'scripts')
+    script_dir = Rails.root.join('scripts')
     FileUtils.mkdir_p(File.join(script_dir, 'tmp'))
     ret = system "sudo docker exec regulus python /opt/scripts/learn.py #{args.join(' ')}"
-    FileUtils.mv(File.join(script_dir, 'tmp'), File.join(Rails.root, "tmp/models/#{analysis_id}"))
+    FileUtils.mv(File.join(script_dir, 'tmp'), Rails.root.join('tmp', 'models', analysis_id.to_s))
     analysis.update!(state: 'completed')
     AnalysisMailer.finished(analysis, ret).deliver_now
     FileUtils.rm_rf("#{Rails.root}/tmp/models/#{analysis_id}")

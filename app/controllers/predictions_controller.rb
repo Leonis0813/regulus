@@ -23,7 +23,7 @@ class PredictionsController < ApplicationController
       raise BadRequest, error_codes
     end
 
-    output_dir = File.join(Rails.root, "tmp/models/#{prediction.id}")
+    output_dir = Rails.root.join('tmp', 'models', prediction.id.to_s)
     FileUtils.mkdir_p(output_dir)
     File.open(File.join(output_dir, prediction.model), 'w+b') do |file|
       file.write(model.read)
