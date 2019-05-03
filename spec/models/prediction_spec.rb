@@ -56,7 +56,7 @@ describe Prediction, type: :model do
         test_case.keys == valid_params.keys
       end
 
-      test_cases.each do|params|
+      test_cases.each do |params|
         context "フォームに#{params.keys.join(',')}を指定した場合" do
           include_context 'Predictionオブジェクトを検証する', params
           it_behaves_like '検証結果が正しいこと', true
