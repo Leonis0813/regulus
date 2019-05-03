@@ -8,10 +8,9 @@ class Prediction < ActiveRecord::Base
 
   def valid_period?
     return unless from and to
+    return if from < to
 
-    unless from < to
-      errors.add(:from, 'invalid')
-      errors.add(:to, 'invalid')
-    end
+    errors.add(:from, 'invalid')
+    errors.add(:to, 'invalid')
   end
 end

@@ -10,10 +10,9 @@ class Analysis < ActiveRecord::Base
     errors.add(:to, 'invalid') unless to
 
     return if errors.messages.include?(:from) or errors.messages.include?(:to)
+    return if from < to
 
-    unless from < to
-      errors.add(:from, 'invalid')
-      errors.add(:to, 'invalid')
-    end
+    errors.add(:from, 'invalid')
+    errors.add(:to, 'invalid')
   end
 end
