@@ -4,7 +4,7 @@ class Prediction < ActiveRecord::Base
   validates :result,
             inclusion: {in: %w[up down range], message: 'invalid'},
             allow_nil: true
-  validates :state, inclusion: {in: %w[processing completed], message: 'invalid'}
+  validates :state, inclusion: {in: %w[processing completed error], message: 'invalid'}
 
   private
 
