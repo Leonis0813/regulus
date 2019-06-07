@@ -13,12 +13,16 @@ class AnalysisJob < ActiveJob::Base
     ]
     command = "sudo docker exec regulus python /opt/scripts/learn.py #{args.join(' ')}"
     ret = system(command)
+    raise StandardError unless ret
 
     from = File.join(script_dir, 'tmp')
     to = Rails.root.join('tmp', 'models', analysis_id.to_s)
     FileUtils.mv(from, to)
     analysis.update!(state: 'completed')
-    AnalysisMailer.finished(analysis, ret).deliver_now
+    AnalysisMailer.completed(analysis).deliver_now
     FileUtils.rm_rf("#{Rails.root}/tmp/models/#{analysis_id}")
+  rescue StandardError
+    analysis.update!(state: 'error')
+    AnalysisMailer.error(analysis).deliver_now
   end
 end
