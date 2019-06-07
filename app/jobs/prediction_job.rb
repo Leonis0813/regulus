@@ -16,11 +16,14 @@ class PredictionJob < ActiveJob::Base
       end
     end
 
-    system 'sudo docker exec regulus python /opt/scripts/predict.py'
+    ret = system 'sudo docker exec regulus python /opt/scripts/predict.py'
+    raise StandardError unless ret
 
     FileUtils.mv(File.join(tmp_dir, 'result.yml'), model_dir)
     result = YAML.load_file(File.join(model_dir, 'result.yml'))
-    prediction.update!(result.merge('state' => 'completed'))
+    prediction.update!(result.merge(state: 'completed'))
     FileUtils.rm_rf([tmp_dir, model_dir])
+  rescue StandardError
+    prediction.update!(state: 'error')
   end
 end
