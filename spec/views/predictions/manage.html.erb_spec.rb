@@ -126,6 +126,7 @@ describe 'predictions/manage', type: :view do
   end
 
   describe '<html><body>' do
+    include_context 'トランザクション作成'
     include_context '予測ジョブを登録する', 10
     it_behaves_like 'ヘッダーが表示されていること'
     it_behaves_like '入力フォームが表示されていること'

@@ -9,9 +9,8 @@ describe AnalysesController, type: :controller do
     batch_size: 100,
   }
 
-  after(:all) { Analysis.destroy_all }
-
   describe '正常系' do
+    include_context 'トランザクション作成'
     before(:all) do
       RSpec::Mocks.with_temporary_scope do
         allow(AnalysisJob).to receive(:perform_later).and_return(true)

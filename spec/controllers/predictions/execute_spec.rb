@@ -6,12 +6,10 @@ describe PredictionsController, type: :controller do
   zip_file_path = Rails.root.join('spec', 'fixtures', 'analysis.zip')
   default_params = {model: Rack::Test::UploadedFile.new(File.open(zip_file_path))}
 
-  after(:all) do
-    Prediction.destroy_all
-    FileUtils.rm_rf(Dir[Rails.root.join('tmp', 'models', '*')])
-  end
+  after(:all) { FileUtils.rm_rf(Dir[Rails.root.join('tmp', 'models', '*')]) }
 
   describe '正常系' do
+    include_context 'トランザクション作成'
     before(:all) do
       RSpec::Mocks.with_temporary_scope do
         allow(PredictionJob).to receive(:perform_later).and_return(true)

@@ -11,8 +11,6 @@ describe 'analyses/manage', type: :view do
       num.times { Analysis.create!(param.merge(state: %w[processing completed].sample)) }
       @analyses = Analysis.order(created_at: :desc).page(1)
     end
-
-    after(:all) { Analysis.destroy_all }
   end
 
   shared_examples '入力フォームが表示されていること' do
@@ -123,6 +121,7 @@ describe 'analyses/manage', type: :view do
   end
 
   describe '<html><body>' do
+    include_context 'トランザクション作成'
     include_context '分析ジョブを登録する', 10
     it_behaves_like 'ヘッダーが表示されていること'
     it_behaves_like '入力フォームが表示されていること'
