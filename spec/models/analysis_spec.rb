@@ -46,7 +46,7 @@ describe Analysis, type: :model do
           '10010101 00:00:00',
         ],
         batch_size: 100,
-        state: %w[processing completed],
+        state: %w[processing completed error],
       }
 
       test_cases = CommonHelper.generate_test_case(valid_params).select do |test_case|
