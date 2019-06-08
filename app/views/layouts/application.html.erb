@@ -7,13 +7,13 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-  <div class='navbar navbar-default navbar-static-top'>
+  <div class='navbar navbar-default navbar-static-top' style='background-color:#111111;font-weight:900'>
     <div class='container'>
       <span class='navbar-brand'>FX Rate Estimator</span>
       <div class='navbar-collapse collapse navbar-responsive-collapse'>
         <ul class='nav navbar-nav'>
-          <li><%= link_to '分析画面', analyses_path %></li>
-          <li><%= link_to '予測画面', predictions_path %></li>
+          <li><%= link_to '分析画面', analyses_path, {style: 'color:white'} %></li>
+          <li><%= link_to '予測画面', predictions_path, {style: 'color:white'} %></li>
         </ul>
       </div>
     </div>

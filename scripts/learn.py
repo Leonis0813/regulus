@@ -52,7 +52,7 @@ for pair in PAIRS:
 inputs = np.empty((0, 720), float)
 labels = np.empty((0, 1), int)
 
-for i in range(0, length - 30):
+for i in range(0, length - 54):
   input = np.empty(0)
   for pair in PAIRS:
     for period in PERIODS:

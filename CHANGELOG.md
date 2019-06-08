@@ -1,3 +1,6 @@
+# 4.2.0 (2019/06/08)
+- [UPDATE] views to notify error
+
 # 4.1.10 (2019/05/03)
 - [FIX] coding style
 - [UPDATE] gems
