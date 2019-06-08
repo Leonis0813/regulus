@@ -1,6 +1,6 @@
 <div class='row center-block'>
   <div class='col-lg-4'>
-    <div id='new-analysis' class='well tab-pane active'>
+    <div id='new-analysis' class='tab-pane well'>
       <h3>レートを分析</h3>
       <%= form_for @analysis, {:url => analyses_path, :remote => true} do |f| %>
         <%= label_tag '期間' %>
@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div class='col-lg-8'>
+  <div class='col-lg-8 well'>
     <h3 style='padding: 10px 0px'>ジョブ実行履歴</h3>
     <% from = @analyses.total_count == 0 ? 0 : @analyses.offset_value + 1 %>
     <% info = {:total_count => @analyses.total_count, :from => from, :to => @analyses.offset_value + @analyses.size} %>
