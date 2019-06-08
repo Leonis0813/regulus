@@ -6,14 +6,7 @@ module PredictionHelper
     when 'error'
       'glyphicon-remove'
     when 'completed'
-      case prediction.result
-      when 'up'
-        'glyphicon-circle-arrow-up'
-      when 'down'
-        'glyphicon-circle-arrow-down'
-      when 'range'
-        'glyphicon-circle-arrow-right'
-      end
+      icon_class_by_result(prediction.result)
     end
   end
 
@@ -24,14 +17,31 @@ module PredictionHelper
     when 'error'
       'red'
     when 'completed'
-      case prediction.result
-      when 'up'
-        'blue'
-      when 'down'
-        'red'
-      when 'range'
-        'orange'
-      end
+      icon_color_by_result(prediction.result)
+    end
+  end
+
+  private
+
+  def icon_class_by_result(result)
+    case result
+    when 'up'
+      'glyphicon-circle-arrow-up'
+    when 'down'
+      'glyphicon-circle-arrow-down'
+    when 'range'
+      'glyphicon-circle-arrow-right'
+    end
+  end
+
+  def icon_color_by_result(result)
+    case result
+    when 'up'
+      'blue'
+    when 'down'
+      'red'
+    when 'range'
+      'orange'
     end
   end
 end
