@@ -1,4 +1,5 @@
 class Analysis < ActiveRecord::Base
+  DEFAULT_PAIR = 'USDJPY'.freeze
   PAIRS = %w[AUDJPY CADJPY CHFJPY EURJPY EURUSD GBPJPY NZDJPY USDJPY].freeze
   STATES = %w[processing completed error].freeze
 

@@ -6,9 +6,11 @@ class Prediction < ActiveRecord::Base
             presence: {message: 'absent'},
             format: {with: /\.zip\z/, message: 'invalid'}
   validates :pair,
-            inclusion: {in: Analysis::PAIRS, message: 'invalid'}
+            inclusion: {in: Analysis::PAIRS, message: 'invalid'},
+            allow_nil: true
   validates :result,
-            inclusion: {in: RESULTS, message: 'invalid'}
+            inclusion: {in: RESULTS, message: 'invalid'},
+            allow_nil: true
   validates :state,
             inclusion: {in: Analysis::STATES, message: 'invalid'}
 
