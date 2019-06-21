@@ -1,5 +1,5 @@
 class Prediction < ActiveRecord::Base
-  RESULTS = %w[up down range]
+  RESULTS = %w[up down range].freeze
 
   validate :valid_period?
   validates :model,

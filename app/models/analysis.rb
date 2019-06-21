@@ -1,6 +1,6 @@
 class Analysis < ActiveRecord::Base
-  PAIRS = %w[AUDJPY CADJPY CHFJPY EURJPY EURUSD GBPJPY NZDJPY USDJPY]
-  STATES = %w[processing completed error]
+  PAIRS = %w[AUDJPY CADJPY CHFJPY EURJPY EURUSD GBPJPY NZDJPY USDJPY].freeze
+  STATES = %w[processing completed error].freeze
 
   validate :valid_period?
   validates :batch_size, :pair, :state,

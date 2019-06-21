@@ -14,13 +14,13 @@
 ActiveRecord::Schema.define(version: 20190621152655) do
 
   create_table "analyses", force: :cascade do |t|
-    t.datetime "from",                   null: false
-    t.datetime "to",                     null: false
-    t.string   "pair",       limit: 255, null: false
-    t.integer  "batch_size", limit: 4,   null: false
-    t.string   "state",      limit: 255, null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "from",                                      null: false
+    t.datetime "to",                                        null: false
+    t.string   "pair",       limit: 255, default: "USDJPY", null: false
+    t.integer  "batch_size", limit: 4,                      null: false
+    t.string   "state",      limit: 255,                    null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
   end
 
   create_table "predictions", force: :cascade do |t|
