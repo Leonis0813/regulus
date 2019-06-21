@@ -9,6 +9,7 @@ class AnalysisJob < ActiveJob::Base
     args = [
       "'#{analysis.from.strftime('%F %T')}'",
       "'#{analysis.to.strftime('%F %T')}'",
+      analysis.pair,
       analysis.batch_size,
     ]
     command = "sudo docker exec regulus python /opt/scripts/learn.py #{args.join(' ')}"
@@ -18,6 +19,9 @@ class AnalysisJob < ActiveJob::Base
     from = File.join(script_dir, 'tmp')
     to = Rails.root.join('tmp', 'models', analysis_id.to_s)
     FileUtils.mv(from, to)
+    File.open(File.join(to, 'metadata.yml'), 'w') do |file|
+      YAML.dump({pair: analysis.pair}, file)
+    end
     analysis.update!(state: 'completed')
     AnalysisMailer.completed(analysis).deliver_now
     FileUtils.rm_rf("#{Rails.root}/tmp/models/#{analysis_id}")
