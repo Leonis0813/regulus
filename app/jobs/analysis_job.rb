@@ -20,7 +20,7 @@ class AnalysisJob < ActiveJob::Base
     to = Rails.root.join('tmp', 'models', analysis_id.to_s)
     FileUtils.mv(from, to)
     File.open(File.join(to, 'metadata.yml'), 'w') do |file|
-      YAML.dump({pair: analysis.pair}, file)
+      YAML.dump({'pair' => analysis.pair}, file)
     end
     analysis.update!(state: 'completed')
     AnalysisMailer.completed(analysis).deliver_now

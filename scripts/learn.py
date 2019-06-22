@@ -8,7 +8,8 @@ import yaml
 args = sys.argv
 FROM = args[1]
 TO = args[2]
-BATCH_SIZE = args[3]
+TARGET_PAIR = args[3]
+BATCH_SIZE = args[4]
 PERIODS = ['25', '75', '200']
 PAIRS = ['USDJPY', 'EURJPY', 'EURUSD', 'AUDJPY', 'GBPJPY', 'CADJPY', 'CHFJPY', 'NZDJPY']
 Settings = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
@@ -60,8 +61,8 @@ for i in range(0, length - 54):
 
   inputs = np.append(inputs, np.array([input]), axis=0)
 
-  usdjpy_25 = moving_average['USDJPY']['25']
-  if (usdjpy_25[i + 30] + 0.01 < usdjpy_25[i + 54]):
+  target_moving_average = moving_average[TARGET_PAIR]['25']
+  if (target_moving_average[i + 30] + 0.01 < target_moving_average[i + 54]):
     labels = np.append(labels, np.array([[1]]), axis=0)
   else:
     labels = np.append(labels, np.array([[0]]), axis=0)
