@@ -13,7 +13,7 @@
         <div class='form-group'>
           <%= f.label :pair, 'ペア' %>
           <% options = Analysis::PAIRS.map {|pair| [pair, pair] }.to_h %>
-          <%= select_tag :pair, options_for_select(options, Analysis::DEFAULT_PAIR), :class => 'form-control', :id => 'pair' %>
+          <%= select_tag :pair, options_for_select(options, Analysis::DEFAULT_PAIR), :class => 'form-control', :id => 'analysis_pair' %>
         </div>
         <div class='form-group'>
           <%= f.label :batch_size, 'バッチサイズ' %>

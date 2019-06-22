@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :prediction do
     model { 'model.zip' }
     from {}
-    to  {}
+    to {}
     pair {}
     result {}
     state { 'processing' }
