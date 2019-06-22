@@ -3,27 +3,11 @@
 require 'rails_helper'
 
 describe Prediction, type: :model do
-  shared_context 'Predictionオブジェクトを検証する' do |params|
-    before(:all) do
-      @prediction = Prediction.new(params)
-      @prediction.validate
-    end
-  end
-
-  shared_examples '検証結果が正しいこと' do |result|
-    it_is_asserted_by { @prediction.errors.empty? == result }
-  end
-
-  shared_examples 'エラーメッセージが正しいこと' do |expected_messages|
-    it_is_asserted_by { @prediction.errors.messages == expected_messages }
-  end
-
   describe '#validates' do
     describe '正常系' do
-      valid_params = {
+      valid_attribute = {
         model: ['analysis.zip'],
         from: [
-          nil,
           '1000-01-01',
           '1000/01/01',
           '01-01-1000',
@@ -34,9 +18,9 @@ describe Prediction, type: :model do
           '01-01-1000 00:00:00',
           '01/01/1000 00:00:00',
           '10000101 00:00:00',
+          nil,
         ],
         to: [
-          nil,
           '1001-01-01',
           '1001/01/01',
           '01-01-1001',
@@ -47,53 +31,44 @@ describe Prediction, type: :model do
           '01-01-1001 00:00:00',
           '01/01/1001 00:00:00',
           '10010101 00:00:00',
+          nil,
         ],
-        result: [nil, 'up', 'down', 'range'],
+        pair: %w[AUDJPY CADJPY CHFJPY EURJPY EURUSD GBPJPY NZDJPY USDJPY] + [nil],
+        result: %w[up down range] + [nil],
         state: %w[processing completed error],
       }
 
-      test_cases = CommonHelper.generate_test_case(valid_params).select do |test_case|
-        test_case.keys == valid_params.keys
-      end
-
-      test_cases.each do |params|
-        context "フォームに#{params.keys.join(',')}を指定した場合" do
-          include_context 'Predictionオブジェクトを検証する', params
-          it_behaves_like '検証結果が正しいこと', true
-        end
-      end
+      it_behaves_like '正常な値を指定した場合のテスト', valid_attribute
     end
 
     describe '異常系' do
-      valid_params = {model: 'analysis.zip', state: 'processing'}
-      invalid_params = {model: [nil], result: %w[invalid], state: [nil, 'invalid']}
-
-      CommonHelper.generate_test_case(invalid_params).each do |params|
-        context "フォームに#{params.keys.join(',')}を指定した場合" do
-          error_messages = params.map {|key, _| [key, ['invalid']] }.to_h
-          include_context 'Predictionオブジェクトを検証する', valid_params.merge(params)
-          it_behaves_like '検証結果が正しいこと', false
-          it_behaves_like 'エラーメッセージが正しいこと', error_messages
-        end
-      end
-
+      invalid_attribute = {
+        model: ['invalid', 0, 0.0, nil],
+        pair: ['invalid', 0, 0.0],
+        result: %w[invalid],
+        state: ['invalid', nil],
+      }
       invalid_period = {
         from: %w[1000-01-02 1000/01/02 02-01-1000 02/01/1000 10000102],
         to: %w[1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101],
       }
+      absent_keys = invalid_attribute.keys - %i[pair result]
 
-      test_cases = CommonHelper.generate_test_case(invalid_params.merge(invalid_period))
-      test_cases.select! do |test_case|
-        test_case.include?(:from) and test_case.include?(:to)
-      end
+      it_behaves_like '必須パラメーターがない場合のテスト', absent_keys
+      it_behaves_like '不正な値を指定した場合のテスト', invalid_attribute
 
-      test_cases.each do |params|
+
+      CommonHelper.generate_test_case(invalid_period).each do |attribute|
         context '期間が不正な場合' do
-          error_messages = params.map {|key, _| [key, ['invalid']] }.to_h
-          include_context 'Predictionオブジェクトを検証する', valid_params.merge(params)
+          before (:all) do
+            @prediction = build(:prediction, attribute)
+            @prediction.validate
+          end
 
-          it_behaves_like '検証結果が正しいこと', false
-          it_behaves_like 'エラーメッセージが正しいこと', error_messages
+          it 'fromとtoが不正なこと' do
+            is_asserted_by { @prediction.errors.messages[:from].include?('invalid') }
+            is_asserted_by { @prediction.errors.messages[:to].include?('invalid') }
+          end
         end
       end
     end

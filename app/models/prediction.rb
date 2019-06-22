@@ -2,8 +2,9 @@ class Prediction < ActiveRecord::Base
   RESULTS = %w[up down range].freeze
 
   validate :valid_period?
+  validates :model, :state,
+            presence: {message: 'absent'}
   validates :model,
-            presence: {message: 'absent'},
             format: {with: /\.zip\z/, message: 'invalid'}
   validates :pair,
             inclusion: {in: Analysis::PAIRS, message: 'invalid'},
