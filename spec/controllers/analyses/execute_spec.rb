@@ -6,6 +6,7 @@ describe AnalysesController, type: :controller do
   default_params = {
     from: 2.months.ago.strftime('%F'),
     to: 1.month.ago.strftime('%F'),
+    pair: 'USDJPY',
     batch_size: 100,
   }
 
@@ -36,14 +37,14 @@ describe AnalysesController, type: :controller do
     test_cases.each do |error_keys|
       context "#{error_keys.join(',')}がない場合" do
         selected_keys = default_params.keys - error_keys
-        body = error_keys.map {|key| {'error_code' => "absent_param_#{key}"} }
+        body = error_keys.sort.map {|key| {'error_code' => "absent_param_#{key}"} }
         include_context 'リクエスト送信', body: default_params.slice(*selected_keys)
         it_behaves_like 'レスポンスが正常であること', status: 400, body: body
       end
 
       context "#{error_keys.join(',')}が不正な場合" do
         invalid_params = error_keys.map {|key| [key, 'invalid'] }.to_h
-        body = error_keys.map {|key| {'error_code' => "invalid_param_#{key}"} }
+        body = error_keys.sort.map {|key| {'error_code' => "invalid_param_#{key}"} }
         include_context 'リクエスト送信', body: default_params.merge(invalid_params)
         it_behaves_like 'レスポンスが正常であること', status: 400, body: body
       end
