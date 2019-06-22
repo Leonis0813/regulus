@@ -56,21 +56,7 @@ describe Prediction, type: :model do
 
       it_behaves_like '必須パラメーターがない場合のテスト', absent_keys
       it_behaves_like '不正な値を指定した場合のテスト', invalid_attribute
-
-
-      CommonHelper.generate_test_case(invalid_period).each do |attribute|
-        context '期間が不正な場合' do
-          before (:all) do
-            @prediction = build(:prediction, attribute)
-            @prediction.validate
-          end
-
-          it 'fromとtoが不正なこと' do
-            is_asserted_by { @prediction.errors.messages[:from].include?('invalid') }
-            is_asserted_by { @prediction.errors.messages[:to].include?('invalid') }
-          end
-        end
-      end
+      it_behaves_like '不正な期間を指定した場合のテスト', invalid_period
     end
   end
 end

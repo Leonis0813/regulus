@@ -36,3 +36,14 @@ shared_examples '不正な値を指定した場合のテスト' do |invalid_attr
     end
   end
 end
+
+shared_examples '不正な期間を指定した場合のテスト' do |invalid_period|
+  CommonHelper.generate_test_case(invalid_period).each do |attribute|
+    it "#{attribute}を指定した場合、エラーとなること" do
+      object = build(described_class.name.downcase.to_sym, attribute)
+      object.validate
+      is_asserted_by { object.errors.messages[:from].include?('invalid') }
+      is_asserted_by { object.errors.messages[:to].include?('invalid') }
+    end
+  end
+end
