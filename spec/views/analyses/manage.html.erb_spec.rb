@@ -37,33 +37,39 @@ describe 'analyses/manage', type: :view do
       input_xpath = "#{form_xpath}/div[@class='form-group']"
 
       it "analysis_#{param}を含む<label>タグがあること" do
-        expect(@html).to have_selector("#{input_xpath}/label[for='analysis_#{param}']")
+        label = @html.xpath("#{input_xpath}/label[@for='analysis_#{param}']")
+        is_asserted_by { label.present? }
       end
 
       it "analysis_#{param}を含む<input>タグがあること", unless: param == 'pair' do
-        expect(@html).to have_selector("#{input_xpath}/input[id='analysis_#{param}']")
+        input = @html.xpath("#{input_xpath}/input[@id='analysis_#{param}']")
+        is_asserted_by { input.present? }
       end
 
       it "analysis_#{param}を含む<select>タグがあること", if: param == 'pair' do
-        expect(@html).to have_selector("#{input_xpath}/select[id='analysis_#{param}']")
+        select = @html.xpath("#{input_xpath}/select[@id='analysis_#{param}']")
+        is_asserted_by { select.present? }
       end
 
       Analysis::PAIRS.each do |pair|
         it "#{pair}を選択できること", if: param == 'pair' do
-          select_xpath = "#{input_xpath}/select[id='analysis_#{param}']"
-          expect(@html).to have_selector("#{select_xpath}/option[@value='#{pair}']")
+          select_xpath = "#{input_xpath}/select[@id='analysis_#{param}']"
+          option = @html.xpath("#{select_xpath}/option[@value='#{pair}']")
+          is_asserted_by { option.present? }
         end
       end
 
       it 'デフォルトでUSDJPYが選択されていること', if: param == 'pair' do
-        select_xpath = "#{input_xpath}/select[id='analysis_#{param}']"
-        expect(@html).to have_selector("#{select_xpath}/option[@value='USDJPY'][@selected]")
+        select_xpath = "#{input_xpath}/select[@id='analysis_#{param}']"
+        default_option = @html.xpath("#{select_xpath}/option[@value='USDJPY']")
+        is_asserted_by { default_option.attribute('selected').value == 'selected' }
       end
     end
 
     %w[submit reset].each do |type|
       it "typeが#{type}のボタンがあること" do
-        expect(@html).to have_selector("#{form_xpath}/input[type='#{type}']")
+        button = @html.xpath("#{form_xpath}/input[@type='#{type}']")
+        is_asserted_by { button.present? }
       end
     end
   end

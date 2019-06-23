@@ -53,17 +53,20 @@ describe 'predictions/manage', type: :view do
       input_xpath = "#{form_xpath}/div[@class='form-group']"
 
       it "prediction_#{param}を含む<label>タグがあること" do
-        expect(@html).to have_selector("#{input_xpath}/label[for='prediction_#{param}']")
+        label = @html.xpath("#{input_xpath}/label[@for='prediction_#{param}']")
+        is_asserted_by { label.present? }
       end
 
       it "prediction_#{param}を含む<input>タグがあること" do
-        expect(@html).to have_selector("#{input_xpath}/input[id='prediction_#{param}']")
+        input = @html.xpath("#{input_xpath}/input[@id='prediction_#{param}']")
+        is_asserted_by { input.present? }
       end
     end
 
     %w[submit reset].each do |type|
       it "typeが#{type}のボタンがあること" do
-        expect(@html).to have_selector("#{form_xpath}/input[type='#{type}']")
+        button = @html.xpath("#{form_xpath}/input[@type='#{type}']")
+        is_asserted_by { button.present? }
       end
     end
   end
