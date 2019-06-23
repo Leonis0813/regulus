@@ -13,7 +13,7 @@ development:
 test:
   <<: *default
   username: test
-  database: regulus
+  database: regulus_test
 
 production:
   <<: *default

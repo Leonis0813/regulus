@@ -6,7 +6,7 @@ module ApplicationHelper
   end
 
   def period_to_string(from, to)
-    "#{time_to_string(from)} 〜 #{time_to_string(to)}"
+    "開始: #{time_to_string(from)}<br>終了: #{time_to_string(to)}"
   end
 
   def state_to_class(state)

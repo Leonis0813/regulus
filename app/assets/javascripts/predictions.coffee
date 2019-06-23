@@ -7,7 +7,7 @@ $ ->
       title: '予測を開始しました',
       message: '終了後、実行履歴に結果が表示されます',
       callback: ->
-        $('.btn-submit').prop('disabled', false)
+        location.reload()
         return
     })
     return

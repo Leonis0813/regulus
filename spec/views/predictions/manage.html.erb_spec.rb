@@ -4,7 +4,11 @@ require 'rails_helper'
 
 describe 'predictions/manage', type: :view do
   per_page = 1
-  default_attribute = {model: 'analysis.zip', state: 'processing'}
+  default_attribute = {
+    model: 'analysis.zip',
+    pair: Analysis::PAIRS.sample,
+    state: 'processing',
+  }
   icon_class = {
     'processing' => 'question-sign',
     'error' => 'remove',
@@ -49,17 +53,20 @@ describe 'predictions/manage', type: :view do
       input_xpath = "#{form_xpath}/div[@class='form-group']"
 
       it "prediction_#{param}を含む<label>タグがあること" do
-        expect(@html).to have_selector("#{input_xpath}/label[for='prediction_#{param}']")
+        label = @html.xpath("#{input_xpath}/label[@for='prediction_#{param}']")
+        is_asserted_by { label.present? }
       end
 
       it "prediction_#{param}を含む<input>タグがあること" do
-        expect(@html).to have_selector("#{input_xpath}/input[id='prediction_#{param}']")
+        input = @html.xpath("#{input_xpath}/input[@id='prediction_#{param}']")
+        is_asserted_by { input.present? }
       end
     end
 
     %w[submit reset].each do |type|
       it "typeが#{type}のボタンがあること" do
-        expect(@html).to have_selector("#{form_xpath}/input[type='#{type}']")
+        button = @html.xpath("#{form_xpath}/input[@type='#{type}']")
+        is_asserted_by { button.present? }
       end
     end
   end
@@ -69,11 +76,11 @@ describe 'predictions/manage', type: :view do
       @table = @html.xpath("#{table_panel_xpath}/table[@class='table table-hover']")
     end
 
-    it '4列のテーブルが表示されていること' do
-      is_asserted_by { @table.xpath('//thead/th').size == 4 }
+    it '5列のテーブルが表示されていること' do
+      is_asserted_by { @table.xpath('//thead/th').size == 5 }
     end
 
-    %w[実行開始日時 モデル 期間 結果].each_with_index do |text, i|
+    %w[実行開始日時 モデル 期間 ペア 結果].each_with_index do |text, i|
       it "#{i + 1}列目のヘッダーが#{text}であること" do
         is_asserted_by { @table.xpath('//thead/th')[i].text == text }
       end
@@ -85,26 +92,32 @@ describe 'predictions/manage', type: :view do
   end
 
   shared_examples 'ジョブの状態が正しいこと' do |state: nil, result: nil|
-    it 'アイコンが正しいこと' do
-      rows =
+    before(:each) do
+      @rows =
         @html.xpath("#{table_panel_xpath}/table[@class='table table-hover']/tbody/tr")
+    end
 
-      rows.each do |row|
+    it 'ペアが正しいこと' do
+      @rows.each_with_index do |row, i|
+        displayed_pair = row.children.search('td')[3].text.strip
+        is_asserted_by { displayed_pair == @predictions[i].pair }
+      end
+    end
+
+    it 'アイコンが正しいこと' do
+      @rows.each do |row|
         glyphicon_name = result ? icon_class[state][result] : icon_class[state]
         span_class = "glyphicon glyphicon-#{glyphicon_name}"
-        icon = row.children.search('td')[3].children
+        icon = row.children.search('td')[4].children
                   .search("span[@class='#{span_class}']")
         is_asserted_by { icon.present? }
       end
     end
 
     it 'アイコンの色が正しいこと' do
-      rows =
-        @html.xpath("#{table_panel_xpath}/table[@class='table table-hover']/tbody/tr")
-
-      rows.each do |row|
+      @rows.each do |row|
         glyphicon_color = result ? icon_color[state][result] : icon_color[state]
-        color = row.children.search('td')[3].children.search('span').attribute('style')
+        color = row.children.search('td')[4].children.search('span').attribute('style')
         is_asserted_by { color.value == "color: #{glyphicon_color}" }
       end
     end

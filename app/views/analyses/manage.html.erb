@@ -11,6 +11,11 @@
           <%= f.datetime_local_field :to, {:class => 'form-control period-form', :name => :to, :step => 1} %>
         </div>
         <div class='form-group'>
+          <%= f.label :pair, 'ペア' %>
+          <% options = Analysis::PAIRS.map {|pair| [pair, pair] }.to_h %>
+          <%= select_tag :pair, options_for_select(options, Analysis::DEFAULT_PAIR), :class => 'form-control', :id => 'analysis_pair' %>
+        </div>
+        <div class='form-group'>
           <%= f.label :batch_size, 'バッチサイズ' %>
           <%= f.text_field :batch_size, {:class => 'form-control', :name => 'batch_size', :required => true} %>
         </div>
@@ -28,8 +33,8 @@
     <%= paginate @analyses %>
     <table class='table table-hover'>
       <thead>
-        <% {'実行開始日時' => 25, '期間' => 45, 'バッチサイズ' => 15, '状態' => 15}.each do |header, width| %>
-          <th style='width:<%= width %>%'><%= header %></th>
+        <% %w[実行開始日時 期間 ペア バッチサイズ 状態].each do |header| %>
+          <th><%= header %></th>
         <% end %>
         <th class='rebuild'></th>
       </thead>

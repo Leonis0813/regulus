@@ -33,9 +33,10 @@ $ ->
   $('button.rebuild').on 'click', ->
     period = $(@).parent().siblings()[1].innerText
     data = {
-      from: period.split(' 〜 ')[0],
-      to: period.split(' 〜 ')[1],
-      batch_size: parseInt($(@).parent().siblings()[2].innerText),
+      from: period.split("\n")[0].replace('開始: ', ''),
+      to: period.split("\n")[1].replace('終了: ', ''),
+      pair: $(@).parent().siblings()[2].innerText,
+      batch_size: parseInt($(@).parent().siblings()[3].innerText),
     }
     $.ajax({
       type: 'POST',

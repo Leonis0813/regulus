@@ -2,4 +2,5 @@
 分析終了日時: <%= @analysis.updated_at %>
 パラメータ:
   分析対象期間: <%= @analysis.from.strftime('%Y/%m/%d %T') %> 〜 <%= @analysis.to.strftime('%Y/%m/%d %T') %>
+  ペア: <%= @analysis.pair %>
   バッチサイズ: <%= @analysis.batch_size %>

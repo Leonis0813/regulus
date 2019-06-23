@@ -1,3 +1,6 @@
+# 4.3.0 (2019/06/23)
+- [UPDATE] analysis and prediction to specify pair
+
 # 4.2.0 (2019/06/08)
 - [UPDATE] views to notify error
 - [UPDATE] gems

@@ -6,11 +6,13 @@
     <%= prediction.model %>
   </td>
   <td>
-    <%=
-      if prediction.from and prediction.to
-        period_to_string(prediction.from, prediction.to)
-      end
-    %>
+    <% if prediction.from and prediction.to %>
+    開始: <%= time_to_string(prediction.from) %><br>
+    終了: <%= time_to_string(prediction.to) %>
+    <% end %>
+  </td>
+  <td>
+    <%= prediction.pair %>
   </td>
   <td>
     <span class='glyphicon <%= icon_class(prediction) %>' style='color: <%= icon_color(prediction) %>'/>

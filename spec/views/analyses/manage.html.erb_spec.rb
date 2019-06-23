@@ -7,6 +7,7 @@ describe 'analyses/manage', type: :view do
   default_attribute = {
     from: 2.months.ago,
     to: 1.month.ago,
+    pair: Analysis::PAIRS.sample,
     batch_size: 100,
     state: 'processing',
   }
@@ -32,21 +33,43 @@ describe 'analyses/manage', type: :view do
   shared_examples '入力フォームが表示されていること' do
     form_xpath = '//form[@id="new_analysis"]'
 
-    %w[from to batch_size].each do |param|
+    %w[from to pair batch_size].each do |param|
       input_xpath = "#{form_xpath}/div[@class='form-group']"
 
       it "analysis_#{param}を含む<label>タグがあること" do
-        expect(@html).to have_selector("#{input_xpath}/label[for='analysis_#{param}']")
+        label = @html.xpath("#{input_xpath}/label[@for='analysis_#{param}']")
+        is_asserted_by { label.present? }
       end
 
-      it "analysis_#{param}を含む<input>タグがあること" do
-        expect(@html).to have_selector("#{input_xpath}/input[id='analysis_#{param}']")
+      it "analysis_#{param}を含む<input>タグがあること", unless: param == 'pair' do
+        input = @html.xpath("#{input_xpath}/input[@id='analysis_#{param}']")
+        is_asserted_by { input.present? }
+      end
+
+      it "analysis_#{param}を含む<select>タグがあること", if: param == 'pair' do
+        select = @html.xpath("#{input_xpath}/select[@id='analysis_#{param}']")
+        is_asserted_by { select.present? }
+      end
+
+      Analysis::PAIRS.each do |pair|
+        it "#{pair}を選択できること", if: param == 'pair' do
+          select_xpath = "#{input_xpath}/select[@id='analysis_#{param}']"
+          option = @html.xpath("#{select_xpath}/option[@value='#{pair}']")
+          is_asserted_by { option.present? }
+        end
+      end
+
+      it 'デフォルトでUSDJPYが選択されていること', if: param == 'pair' do
+        select_xpath = "#{input_xpath}/select[@id='analysis_#{param}']"
+        default_option = @html.xpath("#{select_xpath}/option[@value='USDJPY']")
+        is_asserted_by { default_option.attribute('selected').value == 'selected' }
       end
     end
 
     %w[submit reset].each do |type|
       it "typeが#{type}のボタンがあること" do
-        expect(@html).to have_selector("#{form_xpath}/input[type='#{type}']")
+        button = @html.xpath("#{form_xpath}/input[@type='#{type}']")
+        is_asserted_by { button.present? }
       end
     end
   end
@@ -56,11 +79,11 @@ describe 'analyses/manage', type: :view do
       @table = @html.xpath("#{table_panel_xpath}/table[@class='table table-hover']")
     end
 
-    it '5列のテーブルが表示されていること' do
-      is_asserted_by { @table.xpath('//thead/th').size == 5 }
+    it '6列のテーブルが表示されていること' do
+      is_asserted_by { @table.xpath('//thead/th').size == 6 }
     end
 
-    %w[実行開始日時 期間 バッチサイズ 状態].each_with_index do |text, i|
+    %w[実行開始日時 期間 ペア バッチサイズ 状態].each_with_index do |text, i|
       it "#{i + 1}列目のヘッダーが#{text}であること" do
         is_asserted_by { @table.xpath('//thead/th')[i].text == text }
       end
@@ -83,12 +106,21 @@ describe 'analyses/manage', type: :view do
   end
 
   shared_examples 'ジョブの状態が正しいこと' do |state|
-    it do
-      rows =
+    before(:each) do
+      @rows =
         @html.xpath("#{table_panel_xpath}/table[@class='table table-hover']/tbody/tr")
+    end
 
-      rows.each do |row|
-        is_asserted_by { row.xpath('//td')[3].text.strip == state }
+    it 'ペアが正しいこと' do
+      @rows.each_with_index do |row, i|
+        displayed_pair = row.children.search('td')[2].text.strip
+        is_asserted_by { displayed_pair == @analyses[i].pair }
+      end
+    end
+
+    it '状態が正しいこと' do
+      @rows.each do |row|
+        is_asserted_by { row.xpath('//td')[4].text.strip == state }
       end
     end
   end

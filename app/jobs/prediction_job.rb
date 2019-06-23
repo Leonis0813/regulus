@@ -16,6 +16,7 @@ class PredictionJob < ActiveJob::Base
       end
     end
 
+    prediction.update!(pair: YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair'])
     ret = system 'sudo docker exec regulus python /opt/scripts/predict.py'
     raise StandardError unless ret
 

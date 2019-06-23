@@ -1,10 +1,19 @@
 class Prediction < ActiveRecord::Base
+  RESULTS = %w[up down range].freeze
+
   validate :valid_period?
-  validates :model, format: {with: /\.zip\z/, message: 'invalid'}
-  validates :result,
-            inclusion: {in: %w[up down range], message: 'invalid'},
+  validates :model, :state,
+            presence: {message: 'absent'}
+  validates :model,
+            format: {with: /\.zip\z/, message: 'invalid'}
+  validates :pair,
+            inclusion: {in: Analysis::PAIRS, message: 'invalid'},
             allow_nil: true
-  validates :state, inclusion: {in: %w[processing completed error], message: 'invalid'}
+  validates :result,
+            inclusion: {in: RESULTS, message: 'invalid'},
+            allow_nil: true
+  validates :state,
+            inclusion: {in: Analysis::STATES, message: 'invalid'}
 
   private
 
