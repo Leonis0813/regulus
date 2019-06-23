@@ -17,6 +17,8 @@ describe 'ブラウザで分析する', type: :request do
     before(:all) do
       @driver.find_element(:id, 'analysis_from').send_keys('invalid')
       @driver.find_element(:id, 'analysis_to').send_keys('invalid')
+      pair = @driver.find_element(:id => 'analysis_pair')
+      Selenium::WebDriver::Support::Select.new(pair).select_by(:value, 'EURJPY')
       @driver.find_element(:id, 'analysis_batch_size').send_keys(1)
       @driver.find_element(:xpath, '//form/input[@value="実行"]').click
       @wait.until { @driver.find_element(:class, 'modal-body').displayed? }
