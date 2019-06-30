@@ -1,60 +1,52 @@
 # coding: utf-8
+
 require 'rails_helper'
 
-describe AnalysesController, :type => :controller do
-  default_params = {:from => 2.month.ago.strftime('%F'), :to => 1.month.ago.strftime('%F'), :batch_size => 100}
+describe AnalysesController, type: :controller do
+  default_params = {
+    from: 2.months.ago.strftime('%F'),
+    to: 1.month.ago.strftime('%F'),
+    pair: 'USDJPY',
+    batch_size: 100,
+  }
 
-  after(:all) { Analysis.destroy_all }
-
-  describe '正常系' do
+  shared_context 'リクエスト送信' do |body: default_params|
     before(:all) do
       RSpec::Mocks.with_temporary_scope do
         allow(AnalysisJob).to receive(:perform_later).and_return(true)
-        @res = client.post('/analyses', default_params)
-        @pbody = JSON.parse(@res.body) rescue nil
+        response = client.post('/analyses', body)
+        @response_status = response.status
+        @response_body = JSON.parse(response.body) rescue nil
       end
     end
+  end
 
-    it_behaves_like 'ステータスコードが正しいこと', '200'
-
-    it 'レスポンスが空であること' do
-      is_asserted_by { @pbody == {} }
-    end
+  describe '正常系' do
+    include_context 'トランザクション作成'
+    include_context 'リクエスト送信'
+    it_behaves_like 'レスポンスが正常であること', status: 200, body: {}
   end
 
   describe '異常系' do
     test_cases = [].tap do |tests|
-      (default_params.keys.size - 1).times {|i| tests << default_params.keys.combination(i + 1).to_a }
+      (default_params.keys.size - 1).times do |i|
+        tests << default_params.keys.combination(i + 1).to_a
+      end
     end.flatten(1)
 
     test_cases.each do |error_keys|
       context "#{error_keys.join(',')}がない場合" do
         selected_keys = default_params.keys - error_keys
-        before(:all) do
-          RSpec::Mocks.with_temporary_scope do
-            allow(AnalysisJob).to receive(:perform_later).and_return(true)
-            @res = client.post('/analyses', default_params.slice(*selected_keys))
-            @pbody = JSON.parse(@res.body) rescue nil
-          end
-        end
-
-        it_behaves_like 'ステータスコードが正しいこと', '400'
-        it_behaves_like 'エラーコードが正しいこと', error_keys.map {|key| "absent_param_#{key}" }
+        body = error_keys.sort.map {|key| {'error_code' => "absent_param_#{key}"} }
+        include_context 'リクエスト送信', body: default_params.slice(*selected_keys)
+        it_behaves_like 'レスポンスが正常であること', status: 400, body: body
       end
 
       context "#{error_keys.join(',')}が不正な場合" do
-        before(:all) do
-          RSpec::Mocks.with_temporary_scope do
-            allow(AnalysisJob).to receive(:perform_later).and_return(true)
-            params = default_params.dup
-            error_keys.each {|key| params.merge!(key => 'invalid') }
-            @res = client.post('/analyses', params)
-            @pbody = JSON.parse(@res.body) rescue nil
-          end
-        end
-
-        it_behaves_like 'ステータスコードが正しいこと', '400'
-        it_behaves_like 'エラーコードが正しいこと', error_keys.map {|key| "invalid_param_#{key}" }
+        invalid_params = error_keys.map {|key| [key, 'invalid'] }.to_h
+        body = error_keys.sort.map {|key| {'error_code' => "invalid_param_#{key}"} }
+        include_context 'リクエスト送信', body: default_params.merge(invalid_params)
+        it_behaves_like 'レスポンスが正常であること', status: 400, body: body
       end
     end
   end

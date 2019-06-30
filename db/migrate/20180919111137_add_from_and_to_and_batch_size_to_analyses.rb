@@ -1,7 +1,9 @@
 class AddFromAndToAndBatchSizeToAnalyses < ActiveRecord::Migration
   def change
-    add_column :analyses, :from, :datetime, :after => :id, :null => false
-    add_column :analyses, :to, :datetime, :after => :from, :null => false
-    add_column :analyses, :batch_size, :integer, :after => :to, :null => false
+    change_table :analyses, bulk: true do |t|
+      t.datetime :from, after: :id, null: false, default: Time.at.utc(0)
+      t.datetime :to, after: :from, null: false, default: Time.at.utc(10**10)
+      t.integer :batch_size, after: :to, null: false, default: 0
+    end
   end
 end

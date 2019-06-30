@@ -12,5 +12,6 @@
 !/log/.keep
 /tmp
 
+coverage
 vendor
 scripts/settings.yml

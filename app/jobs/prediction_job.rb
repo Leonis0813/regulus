@@ -3,11 +3,12 @@ class PredictionJob < ActiveJob::Base
 
   def perform(prediction_id)
     prediction = Prediction.find(prediction_id)
-    tmp_dir = File.join(Rails.root, 'scripts/tmp')
+    tmp_dir = Rails.root.join('scripts', 'tmp')
+
     FileUtils.rm_rf(tmp_dir)
     FileUtils.mkdir_p(tmp_dir)
 
-    model_dir = File.join(Rails.root, "tmp/models/#{prediction.id}")
+    model_dir = Rails.root.join('tmp', 'models', prediction.id.to_s)
     zip_file = File.join(model_dir, prediction.model)
     Zip::File.open(zip_file) do |zip|
       zip.each do |entry|
@@ -15,11 +16,15 @@ class PredictionJob < ActiveJob::Base
       end
     end
 
-    system 'sudo docker exec regulus python /opt/scripts/predict.py'
+    prediction.update!(pair: YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair'])
+    ret = system 'sudo docker exec regulus python /opt/scripts/predict.py'
+    raise StandardError unless ret
 
     FileUtils.mv(File.join(tmp_dir, 'result.yml'), model_dir)
     result = YAML.load_file(File.join(model_dir, 'result.yml'))
-    prediction.update!(result.merge('state' => 'completed'))
+    prediction.update!(result.merge(state: 'completed'))
     FileUtils.rm_rf([tmp_dir, model_dir])
+  rescue StandardError
+    prediction.update!(state: 'error')
   end
 end

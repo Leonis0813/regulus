@@ -1,3 +1,25 @@
+# 4.3.1 (2019/06/30)
+- [ADD] gems for pronto
+- [UPDATE] gems
+
+# 4.3.0 (2019/06/23)
+- [UPDATE] analysis and prediction to specify pair
+- [UPDATE] gems
+
+# 4.2.0 (2019/06/08)
+- [UPDATE] views to notify error
+- [UPDATE] gems
+
+# 4.1.10 (2019/05/03)
+- [FIX] coding style
+- [UPDATE] gems
+
+# 4.1.9 (2019/05/02)
+- [UPDATE] ruby version to 2.3.8
+
+# 4.1.8 (2019/04/21)
+- [UPDATE] gems
+
 # 4.1.7 (2019/03/30)
 - [UPDATE] neural network
 - [UPDATE] gems
