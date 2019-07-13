@@ -1,4 +1,5 @@
 # coding: utf-8
+
 module PredictionHelper
   def icon_class(prediction)
     case prediction.state
