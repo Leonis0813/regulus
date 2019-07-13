@@ -1,19 +1,22 @@
 class Prediction < ActiveRecord::Base
-  RESULTS = %w[up down range].freeze
+  RESULT_LIST = %w[up down range].freeze
+  MEANS_LIST = %w[manual auto].freeze
 
   validate :valid_period?
-  validates :model, :state,
+  validates :model, :means, :state,
             presence: {message: 'absent'}
   validates :model,
             format: {with: /\.zip\z/, message: 'invalid'}
   validates :pair,
-            inclusion: {in: Analysis::PAIRS, message: 'invalid'},
+            inclusion: {in: Analysis::PAIR_LIST, message: 'invalid'},
             allow_nil: true
+  validates :means,
+            inclusion: {in: MEANS_LIST, message: 'invalid'}
   validates :result,
-            inclusion: {in: RESULTS, message: 'invalid'},
+            inclusion: {in: RESULT_LIST, message: 'invalid'},
             allow_nil: true
   validates :state,
-            inclusion: {in: Analysis::STATES, message: 'invalid'}
+            inclusion: {in: Analysis::STATE_LIST, message: 'invalid'}
 
   private
 
