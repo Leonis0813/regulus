@@ -1,3 +1,4 @@
+# coding: utf-8
 module PredictionHelper
   def icon_class(prediction)
     case prediction.state
@@ -18,6 +19,15 @@ module PredictionHelper
       'red'
     when 'completed'
       icon_color_by_result(prediction.result)
+    end
+  end
+
+  def means_to_display(means)
+    case means
+    when 'manual'
+      '手動'
+    when 'auto'
+      '自動'
     end
   end
 
