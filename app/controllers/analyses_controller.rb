@@ -12,7 +12,7 @@ class AnalysesController < ApplicationController
       raise BadRequest, error_codes
     end
 
-    analysis = Analysis.new(attributes.merge(state: 'processing'))
+    analysis = Analysis.new(attributes.merge(state: Analysis::STATE_PROCESSING))
     unless analysis.save
       error_codes = analysis.errors.messages.keys.sort.map do |key|
         "invalid_param_#{key}"

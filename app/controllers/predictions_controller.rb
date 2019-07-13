@@ -15,9 +15,13 @@ class PredictionsController < ApplicationController
     model = attributes[:model]
     raise BadRequest, 'invalid_param_model' unless model.respond_to?(:original_filename)
 
-    attributes[:model] = model.original_filename
+    attributes.merge!(
+      model: model.original_filename,
+      means: Prediction::MEANS_MANUAL,
+      state: Prediction::STATE_PROCESSING,
+    )
 
-    prediction = Prediction.new(attributes.merge(state: 'processing'))
+    prediction = Prediction.new(attributes)
     unless prediction.save
       error_codes = prediction.errors.messages.keys.map {|key| "invalid_param_#{key}" }
       raise BadRequest, error_codes
