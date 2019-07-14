@@ -30,7 +30,7 @@ class PredictionsController < ApplicationController
     output_dir = Rails.root.join('tmp', 'models', prediction.id.to_s)
     output_model(output_dir, model)
 
-    PredictionJob.perform_later(prediction.id, output_dir)
+    PredictionJob.perform_later(prediction.id, output_dir.to_s)
     render status: :ok, json: {}
   end
 

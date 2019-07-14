@@ -10,7 +10,7 @@ namespace :job do
       }
       prediction = Prediction.create!(attribute)
       model_dir = Rails.root.join('tmp', 'models', 'auto')
-      PredictionJob.perform_later(prediction.id, model_dir)
+      PredictionJob.perform_later(prediction.id, model_dir.to_s)
     end
   end
 
