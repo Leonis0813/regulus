@@ -10,7 +10,7 @@ class Prediction < ActiveRecord::Base
   STATE_LIST = Analysis::STATE_LIST
 
   validate :valid_period?
-  validates :model, :means, :state,
+  validates :model, :state,
             presence: {message: 'absent'}
   validates :model,
             format: {with: /\.zip\z/, message: 'invalid'}
@@ -18,7 +18,8 @@ class Prediction < ActiveRecord::Base
             inclusion: {in: PAIR_LIST, message: 'invalid'},
             allow_nil: true
   validates :means,
-            inclusion: {in: MEANS_LIST, message: 'invalid'}
+            inclusion: {in: MEANS_LIST, message: 'invalid'},
+            allow_nil: true
   validates :result,
             inclusion: {in: RESULT_LIST, message: 'invalid'},
             allow_nil: true
