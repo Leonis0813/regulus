@@ -48,13 +48,13 @@ describe PredictionsController, type: :controller do
       include_context 'リクエスト送信'
       it_behaves_like 'レスポンスが正しいこと', status: 200, body: {}
       it_behaves_like 'ファイルが作成されていること',
-                      {'status' => 'active', 'filename' => model_file}
+                      'status' => 'active', 'filename' => model_file
     end
 
     context '定期予測を無効にする場合' do
       include_context 'リクエスト送信', body: {auto: {status: 'inactive'}}
       it_behaves_like 'レスポンスが正しいこと', status: 200, body: {}
-      it_behaves_like 'ファイルが作成されていること', {'status' => 'inactive'}
+      it_behaves_like 'ファイルが作成されていること', 'status' => 'inactive'
     end
   end
 
