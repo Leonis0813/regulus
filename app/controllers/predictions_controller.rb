@@ -45,7 +45,7 @@ class PredictionsController < ApplicationController
 
     if status == 'active'
       model = params[:auto][:model]
-      raise BadRequest, 'invalid_param_model' unless valid_model?(model)
+      raise BadRequest, 'invalid_param_auto' unless valid_model?(model)
 
       output_model(Rails.root.join('tmp', 'models', 'auto'), model)
       setting['filename'] = model.original_filename
