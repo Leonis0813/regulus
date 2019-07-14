@@ -20,6 +20,7 @@ gem 'turbolinks'
 gem 'twitter-bootstrap-rails'
 gem 'uglifier', '>= 1.3.0'
 gem 'unicorn', '~> 5.4.0'
+gem 'whenever', :require => false
 
 group :development do
   gem 'pronto'
