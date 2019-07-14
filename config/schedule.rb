@@ -3,5 +3,5 @@ set :output, 'log/cron.log'
 set :environment, (ENV['RAILS_ENV'] || 'development')
 
 every '0 * * * 1-5' do
-  runner 'PredictionUtil.execute'
+  rake 'job:prediction'
 end
