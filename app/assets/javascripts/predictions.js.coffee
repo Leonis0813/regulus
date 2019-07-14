@@ -41,7 +41,12 @@ $ ->
           callback: ->
             $('#prediction-settings').on 'submit', (event) ->
               formData = new FormData()
-              formData.append('auto[model]', $('#auto-model')[0].files[0])
+              file = $('#auto-model')[0].files[0]
+              if file == undefined
+                formData.append('auto[status]', 'inactive')
+              else
+                formData.append('auto[status]', 'active')
+                formData.append('auto[model]', file)
 
               $.ajax({
                 type: 'POST',

@@ -12,10 +12,10 @@
     <% end %>
   </td>
   <td>
-    <%= means_to_display(prediction.means) %>
+    <%= prediction.pair %>
   </td>
   <td>
-    <%= prediction.pair %>
+    <%= means_to_display(prediction.means) %>
   </td>
   <td>
     <span class='glyphicon <%= icon_class(prediction) %>' style='color: <%= icon_color(prediction) %>'/>

@@ -28,11 +28,32 @@ class PredictionsController < ApplicationController
     end
 
     output_dir = Rails.root.join('tmp', 'models', prediction.id.to_s)
-    FileUtils.mkdir_p(output_dir)
-    File.open(File.join(output_dir, prediction.model), 'w+b') do |file|
-      file.write(model.read)
-    end
+    output_model(output_dir, model)
+
     PredictionJob.perform_later(prediction.id)
+    render status: :ok, json: {}
+  end
+
+  def settings
+    raise BadRequest, 'absent_param_auto' unless params[:auto] and params[:auto][:status]
+
+    status = params[:auto][:status]
+    raise BadRequest, 'invalid_param_auto' unless %w[active inactive].include?(status)
+
+    setting_file = File.open(Rails.root.join('config', 'prediction.yml'), 'w')
+    setting = {'status' => status}
+
+    if status == 'active'
+      model = params[:auto][:model]
+      raise BadRequest, 'invalid_param_model' unless model and valid_model?(model)
+
+      output_model(Rails.root.join('tmp', 'models', 'auto'), model)
+      setting.merge!('filename' => model.original_filename)
+    end
+
+    YAML.dump(setting, setting_file)
+    setting_file.close
+
     render status: :ok, json: {}
   end
 
@@ -40,5 +61,16 @@ class PredictionsController < ApplicationController
 
   def prediction_params
     %i[model]
+  end
+
+  def valid_model?(model)
+    model.respond_to?(:original_filename) and model.original_filename.end_with?('.zip')
+  end
+
+  def output_model(dir, model)
+    FileUtils.mkdir_p(dir)
+    File.open(File.join(dir, model.original_filename), 'w+b') do |file|
+      file.write(model.read)
+    end
   end
 end
