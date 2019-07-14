@@ -45,10 +45,10 @@ class PredictionsController < ApplicationController
 
     if status == 'active'
       model = params[:auto][:model]
-      raise BadRequest, 'invalid_param_model' unless model and valid_model?(model)
+      raise BadRequest, 'invalid_param_model' unless valid_model?(model)
 
       output_model(Rails.root.join('tmp', 'models', 'auto'), model)
-      setting.merge!('filename' => model.original_filename)
+      setting['filename'] = model.original_filename
     end
 
     YAML.dump(setting, setting_file)
@@ -64,7 +64,7 @@ class PredictionsController < ApplicationController
   end
 
   def valid_model?(model)
-    model.respond_to?(:original_filename) and model.original_filename.end_with?('.zip')
+    model&.respond_to?(:original_filename) and model.original_filename.end_with?('.zip')
   end
 
   def output_model(dir, model)
