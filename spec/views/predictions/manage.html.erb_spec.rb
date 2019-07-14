@@ -9,6 +9,10 @@ describe 'predictions/manage', type: :view do
     pair: Prediction::PAIR_LIST.sample,
     state: 'processing',
   }
+  means = {
+    'manual' => '手動',
+    'auto' => '自動',
+  }
   icon_class = {
     'processing' => 'question-sign',
     'error' => 'remove',
@@ -48,6 +52,16 @@ describe 'predictions/manage', type: :view do
 
   shared_examples '入力フォームが表示されていること' do
     form_xpath = '//form[@id="new_prediction"]'
+
+    it '設定ボタンが表示されていること' do
+      xpath = [
+        row_xpath,
+        'div[@class="col-lg-4"]',
+        'div[@id="new-prediction"]',
+        'div/button[@id="btn-prediction-setting"]',
+      ].join('/')
+      is_asserted_by { @html.xpath(xpath).present? }
+    end
 
     %w[model].each do |param|
       input_xpath = "#{form_xpath}/div[@class='form-group']"
@@ -101,6 +115,13 @@ describe 'predictions/manage', type: :view do
       @rows.each_with_index do |row, i|
         displayed_pair = row.children.search('td')[3].text.strip
         is_asserted_by { displayed_pair == @predictions[i].pair }
+      end
+    end
+
+    it '方法が正しいこと' do
+      @rows.each_with_index do |row, i|
+        displayed_means = row.children.search('td')[4].text.strip
+        is_asserted_by { displayed_means == means[@predictions[i].means] }
       end
     end
 
@@ -182,6 +203,16 @@ describe 'predictions/manage', type: :view do
     it_behaves_like '画面共通テスト'
     it_behaves_like 'ページングボタンが表示されていないこと'
     it_behaves_like 'ジョブの状態が正しいこと', state: 'error'
+  end
+
+  context '自動実行の場合' do
+    param = {means: 'auto'}
+    include_context 'トランザクション作成'
+    include_context '予測ジョブを登録する', attribute: default_attribute.merge(param)
+    include_context 'HTML初期化'
+    it_behaves_like '画面共通テスト'
+    it_behaves_like 'ページングボタンが表示されていないこと'
+    it_behaves_like 'ジョブの状態が正しいこと', state: 'processing'
   end
 
   context "予測ジョブ情報が#{per_page * (Kaminari.config.window + 2)}件の場合" do
