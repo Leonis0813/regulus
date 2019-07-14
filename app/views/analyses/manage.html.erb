@@ -1,7 +1,9 @@
 <div class='row center-block'>
   <div class='col-lg-4'>
-    <div id='new-analysis' class='tab-pane well'>
-      <h3>レートを分析</h3>
+    <div id='new-analysis' class='well'>
+      <div>
+        <h3 style='display:inline'>レートを分析</h3>
+      </div>
       <%= form_for @analysis, {:url => analyses_path, :remote => true} do |f| %>
         <%= label_tag '期間' %>
         <div class='form-group'>
@@ -26,10 +28,12 @@
   </div>
 
   <div class='col-lg-8 well'>
-    <h3 style='padding: 10px 0px'>ジョブ実行履歴</h3>
+    <div>
+      <h3 style='display:inline;padding: 10px 0px'>ジョブ実行履歴</h3>
+    </div>
     <% from = @analyses.total_count == 0 ? 0 : @analyses.offset_value + 1 %>
     <% info = {:total_count => @analyses.total_count, :from => from, :to => @analyses.offset_value + @analyses.size} %>
-    <h4 style='padding: 10px 0px;display: inline'><%= t('views.pagination.info', info) %></h4>
+    <h4 style='padding: 10px 0px'><%= t('views.pagination.info', info) %></h4>
     <%= paginate @analyses %>
     <table class='table table-hover'>
       <thead>
