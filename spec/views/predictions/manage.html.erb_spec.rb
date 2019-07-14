@@ -6,7 +6,7 @@ describe 'predictions/manage', type: :view do
   per_page = 1
   default_attribute = {
     model: 'analysis.zip',
-    pair: Analysis::PAIRS.sample,
+    pair: Prediction::PAIR_LIST.sample,
     state: 'processing',
   }
   icon_class = {

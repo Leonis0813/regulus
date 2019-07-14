@@ -22,20 +22,20 @@ describe PredictionsController, type: :controller do
   describe '正常系' do
     include_context 'トランザクション作成'
     include_context 'リクエスト送信'
-    it_behaves_like 'レスポンスが正常であること', status: 200, body: {}
+    it_behaves_like 'レスポンスが正しいこと', status: 200, body: {}
   end
 
   describe '異常系' do
     context 'modelがない場合' do
-      body = [{'error_code' => 'absent_param_model'}]
+      errors = [{'error_code' => 'absent_param_model'}]
       include_context 'リクエスト送信', body: {}
-      it_behaves_like 'レスポンスが正常であること', status: 400, body: body
+      it_behaves_like 'レスポンスが正しいこと', status: 400, body: {'errors' => errors}
     end
 
     context 'modelが不正な場合' do
-      body = [{'error_code' => 'invalid_param_model'}]
+      errors = [{'error_code' => 'invalid_param_model'}]
       include_context 'リクエスト送信', body: {model: 'invalid.txt'}
-      it_behaves_like 'レスポンスが正常であること', status: 400, body: body
+      it_behaves_like 'レスポンスが正しいこと', status: 400, body: {'errors' => errors}
     end
   end
 end
