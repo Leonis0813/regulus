@@ -21,10 +21,10 @@ class PredictionJob < ActiveJob::Base
 
     FileUtils.mv(File.join(tmp_dir, 'result.yml'), model_dir)
     result = YAML.load_file(File.join(model_dir, 'result.yml'))
-    prediction.update!(result.merge(state: 'completed'))
+    prediction.update!(result.merge(state: Prediction::STATE_COMPLETED))
     FileUtils.rm_rf(tmp_dir)
-    FileUtils.rm_rf(model_dir) if prediction.means == 'manual'
+    FileUtils.rm_rf(model_dir) if prediction.means == Prediction::MEANS_MANUAL
   rescue StandardError
-    prediction.update!(state: 'error')
+    prediction.update!(state: Prediction::STATE_ERROR)
   end
 end
