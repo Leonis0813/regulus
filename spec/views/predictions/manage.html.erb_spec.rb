@@ -76,11 +76,11 @@ describe 'predictions/manage', type: :view do
       @table = @html.xpath("#{table_panel_xpath}/table[@class='table table-hover']")
     end
 
-    it '5列のテーブルが表示されていること' do
-      is_asserted_by { @table.xpath('//thead/th').size == 5 }
+    it '6列のテーブルが表示されていること' do
+      is_asserted_by { @table.xpath('//thead/th').size == 6 }
     end
 
-    %w[実行開始日時 モデル 期間 ペア 結果].each_with_index do |text, i|
+    %w[実行開始日時 モデル 期間 ペア 方法 結果].each_with_index do |text, i|
       it "#{i + 1}列目のヘッダーが#{text}であること" do
         is_asserted_by { @table.xpath('//thead/th')[i].text == text }
       end
@@ -108,7 +108,7 @@ describe 'predictions/manage', type: :view do
       @rows.each do |row|
         glyphicon_name = result ? icon_class[state][result] : icon_class[state]
         span_class = "glyphicon glyphicon-#{glyphicon_name}"
-        icon = row.children.search('td')[4].children
+        icon = row.children.search('td')[5].children
                   .search("span[@class='#{span_class}']")
         is_asserted_by { icon.present? }
       end
@@ -117,7 +117,7 @@ describe 'predictions/manage', type: :view do
     it 'アイコンの色が正しいこと' do
       @rows.each do |row|
         glyphicon_color = result ? icon_color[state][result] : icon_color[state]
-        color = row.children.search('td')[4].children.search('span').attribute('style')
+        color = row.children.search('td')[5].children.search('span').attribute('style')
         is_asserted_by { color.value == "color: #{glyphicon_color}" }
       end
     end
