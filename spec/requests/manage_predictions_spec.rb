@@ -31,7 +31,7 @@ describe 'ブラウザで予測する', type: :request do
         xpath = '//div[@class="modal-header"]/h4[@class="modal-title"]'
         text = 'モデルを設定しました'
         is_asserted_by do
-          @wait.until { @driver.find_element(:xpath, xpath).text == text }
+          @wait.until { @driver.find_element(:xpath, xpath).text == text rescue false }
         end
       end
 
@@ -39,7 +39,7 @@ describe 'ブラウザで予測する', type: :request do
         xpath = '//div[@class="modal-body"]/div'
         text = '次の予測から設定したモデルが利用されます'
         is_asserted_by do
-          @wait.until { @driver.find_element(:xpath, xpath).text == text }
+          @wait.until { @driver.find_element(:xpath, xpath).text == text rescue false }
         end
       end
     end
