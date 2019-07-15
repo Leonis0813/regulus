@@ -1,4 +1,4 @@
-# 4.4.0 (2019/07/14)
+# 4.4.0 (2019/07/15)
 - [UPDATE] feature to predict automatically per hour
 
 # 4.3.1 (2019/06/30)
