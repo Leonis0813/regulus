@@ -15,6 +15,9 @@
     <%= prediction.pair %>
   </td>
   <td>
+    <%= means_to_display(prediction.means) %>
+  </td>
+  <td>
     <span class='glyphicon <%= icon_class(prediction) %>' style='color: <%= icon_color(prediction) %>'/>
   </td>
 </tr>

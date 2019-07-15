@@ -7,7 +7,7 @@ describe 'analyses/manage', type: :view do
   default_attribute = {
     from: 2.months.ago,
     to: 1.month.ago,
-    pair: Analysis::PAIRS.sample,
+    pair: Analysis::PAIR_LIST.sample,
     batch_size: 100,
     state: 'processing',
   }
@@ -51,7 +51,7 @@ describe 'analyses/manage', type: :view do
         is_asserted_by { select.present? }
       end
 
-      Analysis::PAIRS.each do |pair|
+      Analysis::PAIR_LIST.each do |pair|
         it "#{pair}を選択できること", if: param == 'pair' do
           select_xpath = "#{input_xpath}/select[@id='analysis_#{param}']"
           option = @html.xpath("#{select_xpath}/option[@value='#{pair}']")
