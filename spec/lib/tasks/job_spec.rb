@@ -4,19 +4,19 @@ require 'rake_helper'
 require 'rails_helper'
 
 describe 'job:prediction' do
-  config = Settings.prediction
+  prediction = Settings.prediction
   filename = 'analysis.zip'
 
   before(:all) { @task = Rake.application['job:prediction'] }
 
   shared_context '設定ファイルを作成' do |param|
     before(:all) do
-      File.open(Rails.root.join(config.auto.setting_file), 'w') do |file|
+      File.open(Rails.root.join(prediction.auto.setting_file), 'w') do |file|
         YAML.dump(param, file)
       end
     end
 
-    after(:all) { FileUtils.rm(Rails.root.join(config.auto.setting_file)) }
+    after(:all) { FileUtils.rm(Rails.root.join(prediction.auto.setting_file)) }
   end
 
   shared_context 'タスクを実行' do
@@ -36,7 +36,7 @@ describe 'job:prediction' do
   end
 
   context '定期予測が有効な場合' do
-    model_dir = Rails.root.join(config.base_model_dir, config.auto.model_dir)
+    model_dir = Rails.root.join(prediction.base_model_dir, prediction.auto.model_dir)
 
     before(:all) do
       FileUtils.mkdir_p(model_dir)

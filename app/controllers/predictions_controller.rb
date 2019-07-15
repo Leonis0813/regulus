@@ -27,7 +27,7 @@ class PredictionsController < ApplicationController
       raise BadRequest, error_codes
     end
 
-    output_dir = Rails.root.join(config.base_model_dir, prediction.id.to_s)
+    output_dir = Rails.root.join(Settings.prediction.base_model_dir, prediction.id.to_s)
     output_model(output_dir, model)
 
     PredictionJob.perform_later(prediction.id, output_dir.to_s)
@@ -40,14 +40,18 @@ class PredictionsController < ApplicationController
     status = params[:auto][:status]
     raise BadRequest, 'invalid_param_auto' unless %w[active inactive].include?(status)
 
-    setting_file = File.open(Rails.root.join(config.auto.setting_file), 'w')
+    setting_file = File.open(Rails.root.join(Settings.prediction.auto.setting_file), 'w')
     setting = {'status' => status}
 
     if status == 'active'
       model = params[:auto][:model]
       raise BadRequest, 'invalid_param_auto' unless valid_model?(model)
 
-      output_model(Rails.root.join(config.base_model_dir, config.auto.model_dir), model)
+      model_dir = Rails.root.join(
+        Settings.prediction.base_model_dir,
+        Settings.prediction.auto.model_dir,
+      )
+      output_model(model_dir, model)
       setting['filename'] = model.original_filename
     end
 
@@ -68,10 +72,6 @@ class PredictionsController < ApplicationController
 
   def prediction_params
     %i[model]
-  end
-
-  def config
-    @config ||= Settings.prediction
   end
 
   def valid_model?(model)

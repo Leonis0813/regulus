@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe PredictionsController, type: :controller do
-  config = Settings.prediction
+  prediction = Settings.prediction
   model_file = 'analysis.zip'
   zip_file_path = Rails.root.join('spec', 'fixtures', model_file)
   invalid_file_path = Rails.root.join('spec', 'fixtures', 'invalid.txt')
@@ -13,8 +13,8 @@ describe PredictionsController, type: :controller do
       model: Rack::Test::UploadedFile.new(File.open(zip_file_path)),
     },
   }
-  setting_file = Rails.root.join(config.auto.setting_file)
-  model_dir = Rails.root.join(config.base_model_dir, config.auto.model_dir)
+  setting_file = Rails.root.join(prediction.auto.setting_file)
+  model_dir = Rails.root.join(prediction.base_model_dir, prediction.auto.model_dir)
 
   shared_context 'リクエスト送信' do |body: default_params|
     before(:all) do
