@@ -16,3 +16,7 @@ coverage
 vendor
 scripts/settings.yml
 config/prediction.yml
+
+config/settings.local.yml
+config/settings/*.local.yml
+config/environments/*.local.yml

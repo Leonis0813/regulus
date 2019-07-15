@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'bootbox-rails'
 gem 'coffee-rails', '~> 4.1.0'
+gem 'config'
 gem 'daemon-spawn', require: 'daemon_spawn'
 gem 'execjs'
 gem 'jbuilder', '~> 2.0'
