@@ -15,5 +15,4 @@
 //= require jquery.remotipart
 //= require twitter/bootstrap
 //= require bootbox
-//= require turbolinks
 //= require_tree .

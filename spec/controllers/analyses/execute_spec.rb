@@ -24,7 +24,7 @@ describe AnalysesController, type: :controller do
   describe '正常系' do
     include_context 'トランザクション作成'
     include_context 'リクエスト送信'
-    it_behaves_like 'レスポンスが正常であること', status: 200, body: {}
+    it_behaves_like 'レスポンスが正しいこと', status: 200, body: {}
   end
 
   describe '異常系' do
@@ -37,16 +37,16 @@ describe AnalysesController, type: :controller do
     test_cases.each do |error_keys|
       context "#{error_keys.join(',')}がない場合" do
         selected_keys = default_params.keys - error_keys
-        body = error_keys.sort.map {|key| {'error_code' => "absent_param_#{key}"} }
+        errors = error_keys.sort.map {|key| {'error_code' => "absent_param_#{key}"} }
         include_context 'リクエスト送信', body: default_params.slice(*selected_keys)
-        it_behaves_like 'レスポンスが正常であること', status: 400, body: body
+        it_behaves_like 'レスポンスが正しいこと', status: 400, body: {'errors' => errors}
       end
 
       context "#{error_keys.join(',')}が不正な場合" do
         invalid_params = error_keys.map {|key| [key, 'invalid'] }.to_h
-        body = error_keys.sort.map {|key| {'error_code' => "invalid_param_#{key}"} }
+        errors = error_keys.sort.map {|key| {'error_code' => "invalid_param_#{key}"} }
         include_context 'リクエスト送信', body: default_params.merge(invalid_params)
-        it_behaves_like 'レスポンスが正常であること', status: 400, body: body
+        it_behaves_like 'レスポンスが正しいこと', status: 400, body: {'errors' => errors}
       end
     end
   end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190621152655) do
+ActiveRecord::Schema.define(version: 20190713031725) do
 
   create_table "analyses", force: :cascade do |t|
     t.datetime "from",                                      null: false
@@ -24,14 +24,15 @@ ActiveRecord::Schema.define(version: 20190621152655) do
   end
 
   create_table "predictions", force: :cascade do |t|
-    t.string   "model",      limit: 255, null: false
+    t.string   "model",      limit: 255,                    null: false
     t.datetime "from"
     t.datetime "to"
     t.string   "pair",       limit: 255
+    t.string   "means",      limit: 255, default: "manual", null: false
     t.string   "result",     limit: 255
-    t.string   "state",      limit: 255, null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "state",      limit: 255,                    null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
   end
 
 end

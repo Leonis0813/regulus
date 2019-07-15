@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'bootbox-rails'
 gem 'coffee-rails', '~> 4.1.0'
+gem 'config'
 gem 'daemon-spawn', require: 'daemon_spawn'
 gem 'execjs'
 gem 'jbuilder', '~> 2.0'
@@ -20,15 +21,16 @@ gem 'turbolinks'
 gem 'twitter-bootstrap-rails'
 gem 'uglifier', '>= 1.3.0'
 gem 'unicorn', '~> 5.4.0'
+gem 'whenever', require: false
 
 group :development do
   gem 'pronto'
   gem 'pronto-coffeelint', require: false
   gem 'pronto-erb_lint', require: false
   gem 'pronto-rubocop', require: false
-  gem 'pronto-stylelint', require: false
   gem 'rubocop'
   gem 'rubocop-performance'
+  gem 'rubocop-rails'
   gem 'web-console', '~> 2.0'
 end
 

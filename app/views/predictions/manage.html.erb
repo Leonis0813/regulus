@@ -1,7 +1,12 @@
 <div class='row center-block'>
   <div class='col-lg-4'>
-    <div id='new-prediction' class='well tab-pane'>
-      <h3>レートを予測</h3>
+    <div id='new-prediction' class='well'>
+      <div>
+        <h3 style='display:inline'>レートを予測</h3>
+        <button id='btn-prediction-setting' class='btn btn-default btn-sm' style='height:32px;float:right'>
+          <span class='glyphicon glyphicon-cog' style='font-size:18px'></span>
+        </button>
+      </div>
       <%= form_for @prediction, :html => {:multipart => true}, :url => predictions_path, :remote => true do |f| %>
         <div class='form-group'>
           <%= f.label :model, 'モデル' %><br>
@@ -14,18 +19,21 @@
   </div>
 
   <div class='col-lg-8 well'>
-    <h3 style='padding: 10px 0px'>ジョブ実行履歴</h3>
+    <div>
+      <h3 style='display:inline;padding: 10px 0px'>ジョブ実行履歴</h3>
+    </div>
     <% from = @predictions.total_count == 0 ? 0 : @predictions.offset_value + 1 %>
     <% info = {:total_count => @predictions.total_count, :from => from, :to => @predictions.offset_value + @predictions.size} %>
-    <h4 style='padding: 10px 0px;display: inline'><%= t('views.pagination.info', info) %></h4>
+    <h4 style='padding: 10px 0px'><%= t('views.pagination.info', info) %></h4>
     <%= paginate @predictions %>
     <table class='table table-hover'>
       <thead>
-        <th width="150">実行開始日時</th>
+        <th width='150'>実行開始日時</th>
         <th>モデル</th>
         <th>期間</th>
         <th>ペア</th>
-        <th width="50">結果</th>
+        <th>方法</th>
+        <th width='50'>結果</th>
       </thead>
       <tbody>
         <%= render @predictions %>

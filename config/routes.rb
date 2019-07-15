@@ -4,4 +4,5 @@ Rails.application.routes.draw do
 
   get '/predictions' => 'predictions#manage'
   post '/predictions' => 'predictions#execute'
+  post '/predictions/settings' => 'predictions#settings'
 end
