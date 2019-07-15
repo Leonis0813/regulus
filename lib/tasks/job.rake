@@ -9,13 +9,17 @@ namespace :job do
         state: Prediction::STATE_PROCESSING,
       }
       prediction = Prediction.create!(attribute)
-      model_dir = Rails.root.join('tmp', 'models', 'auto')
+      model_dir = Rails.root.join(config.base_model_dir, config.auto.model_dir)
       PredictionJob.perform_later(prediction.id, model_dir.to_s)
     end
   end
 
   def setting_file
-    "#{rails_root}/config/prediction.yml"
+    File.join(rails_root, config.auto.setting_file)
+  end
+
+  def config
+    Settings.prediction
   end
 
   def rails_root
