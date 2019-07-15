@@ -1,6 +1,8 @@
 namespace :job do
   desc 'Execute prediction'
   task prediction: :environment do
+    return unless File.exist?(setting_file)
+
     setting = YAML.load_file(setting_file)
     if setting['status'] == 'active'
       attribute = {
