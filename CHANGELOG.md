@@ -1,3 +1,6 @@
+# 4.4.1 (2019/07/16)
+- [UPDATE] gems
+
 # 4.4.0 (2019/07/15)
 - [UPDATE] feature to predict automatically per hour
 - [UPDATE] gems
