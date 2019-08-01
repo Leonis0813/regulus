@@ -3,11 +3,13 @@
 require 'json'
 require 'net/https'
 
-GITHUB_API_URL = "https://api.github.com/repos/Leonis0813/regulus/pulls"
+GITHUB_API_URL = 'https://api.github.com/repos/Leonis0813/regulus/pulls'.freeze
 PARSED_URL = URI.parse(GITHUB_API_URL)
 
 begin
-  pull_requests = Net::HTTP.start(PARSED_URL.host, PARSED_URL.port, :use_ssl => true) do |https|
+  host = PARSED_URL.host
+  port = PARSED_URL.port
+  pull_requests = Net::HTTP.start(host, port, use_ssl: true) do |https|
     request = Net::HTTP::Get.new(PARSED_URL)
     request['Authorization'] = "token #{ENV['DANGER_GITHUB_API_TOKEN']}"
     response = https.request(request)
@@ -17,7 +19,7 @@ begin
   target_pr = pull_requests.find do |pull_request|
     ENV['GIT_BRANCH'].end_with?(pull_request['head']['ref'])
   end
-rescue Exception => e
+rescue StandardError
   exit 1
 end
 
