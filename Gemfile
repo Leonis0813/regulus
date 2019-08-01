@@ -38,6 +38,7 @@ group :development, :test do
   gem 'byebug'
   gem 'capybara'
   gem 'capybara-mechanize'
+  gem 'danger'
   gem 'database_cleaner'
   gem 'factory_bot_rails'
   gem 'fuubar'
