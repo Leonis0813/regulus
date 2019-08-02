@@ -7,6 +7,7 @@ GITHUB_API_URL = 'https://api.github.com/repos/Leonis0813/regulus/pulls'.freeze
 PARSED_URL = URI.parse(GITHUB_API_URL)
 
 begin
+  p ENV
   host = PARSED_URL.host
   port = PARSED_URL.port
   pull_requests = Net::HTTP.start(host, port, use_ssl: true) do |https|
