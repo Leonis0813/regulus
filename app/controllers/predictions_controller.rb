@@ -20,7 +20,7 @@ class PredictionsController < ApplicationController
         model: model.original_filename,
         means: Prediction::MEANS_MANUAL,
         state: Prediction::STATE_PROCESSING,
-      )
+      ),
     )
 
     unless prediction.save
