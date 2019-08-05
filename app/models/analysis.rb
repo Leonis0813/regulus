@@ -10,11 +10,14 @@ class Analysis < ActiveRecord::Base
   validates :batch_size, :pair, :state,
             presence: {message: 'absent'}
   validates :batch_size,
-            numericality: {only_integer: true, greater_than: 0, message: 'invalid'}
+            numericality: {only_integer: true, greater_than: 0, message: 'invalid'},
+            allow_nil: true
   validates :pair,
-            inclusion: {in: PAIR_LIST, message: 'invalid'}
+            inclusion: {in: PAIR_LIST, message: 'invalid'},
+            allow_nil: true
   validates :state,
-            inclusion: {in: STATE_LIST, message: 'invalid'}
+            inclusion: {in: STATE_LIST, message: 'invalid'},
+            allow_nil: true
 
   private
 

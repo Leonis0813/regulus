@@ -13,7 +13,8 @@ class Prediction < ActiveRecord::Base
   validates :model, :state,
             presence: {message: 'absent'}
   validates :model,
-            format: {with: /\.zip\z/, message: 'invalid'}
+            format: {with: /\.zip\z/, message: 'invalid'},
+            allow_nil: true
   validates :pair,
             inclusion: {in: PAIR_LIST, message: 'invalid'},
             allow_nil: true
@@ -24,7 +25,8 @@ class Prediction < ActiveRecord::Base
             inclusion: {in: RESULT_LIST, message: 'invalid'},
             allow_nil: true
   validates :state,
-            inclusion: {in: STATE_LIST, message: 'invalid'}
+            inclusion: {in: STATE_LIST, message: 'invalid'},
+            allow_nil: true
 
   private
 
