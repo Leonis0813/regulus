@@ -6,7 +6,7 @@ class PredictionsController < ApplicationController
 
   def execute
     attributes = params.permit(*prediction_params)
-    absent_keys = prediction_params - attributes.symbolize_keys.keys
+    absent_keys = prediction_params - attributes.keys.map(&:to_sym)
     unless absent_keys.empty?
       error_codes = absent_keys.map {|key| "absent_param_#{key}" }
       raise BadRequest, error_codes
@@ -15,13 +15,14 @@ class PredictionsController < ApplicationController
     model = attributes[:model]
     raise BadRequest, 'invalid_param_model' unless model.respond_to?(:original_filename)
 
-    attributes.merge!(
-      model: model.original_filename,
-      means: Prediction::MEANS_MANUAL,
-      state: Prediction::STATE_PROCESSING,
+    prediction = Prediction.new(
+      attributes.merge(
+        model: model.original_filename,
+        means: Prediction::MEANS_MANUAL,
+        state: Prediction::STATE_PROCESSING,
+      )
     )
 
-    prediction = Prediction.new(attributes)
     unless prediction.save
       error_codes = prediction.errors.messages.keys.map {|key| "invalid_param_#{key}" }
       raise BadRequest, error_codes
