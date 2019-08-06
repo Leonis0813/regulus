@@ -18,17 +18,17 @@ describe Analysis, type: :model do
 
     describe '異常系' do
       invalid_attribute = {
-        from: ['invalid', 0, 0.0, nil],
-        to: ['invalid', 0, 0.0, nil],
-        pair: ['invalid', 0, 0.0, nil],
-        batch_size: ['invalid', 0, 1.0, nil],
-        state: ['invalid', 0, 0.0, nil],
+        from: [0, 0.0],
+        to: [0, 0.0],
+        pair: ['invalid'],
+        batch_size: [0],
+        state: ['invalid'],
       }
       invalid_period = {
         from: ['1000-01-02 00:00:00'],
         to: ['1000-01-01 00:00:00'],
       }
-      absent_keys = invalid_attribute.keys - %i[from to pair]
+      absent_keys = invalid_attribute.keys - %i[batch_size from to pair]
 
       it_behaves_like '必須パラメーターがない場合のテスト', absent_keys
       it_behaves_like '不正な値を指定した場合のテスト', invalid_attribute

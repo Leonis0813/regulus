@@ -1,25 +1,26 @@
 source 'https://rubygems.org'
 
 gem 'bootbox-rails'
-gem 'coffee-rails', '~> 4.1.0'
+gem 'coffee-rails'
 gem 'config'
 gem 'daemon-spawn', require: 'daemon_spawn'
 gem 'execjs'
-gem 'jbuilder', '~> 2.0'
+gem 'font-awesome-rails'
+gem 'jbuilder'
 gem 'jquery-rails'
 gem 'kaminari'
 gem 'less-rails'
 gem 'mysql2', '~> 0.3.20'
-gem 'rails', '~> 4.0'
+gem 'rails', '~> 5.0.0'
 gem 'remotipart'
 gem 'resque'
 gem 'rubyzip'
 gem 'sass-rails', '~> 5.0'
-gem 'sdoc', '~> 0.4.0', group: :doc
+gem 'sdoc', group: :doc
 gem 'therubyracer'
 gem 'turbolinks'
-gem 'twitter-bootstrap-rails'
-gem 'uglifier', '>= 1.3.0'
+gem 'twitter-bootstrap-rails', '3.2.2'
+gem 'uglifier'
 gem 'unicorn', '~> 5.4.0'
 gem 'whenever', require: false
 
@@ -31,7 +32,7 @@ group :development do
   gem 'rubocop'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
-  gem 'web-console', '~> 2.0'
+  gem 'web-console'
 end
 
 group :development, :test do

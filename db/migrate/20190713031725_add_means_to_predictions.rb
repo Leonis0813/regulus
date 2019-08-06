@@ -1,4 +1,4 @@
-class AddMeansToPredictions < ActiveRecord::Migration
+class AddMeansToPredictions < ActiveRecord::Migration[4.2]
   def change
     add_column :predictions,
                :means,

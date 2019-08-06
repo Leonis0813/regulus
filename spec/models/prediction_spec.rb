@@ -26,11 +26,11 @@ describe Prediction, type: :model do
 
     describe '異常系' do
       invalid_attribute = {
-        model: ['invalid', nil],
+        model: %w[invalid],
         pair: %w[invalid],
         means: %w[invalid],
         result: %w[invalid],
-        state: ['invalid', nil],
+        state: %w[invalid],
       }
       invalid_period = {
         from: %w[1000-01-02 1000/01/02 02-01-1000 02/01/1000 10000102],
