@@ -1,3 +1,6 @@
+# 4.4.3 (2019/08/06)
+- [UPDATE] rails version to 5.0.x
+
 # 4.4.2 (2019/08/04)
 - [UPDATE] job scheduler
 
