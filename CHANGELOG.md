@@ -1,3 +1,6 @@
+# 4.4.4 (2019/08/09)
+- [UPDATE] gems
+
 # 4.4.3 (2019/08/06)
 - [UPDATE] rails version to 5.0.x
 
