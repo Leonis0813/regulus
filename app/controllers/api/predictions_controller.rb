@@ -4,9 +4,9 @@ module Api
       query = Query.new(index_param)
       if query.valid?
         @predictions = Prediction.where(index_param.slice(:means))
-                       .order(created_at: :desc)
-                       .page(query.page)
-                       .per(query.per_page)
+                                 .order(created_at: :desc)
+                                 .page(query.page)
+                                 .per(query.per_page)
         render status: :ok, template: 'predictions/predictions'
       else
         error_codes = query.errors.messages.keys.map {|key| "invalid_param_#{key}" }
