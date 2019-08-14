@@ -1,4 +1,4 @@
-class Prediction < ActiveRecord::Base
+class Prediction < ApplicationRecord
   PAIR_LIST = Analysis::PAIR_LIST
   MEANS_MANUAL = 'manual'.freeze
   MEANS_AUTO = 'auto'.freeze

@@ -1,4 +1,4 @@
-class PredictionJob < ActiveJob::Base
+class PredictionJob < ApplicationJob
   queue_as :regulus
 
   def perform(prediction_id, model_dir)
