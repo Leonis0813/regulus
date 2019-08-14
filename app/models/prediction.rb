@@ -10,8 +10,11 @@ class Prediction < ApplicationRecord
   STATE_LIST = Analysis::STATE_LIST
 
   validate :valid_period?
-  validates :model, :state,
+  validates :prediction_id, :model, :state,
             presence: {message: 'absent'}
+  validates :prediction_id,
+            format: {with: /^[0-9a-zA-Z]{32}$/, message: 'invalid'},
+            allow_nil: true
   validates :model,
             format: {with: /\.zip\z/, message: 'invalid'},
             allow_nil: true
