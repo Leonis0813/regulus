@@ -16,6 +16,7 @@ describe '自動予測結果を検索する', type: :request do
 
     @response_body['predictions'].each do |prediction|
       is_asserted_by { prediction.keys.sort == PredictionHelper.response_keys.sort }
+      is_asserted_by { prediction['means'] == 'auto' }
     end
   end
 end
