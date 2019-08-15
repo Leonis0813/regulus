@@ -14,7 +14,7 @@ describe Api::PredictionsController, type: :controller do
   include_context 'トランザクション作成'
 
   before(:all) do
-    now = Time.now
+    now = Time.zone.now
     @predictions = Array.new(5) do |i|
       create(:prediction, means: 'auto', created_at: now - i)
     end
