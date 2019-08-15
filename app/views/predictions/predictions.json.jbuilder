@@ -10,7 +10,7 @@ json.predictions do
       :means,
       :result,
       :state,
-      :created_at
+      :created_at,
     )
   end
 end
