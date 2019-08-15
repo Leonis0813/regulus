@@ -32,7 +32,7 @@ describe Api::PredictionsController, type: :controller do
     ].each do |query, indexes|
       context "#{query}を指定した場合" do
         before(:all) do
-          attributes = %i[prediction_id model from to pair means result state created_at]
+          attributes = PredictionHelper.response_keys.sort
           predictions = indexes.map do |index|
             prediction = @predictions[index].slice(*attributes)
             prediction['created_at'] = prediction['created_at'].strftime('%FT%T.%LZ')
