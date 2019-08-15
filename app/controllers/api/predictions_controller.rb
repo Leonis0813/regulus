@@ -13,11 +13,11 @@ module Api
         raise BadRequest, error_codes
       end
     end
-  end
 
-  private
+    private
 
-  def index_param
-    @index_param ||= params.permit(:means, :page, :per_page)
+    def index_param
+      @index_param ||= params.permit(:means, :page, :per_page)
+    end
   end
 end

@@ -13,7 +13,7 @@ class Prediction < ApplicationRecord
   validates :prediction_id, :model, :state,
             presence: {message: 'absent'}
   validates :prediction_id,
-            format: {with: /^[0-9a-zA-Z]{32}$/, message: 'invalid'},
+            format: {with: /\A[0-9a-zA-Z]{32}\z/, message: 'invalid'},
             allow_nil: true
   validates :model,
             format: {with: /\.zip\z/, message: 'invalid'},
