@@ -6,6 +6,7 @@ namespace :job do
 
       if setting['status'] == 'active'
         attribute = {
+          prediction_id: SecureRandom.hex,
           model: setting['filename'],
           means: Prediction::MEANS_AUTO,
           state: Prediction::STATE_PROCESSING,

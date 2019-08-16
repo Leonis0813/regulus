@@ -34,7 +34,7 @@ describe 'predictions/manage', type: :view do
 
   shared_context '予測ジョブを登録する' do |total: per_page, attribute: default_attribute|
     before(:all) do
-      total.times { Prediction.create!(attribute) }
+      total.times { create(:prediction, attribute) }
       @predictions = Prediction.order(created_at: :desc).page(1)
     end
   end
