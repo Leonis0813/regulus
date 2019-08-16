@@ -6,6 +6,7 @@ describe Prediction, type: :model do
   describe '#validates' do
     describe '正常系' do
       valid_attribute = {
+        prediction_id: ['0' * 32],
         model: ['analysis.zip'],
         from: [
           '1000-01-01 00:00:00',
@@ -26,6 +27,7 @@ describe Prediction, type: :model do
 
     describe '異常系' do
       invalid_attribute = {
+        prediction_id: ['0' * 33],
         model: %w[invalid],
         pair: %w[invalid],
         means: %w[invalid],

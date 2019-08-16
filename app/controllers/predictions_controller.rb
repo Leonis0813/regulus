@@ -17,6 +17,7 @@ class PredictionsController < ApplicationController
 
     prediction = Prediction.new(
       attributes.merge(
+        prediction_id: SecureRandom.hex,
         model: model.original_filename,
         means: Prediction::MEANS_MANUAL,
         state: Prediction::STATE_PROCESSING,

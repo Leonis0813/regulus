@@ -45,6 +45,7 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'fuubar'
   gem 'headless'
+  gem 'httpclient'
   gem 'pry'
   gem 'rspec-power_assert'
   gem 'rspec-rails'
