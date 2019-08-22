@@ -1,3 +1,6 @@
+# 4.5.1 (2019/08/22)
+- [UPDATE] gems
+
 # 4.5.0 (2019/08/16)
 - [ADD] Web API to index predictions
 - [UPDATE] gems
