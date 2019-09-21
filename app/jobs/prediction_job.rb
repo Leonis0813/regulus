@@ -26,7 +26,8 @@ class PredictionJob < ApplicationJob
     prediction.update!(result.merge(state: Prediction::STATE_COMPLETED))
     FileUtils.rm_rf(tmp_dir)
     FileUtils.rm_rf(model_dir) if prediction.means == Prediction::MEANS_MANUAL
-  rescue StandardError
+  rescue StandardError => e
+    Rails.logger.error(e.backtrace)
     prediction.update!(state: Prediction::STATE_ERROR)
   end
 end
