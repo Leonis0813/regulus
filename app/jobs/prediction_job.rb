@@ -27,7 +27,8 @@ class PredictionJob < ApplicationJob
     FileUtils.rm_rf(tmp_dir)
     FileUtils.rm_rf(model_dir) if prediction.means == Prediction::MEANS_MANUAL
   rescue StandardError => e
-    Rails.logger.error(e.backtrace)
+    Rails.logger.error(e.message)
+    Rails.logger.error(e.backtrace.join("\n"))
     prediction.update!(state: Prediction::STATE_ERROR)
   end
 end
