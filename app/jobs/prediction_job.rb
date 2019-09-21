@@ -1,3 +1,5 @@
+require 'zip'
+
 class PredictionJob < ApplicationJob
   queue_as :regulus
 
