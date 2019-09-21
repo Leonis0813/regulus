@@ -1,4 +1,5 @@
 # coding: utf-8
+require 'zip'
 
 class AnalysisMailer < ApplicationMailer
   default from: 'Leonis.0813@gmail.com'
@@ -7,9 +8,8 @@ class AnalysisMailer < ApplicationMailer
     @analysis = analysis
     subject = '分析が完了しました'
     tmp_dir = Rails.root.join('tmp', 'models', analysis.id.to_s)
-    Rails.logger.info(tmp_dir)
+
     Dir.mktmpdir(nil, Rails.root.join('tmp', 'files')) do |dir|
-      Rails.logger.info(dir)
       zip_file_name = File.join(dir, 'analysis.zip')
 
       Zip::File.open(zip_file_name, Zip::File::CREATE) do |zip|

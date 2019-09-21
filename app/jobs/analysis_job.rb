@@ -23,7 +23,8 @@ class AnalysisJob < ApplicationJob
     analysis.update!(state: 'completed')
     AnalysisMailer.completed(analysis).deliver_now
     FileUtils.rm_rf("#{Rails.root}/tmp/models/#{analysis_id}")
-  rescue StandardError
+  rescue StandardError => e
+    Rails.logger.error(e.backtrace)
     analysis.update!(state: 'error')
     AnalysisMailer.error(analysis).deliver_now
   end
