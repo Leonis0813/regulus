@@ -1,6 +1,7 @@
 # 4.5.2 (2019/09/21)
 - [FIX] bug for production
 - [ADD] logging for error message and backtrace
+- [UPDATE] gems
 
 # 4.5.1 (2019/09/10)
 - [UPDATE] gems
