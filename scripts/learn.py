@@ -108,4 +108,4 @@ with tf.Session() as sess:
     batch_label = labels[indices]
     sess.run(train_step, feed_dict={x:batch_data, y:batch_label})
 
-  saver.save(sess, "/opt/scripts/tmp/model.ckpt")
+  saver.save(sess, os.path.dirname(os.path.abspath(args[0])) + '/tmp/model.ckpt')
