@@ -12,9 +12,7 @@ class AnalysisJob < ApplicationJob
       analysis.pair,
       analysis.batch_size,
     ]
-    command = "sudo docker exec regulus python /opt/scripts/learn.py #{args.join(' ')}"
-    ret = system(command)
-    raise StandardError unless ret
+    execute_script('learn.py', args)
 
     from = File.join(script_dir, 'tmp')
     to = Rails.root.join('tmp', 'models', analysis_id.to_s)
