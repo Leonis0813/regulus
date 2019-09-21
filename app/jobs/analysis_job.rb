@@ -12,9 +12,7 @@ class AnalysisJob < ApplicationJob
       analysis.pair,
       analysis.batch_size,
     ]
-    command = "sudo docker exec regulus python /opt/scripts/learn.py #{args.join(' ')}"
-    ret = system(command)
-    raise StandardError unless ret
+    execute_script('learn.py', args)
 
     from = File.join(script_dir, 'tmp')
     to = Rails.root.join('tmp', 'models', analysis_id.to_s)
@@ -25,7 +23,9 @@ class AnalysisJob < ApplicationJob
     analysis.update!(state: 'completed')
     AnalysisMailer.completed(analysis).deliver_now
     FileUtils.rm_rf("#{Rails.root}/tmp/models/#{analysis_id}")
-  rescue StandardError
+  rescue StandardError => e
+    Rails.logger.error(e.message)
+    Rails.logger.error(e.backtrace.join("\n"))
     analysis.update!(state: 'error')
     AnalysisMailer.error(analysis).deliver_now
   end

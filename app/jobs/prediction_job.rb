@@ -1,3 +1,5 @@
+require 'zip'
+
 class PredictionJob < ApplicationJob
   queue_as :regulus
 
@@ -16,15 +18,17 @@ class PredictionJob < ApplicationJob
     end
 
     prediction.update!(pair: YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair'])
-    ret = system 'sudo docker exec regulus python /opt/scripts/predict.py'
-    raise StandardError unless ret
+
+    execute_script('predict.py')
 
     FileUtils.mv(File.join(tmp_dir, 'result.yml'), model_dir)
     result = YAML.load_file(File.join(model_dir, 'result.yml'))
     prediction.update!(result.merge(state: Prediction::STATE_COMPLETED))
     FileUtils.rm_rf(tmp_dir)
     FileUtils.rm_rf(model_dir) if prediction.means == Prediction::MEANS_MANUAL
-  rescue StandardError
+  rescue StandardError => e
+    Rails.logger.error(e.message)
+    Rails.logger.error(e.backtrace.join("\n"))
     prediction.update!(state: Prediction::STATE_ERROR)
   end
 end
