@@ -1,5 +1,7 @@
 # coding: utf-8
 
+require 'zip'
+
 class AnalysisMailer < ApplicationMailer
   default from: 'Leonis.0813@gmail.com'
 

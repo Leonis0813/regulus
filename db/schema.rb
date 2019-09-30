@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,27 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190621152655) do
+ActiveRecord::Schema.define(version: 20190814104812) do
 
-  create_table "analyses", force: :cascade do |t|
-    t.datetime "from",                                      null: false
-    t.datetime "to",                                        null: false
-    t.string   "pair",       limit: 255, default: "USDJPY", null: false
-    t.integer  "batch_size", limit: 4,                      null: false
-    t.string   "state",      limit: 255,                    null: false
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+  create_table "analyses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.datetime "from",       default: '1970-01-01 00:00:00', null: false
+    t.datetime "to",         default: '2286-11-20 17:46:40', null: false
+    t.string   "pair",       default: "USDJPY",              null: false
+    t.integer  "batch_size", default: 0,                     null: false
+    t.string   "state",                                      null: false
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
   end
 
-  create_table "predictions", force: :cascade do |t|
-    t.string   "model",      limit: 255, null: false
+  create_table "predictions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "prediction_id", default: "",       null: false
+    t.string   "model",                            null: false
     t.datetime "from"
     t.datetime "to"
-    t.string   "pair",       limit: 255
-    t.string   "result",     limit: 255
-    t.string   "state",      limit: 255, null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.string   "pair"
+    t.string   "means",         default: "manual", null: false
+    t.string   "result"
+    t.string   "state",                            null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
   end
 
 end

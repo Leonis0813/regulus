@@ -9,7 +9,7 @@ args = sys.argv
 PERIODS = ['25', '75', '200']
 PAIRS = ['USDJPY', 'EURJPY', 'EURUSD', 'AUDJPY', 'GBPJPY', 'CADJPY', 'CHFJPY', 'NZDJPY']
 Settings = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
-result_file = open('/opt/scripts/tmp/result.yml', 'w')
+result_file = open(os.path.dirname(os.path.abspath(args[0])) + '/tmp/result.yml', 'w')
 
 def value(record):
   return record['value']
@@ -73,7 +73,7 @@ out = tf.nn.softmax(tf.matmul(h_4, w_5) + b_5)
 saver = tf.train.Saver()
 
 with tf.Session() as sess:
-  saver.restore(sess, "/opt/scripts/tmp/model.ckpt")
+  saver.restore(sess, os.path.dirname(os.path.abspath(args[0])) + '/tmp/model.ckpt')
   result = sess.run(out, feed_dict={x:test_data})
 
   cursor.execute(

@@ -1,3 +1,28 @@
+# 4.5.2 (2019/09/21)
+- [FIX] bug for production
+- [ADD] logging for error message and backtrace
+- [UPDATE] gems
+
+# 4.5.1 (2019/09/10)
+- [UPDATE] gems
+
+# 4.5.0 (2019/08/16)
+- [ADD] Web API to index predictions
+- [UPDATE] gems
+
+# 4.4.3 (2019/08/06)
+- [UPDATE] rails version to 5.0.x
+
+# 4.4.2 (2019/08/04)
+- [UPDATE] job scheduler
+
+# 4.4.1 (2019/08/02)
+- [UPDATE] ruby version to 2.5.5
+
+# 4.4.0 (2019/07/15)
+- [UPDATE] feature to predict automatically per hour
+- [UPDATE] gems
+
 # 4.3.1 (2019/06/30)
 - [ADD] gems for pronto
 - [UPDATE] gems

@@ -1,17 +1,23 @@
-class Analysis < ActiveRecord::Base
+class Analysis < ApplicationRecord
   DEFAULT_PAIR = 'USDJPY'.freeze
-  PAIRS = %w[AUDJPY CADJPY CHFJPY EURJPY EURUSD GBPJPY NZDJPY USDJPY].freeze
-  STATES = %w[processing completed error].freeze
+  PAIR_LIST = %w[AUDJPY CADJPY CHFJPY EURJPY EURUSD GBPJPY NZDJPY USDJPY].freeze
+  STATE_PROCESSING = 'processing'.freeze
+  STATE_COMPLETED = 'completed'.freeze
+  STATE_ERROR = 'error'.freeze
+  STATE_LIST = [STATE_PROCESSING, STATE_COMPLETED, STATE_ERROR].freeze
 
   validate :valid_period?
   validates :batch_size, :pair, :state,
             presence: {message: 'absent'}
   validates :batch_size,
-            numericality: {only_integer: true, greater_than: 0, message: 'invalid'}
+            numericality: {only_integer: true, greater_than: 0, message: 'invalid'},
+            allow_nil: true
   validates :pair,
-            inclusion: {in: PAIRS, message: 'invalid'}
+            inclusion: {in: PAIR_LIST, message: 'invalid'},
+            allow_nil: true
   validates :state,
-            inclusion: {in: STATES, message: 'invalid'}
+            inclusion: {in: STATE_LIST, message: 'invalid'},
+            allow_nil: true
 
   private
 

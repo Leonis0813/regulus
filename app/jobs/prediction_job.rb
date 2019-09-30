@@ -1,14 +1,15 @@
-class PredictionJob < ActiveJob::Base
+require 'zip'
+
+class PredictionJob < ApplicationJob
   queue_as :regulus
 
-  def perform(prediction_id)
+  def perform(prediction_id, model_dir)
     prediction = Prediction.find(prediction_id)
     tmp_dir = Rails.root.join('scripts', 'tmp')
 
     FileUtils.rm_rf(tmp_dir)
     FileUtils.mkdir_p(tmp_dir)
 
-    model_dir = Rails.root.join('tmp', 'models', prediction.id.to_s)
     zip_file = File.join(model_dir, prediction.model)
     Zip::File.open(zip_file) do |zip|
       zip.each do |entry|
@@ -17,14 +18,17 @@ class PredictionJob < ActiveJob::Base
     end
 
     prediction.update!(pair: YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair'])
-    ret = system 'sudo docker exec regulus python /opt/scripts/predict.py'
-    raise StandardError unless ret
+
+    execute_script('predict.py')
 
     FileUtils.mv(File.join(tmp_dir, 'result.yml'), model_dir)
     result = YAML.load_file(File.join(model_dir, 'result.yml'))
-    prediction.update!(result.merge(state: 'completed'))
-    FileUtils.rm_rf([tmp_dir, model_dir])
-  rescue StandardError
-    prediction.update!(state: 'error')
+    prediction.update!(result.merge(state: Prediction::STATE_COMPLETED))
+    FileUtils.rm_rf(tmp_dir)
+    FileUtils.rm_rf(model_dir) if prediction.means == Prediction::MEANS_MANUAL
+  rescue StandardError => e
+    Rails.logger.error(e.message)
+    Rails.logger.error(e.backtrace.join("\n"))
+    prediction.update!(state: Prediction::STATE_ERROR)
   end
 end

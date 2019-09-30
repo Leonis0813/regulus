@@ -1,0 +1,8 @@
+application_id: 'test_app_id'
+application_key: 'test_app_key'
+
+prediction:
+  base_model_dir: 'tmp/models'
+  auto:
+    model_dir: 'auto'
+    setting_file: 'config/prediction_test.yml'
