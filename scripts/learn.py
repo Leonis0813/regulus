@@ -11,7 +11,7 @@ WORKDIR = os.path.dirname(os.path.abspath(args[0]))
 FROM = args[1]
 TO = args[2]
 TARGET_PAIR = args[3]
-BATCH_SIZE = args[4]
+BATCH_SIZE = int(args[4])
 PERIODS = ['25', '75', '200']
 PAIRS = ['USDJPY', 'EURJPY', 'EURUSD', 'AUDJPY', 'GBPJPY', 'CADJPY', 'CHFJPY', 'NZDJPY']
 Settings = yaml.load(open(WORKDIR + '/settings.yml', 'r+'))
@@ -111,12 +111,11 @@ with tf.Session() as sess:
   sess.run(init)
 
   for i in range(10000):
-    step = i + 1
-    batch_data = training_data.sample(n=int(BATCH_SIZE))
+    batch_data = training_data.sample(n=BATCH_SIZE)
     labels = []
     for label in batch_data['label'].values:
       labels += [[label]]
     inputs = batch_data.drop(['latest', 'future', 'label'], axis=1).values
     sess.run(train_step, feed_dict={x:inputs, y:labels})
 
-  saver.save(sess, os.path.dirname(os.path.abspath(args[0])) + '/tmp/model.ckpt')
+  saver.save(sess, WORKDIR + '/tmp/model.ckpt')
