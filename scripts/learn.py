@@ -66,11 +66,11 @@ futures = []
 target_moving_average = moving_average[TARGET_PAIR + '_25']
 
 for i in range(0, length - 54):
-  latests += target_moving_average[i + 30 - 1]
-  futures += target_moving_average[i + 54 - 1]
+  latests += [target_moving_average[i + 30 - 1]]
+  futures += [target_moving_average[i + 54 - 1]]
 
 for i in range(0, length - 54):
-  labels += [i] if (latests[i] < futures[i]) else [0]
+  labels += [1] if (latests[i] < futures[i]) else [0]
 
 training_data['latests'] = latests
 training_data['futures'] = futures
