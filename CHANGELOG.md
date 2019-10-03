@@ -1,3 +1,6 @@
+# 4.6.0 (2019/10/03)
+- [UPDATE] learning script to output training data
+
 # 4.5.2 (2019/09/21)
 - [FIX] bug for production
 - [ADD] logging for error message and backtrace
