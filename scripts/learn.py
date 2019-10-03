@@ -1,8 +1,9 @@
 import mysql.connector as mysql
 import numpy as np
-import tensorflow as tf
 import os
+import pandas as pd
 import sys
+import tensorflow as tf
 import yaml
 
 args = sys.argv
@@ -31,7 +32,7 @@ connection = mysql.connect(
 
 cursor = connection.cursor(dictionary=True)
 vfunc = np.vectorize(value)
-moving_average = {}
+moving_average = pd.DataFrame()
 length = np.inf
 
 for pair in PAIRS:
@@ -48,24 +49,28 @@ for pair in PAIRS:
     values = vfunc(cursor.fetchall())
     values = min_max(values)
     length = len(values) if length > len(values) else length
-    moving_average[pair][period] = values
+    moving_average[pair + '_' + period] = values
 
-inputs = np.empty((0, 720), float)
-labels = np.empty((0, 1), int)
+training_data = pd.DataFrame()
+
+for pair in PAIRS:
+  for period in PERIODS:
+    for index in range(0, 30):
+      key = pair + '_' + period
+      new_key = key + '_' + str(index)
+      training_data[new_key] = moving_average[key][index:(length - 54 + index)].values
+
+labels = []
 
 for i in range(0, length - 54):
-  input = np.empty(0)
-  for pair in PAIRS:
-    for period in PERIODS:
-      input = np.append(input, np.array(moving_average[pair][period][i:i+30]))
-
-  inputs = np.append(inputs, np.array([input]), axis=0)
-
-  target_moving_average = moving_average[TARGET_PAIR]['25']
-  if (target_moving_average[i + 30] + 0.01 < target_moving_average[i + 54]):
-    labels = np.append(labels, np.array([[1]]), axis=0)
+  target_moving_average = moving_average[TARGET_PAIR + '_25']
+  if (target_moving_average[i + 30 - 1] < target_moving_average[i + 54 - 1]):
+    labels += [1]
   else:
-    labels = np.append(labels, np.array([[0]]), axis=0)
+    labels += [0]
+
+training_data['label'] = labels
+training_data.to_csv(os.path.dirname(os.path.abspath(args[0])) + '/tmp/training_data.csv', index=False)
 
 x = tf.placeholder(tf.float32, [None, 720])
 
@@ -102,10 +107,10 @@ with tf.Session() as sess:
 
   for i in range(10000):
     step = i + 1
-
-    indices = np.random.randint(0, len(inputs), int(BATCH_SIZE), int)
-    batch_data = inputs[indices]
-    batch_label = labels[indices]
-    sess.run(train_step, feed_dict={x:batch_data, y:batch_label})
+    batch_data = training_data.sample(n=int(BATCH_SIZE))
+    labels = []
+    for l in batch_data['label'].values:
+      labels += [[l]]
+    sess.run(train_step, feed_dict={x:batch_data.drop('label', axis=1).values, y:labels})
 
   saver.save(sess, os.path.dirname(os.path.abspath(args[0])) + '/tmp/model.ckpt')
