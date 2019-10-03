@@ -36,7 +36,6 @@ moving_average = pd.DataFrame()
 length = np.inf
 
 for pair in PAIRS:
-  moving_average[pair] = {}
   for period in PERIODS:
     cursor.execute(
       'SELECT value FROM moving_averages ' \
