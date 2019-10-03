@@ -7,13 +7,14 @@ import tensorflow as tf
 import yaml
 
 args = sys.argv
+WORKDIR = os.path.dirname(os.path.abspath(args[0]))
 FROM = args[1]
 TO = args[2]
 TARGET_PAIR = args[3]
 BATCH_SIZE = args[4]
 PERIODS = ['25', '75', '200']
 PAIRS = ['USDJPY', 'EURJPY', 'EURUSD', 'AUDJPY', 'GBPJPY', 'CADJPY', 'CHFJPY', 'NZDJPY']
-Settings = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
+Settings = yaml.load(open(WORKDIR + '/settings.yml', 'r+'))
 
 def value(moving_average):
   return moving_average['value']
@@ -60,16 +61,21 @@ for pair in PAIRS:
       training_data[new_key] = moving_average[key][index:(length - 54 + index)].values
 
 labels = []
+latests = []
+futures = []
+target_moving_average = moving_average[TARGET_PAIR + '_25']
 
 for i in range(0, length - 54):
-  target_moving_average = moving_average[TARGET_PAIR + '_25']
-  if (target_moving_average[i + 30 - 1] < target_moving_average[i + 54 - 1]):
-    labels += [1]
-  else:
-    labels += [0]
+  latests += target_moving_average[i + 30 - 1]
+  futures += target_moving_average[i + 54 - 1]
 
+for i in range(0, length - 54):
+  labels += [i] if (latests[i] < futures[i]) else [0]
+
+training_data['latests'] = latests
+training_data['futures'] = futures
 training_data['label'] = labels
-training_data.to_csv(os.path.dirname(os.path.abspath(args[0])) + '/tmp/training_data.csv', index=False)
+training_data.to_csv(WORKDIR + '/tmp/training_data.csv', index=False)
 
 x = tf.placeholder(tf.float32, [None, 720])
 
