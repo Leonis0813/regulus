@@ -114,8 +114,9 @@ with tf.Session() as sess:
     step = i + 1
     batch_data = training_data.sample(n=int(BATCH_SIZE))
     labels = []
-    for l in batch_data['label'].values:
-      labels += [[l]]
-    sess.run(train_step, feed_dict={x:batch_data.drop('label', axis=1).values, y:labels})
+    for label in batch_data['label'].values:
+      labels += [[label]]
+    inputs = batch_data.drop('label', axis=1).values
+    sess.run(train_step, feed_dict={x:inputs, y:labels})
 
   saver.save(sess, os.path.dirname(os.path.abspath(args[0])) + '/tmp/model.ckpt')
