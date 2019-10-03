@@ -72,8 +72,8 @@ for i in range(0, length - 54):
 for i in range(0, length - 54):
   labels += [1] if (latests[i] < futures[i]) else [0]
 
-training_data['latests'] = latests
-training_data['futures'] = futures
+training_data['latest'] = latests
+training_data['future'] = futures
 training_data['label'] = labels
 training_data.to_csv(WORKDIR + '/tmp/training_data.csv', index=False)
 
@@ -116,7 +116,7 @@ with tf.Session() as sess:
     labels = []
     for label in batch_data['label'].values:
       labels += [[label]]
-    inputs = batch_data.drop('label', axis=1).values
+    inputs = batch_data.drop(['latest', 'future', 'label'], axis=1).values
     sess.run(train_step, feed_dict={x:inputs, y:labels})
 
   saver.save(sess, os.path.dirname(os.path.abspath(args[0])) + '/tmp/model.ckpt')
