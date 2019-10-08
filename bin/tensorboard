@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require File.expand_path('../config/application', __dir__)
+Rails.application.require_environment!
+
+class TensorboardDaemon < DaemonSpawn::Base
+  def start(_)
+    ENV['PYENV_ROOT'] = '/usr/local/pyenv'
+    ENV['PATH'] = [
+      "#{ENV['PYENV_ROOT']}/versions/3.6.6/bin",
+      "#{ENV['PYENV_ROOT']}/bin",
+      '/usr/bin',
+      '/bin',
+    ].join(':')
+
+    command = [
+      'eval "$(pyenv init -)"',
+      'eval "$(pyenv virtualenv-init -)"',
+      'pyenv activate regulus',
+      "tensorboard --logdir=#{Rails.root.join('tmp', 'models', 'tensorboard')}"
+    ].join(' && ')
+    system command
+  end
+
+  def stop
+  end
+end
+
+TensorboardDaemon.spawn!(
+  working_dir: Rails.root,
+  pid_file: Rails.root.join('tmp', 'pids', 'tensorboard.pid'),
+  log_file: Rails.root.join('log', 'tensorboard.log'),
+  sync_log: true,
+  singleton: true,
+)
