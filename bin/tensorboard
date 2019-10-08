@@ -17,12 +17,13 @@ class TensorboardDaemon < DaemonSpawn::Base
       'eval "$(pyenv init -)"',
       'eval "$(pyenv virtualenv-init -)"',
       'pyenv activate regulus',
-      "tensorboard --logdir=#{Rails.root.join('tmp', 'models', 'tensorboard')}"
+      "tensorboard --logdir=#{Rails.root.join('tmp', 'models', 'tensorboard')}",
     ].join(' && ')
     system command
   end
 
   def stop
+    Process.kill('TERM', `pgrep tensorboard`.to_i)
   end
 end
 
