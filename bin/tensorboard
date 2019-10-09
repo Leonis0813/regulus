@@ -13,11 +13,12 @@ class TensorboardDaemon < DaemonSpawn::Base
       '/bin',
     ].join(':')
 
+    logdir = Rails.root.join('tmp', 'models', 'tensorboard', 'logs')
     command = [
       'eval "$(pyenv init -)"',
       'eval "$(pyenv virtualenv-init -)"',
       'pyenv activate regulus',
-      "tensorboard --logdir=#{Rails.root.join('tmp', 'models', 'tensorboard')}",
+      "tensorboard --logdir=#{logdir} --path_prefix=/regulus/analyses/result",
     ].join(' && ')
     system command
   end
