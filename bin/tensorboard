@@ -33,5 +33,4 @@ TensorboardDaemon.spawn!(
   pid_file: Rails.root.join('tmp', 'pids', 'tensorboard.pid'),
   log_file: Rails.root.join('log', 'tensorboard.log'),
   sync_log: true,
-  singleton: true,
 )

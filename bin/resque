@@ -20,5 +20,4 @@ ResqueDaemon.spawn!(
   pid_file: Rails.root.join('tmp', 'pids', 'resque.pid'),
   log_file: Rails.root.join('log', 'resque.log'),
   sync_log: true,
-  singleton: true,
 )
