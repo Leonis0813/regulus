@@ -28,7 +28,7 @@ class AnalysesController < ApplicationController
   def upload_result
     raise BadRequest, 'absent_param_model' unless params[:model]
 
-    model = param[:model]
+    model = params[:model]
     dir = Rails.root.join(Settings.prediction.base_model_dir, 'tensorboard')
 
     zip_file = File.join(dir, model.original_filename)

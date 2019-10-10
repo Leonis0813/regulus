@@ -55,7 +55,7 @@ $ ->
     bootbox.dialog({
       title: '<span style="font-size:20px">モデルを選択してください</span>',
       message: '<form id="new-analysis-result">' +
-        '<input id="model" class="form-control" type="file" required>' +
+        '<input id="model" class="form-control" type="file">' +
         '</form>',
       buttons: {
         cancel: {
