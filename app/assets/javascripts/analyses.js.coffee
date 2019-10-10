@@ -51,7 +51,7 @@ $ ->
     )
     return
 
-  $('#analysis_result').on 'click', ->
+  $('#analysis-result').on 'click', ->
     bootbox.dialog({
       title: '<span style="font-size:20px">モデルを選択してください</span>',
       message: '<form id="new-analysis-result">' +
