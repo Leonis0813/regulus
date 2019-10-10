@@ -25,6 +25,24 @@ class AnalysesController < ApplicationController
     render status: :ok, json: {}
   end
 
+  def upload_result
+    raise BadRequest, 'absent_param_model' unless params[:model]
+
+    model = param[:model]
+    dir = Rails.root.join(Settings.prediction.base_model_dir, 'tensorboard')
+
+    zip_file = File.join(dir, model.original_filename)
+    File.open(zip_file, 'w+b') {|file| file.write(model.read) }
+
+    Zip::File.open(zip_file) do |zip|
+      zip.each do |entry|
+        zip.extract(entry, File.join(dir, entry.name))
+      end
+    end
+
+    render status: :ok, json: {}
+  end
+
   private
 
   def analysis_params
