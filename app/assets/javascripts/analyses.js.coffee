@@ -82,7 +82,7 @@ $ ->
               }).done((data) ->
                 bootbox.alert({
                   title: 'モデルを設定しました',
-                  message: '<a href="/regulus/analyses/result" target="_blank">こちら</a>から結果を確認できます'
+                  message: '<a href="/regulus/tensorboard" target="_blank">こちら</a>から結果を確認できます'
                 })
                 return
               ).fail((xhr, status, error) ->
