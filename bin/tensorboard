@@ -18,7 +18,7 @@ class TensorboardDaemon < DaemonSpawn::Base
       'eval "$(pyenv init -)"',
       'eval "$(pyenv virtualenv-init -)"',
       'pyenv activate regulus',
-      "tensorboard --logdir=#{logdir} --path_prefix=/regulus/analyses/result",
+      "tensorboard --logdir=#{logdir} --path_prefix=/regulus/tensorboard",
     ].join(' && ')
     system command
   end
