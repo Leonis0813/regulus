@@ -30,6 +30,7 @@ class AnalysesController < ApplicationController
 
     model = params[:model]
     dir = Rails.root.join(Settings.prediction.base_model_dir, 'tensorboard')
+    FileUtils.rm_rf(Dir[File.join(dir, '*')])
 
     zip_file = File.join(dir, model.original_filename)
     File.open(zip_file, 'w+b') {|file| file.write(model.read) }
