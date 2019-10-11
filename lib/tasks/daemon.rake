@@ -4,20 +4,20 @@ namespace :daemon do
 
     desc 'Start rescue'
     task :start do
-      worker :start
+      resque :start
     end
 
     desc 'Stop rescue'
     task :stop do
-      worker :stop
+      resque :stop
     end
 
     desc 'Restart rescue'
     task :restart do
-      worker :restart
+      resque :restart
     end
 
-    def worker(operation)
+    def resque(operation)
       system "#{Rails.root}/bin/resque #{operation}"
     end
   end
@@ -27,20 +27,20 @@ namespace :daemon do
 
     desc 'Start tensorboard'
     task :start do
-      worker :start
+      tensorboard :start
     end
 
     desc 'Stop tensorboard'
     task :stop do
-      worker :stop
+      tensorboard :stop
     end
 
     desc 'Restart tensorboard'
     task :restart do
-      worker :restart
+      tensorboard :restart
     end
 
-    def worker(operation)
+    def tensorboard(operation)
       system "#{Rails.root}/bin/tensorboard #{operation}"
     end
   end
