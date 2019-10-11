@@ -7,9 +7,7 @@ describe AnalysesController, type: :controller do
   model_file = 'analysis.zip'
   zip_file_path = Rails.root.join('spec', 'fixtures', model_file)
   invalid_file_path = Rails.root.join('spec', 'fixtures', 'invalid.txt')
-  default_params = {
-    model: Rack::Test::UploadedFile.new(File.open(zip_file_path)),
-  }
+  default_params = {model: Rack::Test::UploadedFile.new(File.open(zip_file_path))}
 
   shared_context 'リクエスト送信' do |body: default_params|
     before(:all) do
