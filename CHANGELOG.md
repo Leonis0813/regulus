@@ -1,3 +1,6 @@
+# 4.7.0 (2019/10/11)
+- [UPDATE] analysis view to confirm result by tensorboard
+
 # 4.6.0 (2019/10/03)
 - [UPDATE] learning script to output training data
 - [UPDATE] gems
