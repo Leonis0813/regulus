@@ -6,4 +6,8 @@ class ApplicationController < ActionController::Base
   rescue_from BadRequest do |e|
     render status: :bad_request, json: {errors: e.errors}
   end
+
+  def valid_model?(model)
+    model&.respond_to?(:original_filename) and model.original_filename.end_with?('.zip')
+  end
 end

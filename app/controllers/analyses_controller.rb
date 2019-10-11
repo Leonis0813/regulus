@@ -29,7 +29,12 @@ class AnalysesController < ApplicationController
     raise BadRequest, 'absent_param_model' unless params[:model]
 
     model = params[:model]
-    dir = Rails.root.join(Settings.prediction.base_model_dir, 'tensorboard')
+    raise BadRequest, 'invalid_param_model' unless valid_model?(model)
+
+    dir = Rails.root.join(
+      Settings.analysis.base_model_dir,
+      Settings.analysis.tensorboard_dir,
+    )
     FileUtils.rm_rf(Dir[File.join(dir, '*')])
 
     zip_file = File.join(dir, model.original_filename)

@@ -75,8 +75,4 @@ class PredictionsController < ApplicationController
   def prediction_params
     %i[model]
   end
-
-  def valid_model?(model)
-    model&.respond_to?(:original_filename) and model.original_filename.end_with?('.zip')
-  end
 end
