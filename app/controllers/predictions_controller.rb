@@ -1,4 +1,6 @@
 class PredictionsController < ApplicationController
+  include ModelUtil
+
   def manage
     @prediction = Prediction.new
     @predictions = Prediction.all.order(created_at: :desc).page(params[:page])
@@ -64,13 +66,6 @@ class PredictionsController < ApplicationController
   end
 
   private
-
-  def output_model(dir, model)
-    FileUtils.mkdir_p(dir)
-    File.open(File.join(dir, model.original_filename), 'w+b') do |file|
-      file.write(model.read)
-    end
-  end
 
   def prediction_params
     %i[model]

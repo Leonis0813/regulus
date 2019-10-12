@@ -1,6 +1,8 @@
 require 'zip'
 
 class PredictionJob < ApplicationJob
+  include ModelUtil
+
   queue_as :regulus
 
   def perform(prediction_id, model_dir)
@@ -9,13 +11,7 @@ class PredictionJob < ApplicationJob
 
     FileUtils.rm_rf(tmp_dir)
     FileUtils.mkdir_p(tmp_dir)
-
-    zip_file = File.join(model_dir, prediction.model)
-    Zip::File.open(zip_file) do |zip|
-      zip.each do |entry|
-        zip.extract(entry, File.join(tmp_dir, entry.name))
-      end
-    end
+    unzip_model(File.join(model_dir, prediction.model), tmp_dir)
 
     prediction.update!(pair: YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair'])
 

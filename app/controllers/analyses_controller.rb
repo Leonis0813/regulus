@@ -1,4 +1,6 @@
 class AnalysesController < ApplicationController
+  include ModelUtil
+
   def manage
     @analysis = Analysis.new
     @analyses = Analysis.all.order(created_at: :desc).page(params[:page])
@@ -37,14 +39,8 @@ class AnalysesController < ApplicationController
     )
     FileUtils.rm_rf(Dir[File.join(dir, '*')])
 
-    zip_file = File.join(dir, model.original_filename)
-    File.open(zip_file, 'w+b') {|file| file.write(model.read) }
-
-    Zip::File.open(zip_file) do |zip|
-      zip.each do |entry|
-        zip.extract(entry, File.join(dir, entry.name))
-      end
-    end
+    output_model(dir, model)
+    unzip_model(File.join(dir, model.original_filename), dir)
 
     render status: :ok, json: {}
   end
