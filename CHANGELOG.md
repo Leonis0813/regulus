@@ -1,4 +1,4 @@
-# 4.7.0 (2019/10/11)
+# 4.7.0 (2019/10/12)
 - [UPDATE] analysis view to confirm result by tensorboard
 
 # 4.6.0 (2019/10/03)
