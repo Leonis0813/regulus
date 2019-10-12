@@ -80,9 +80,10 @@ $ ->
                 processData: false,
                 contentType: false,
               }).done((data) ->
+                link = '<a href="/regulus/tensorboard" target="_blank">こちら</a>'
                 bootbox.alert({
                   title: 'モデルを設定しました',
-                  message: '<a href="/regulus/tensorboard" target="_blank">こちら</a>から結果を確認できます'
+                  message: link + 'から結果を確認できます'
                 })
                 return
               ).fail((xhr, status, error) ->
