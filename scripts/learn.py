@@ -108,6 +108,11 @@ init = tf.global_variables_initializer()
 saver = tf.train.Saver()
 
 with tf.Session() as sess:
+  with tf.name_scope('summary'):
+    tf.summary.scalar('loss', loss)
+    merged = tf.summary.merge_all()
+    writer = tf.summary.FileWriter(WORKDIR + '/tmp/logs', sess.graph)
+
   sess.run(init)
 
   for i in range(10000):

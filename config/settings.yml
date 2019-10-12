@@ -1,3 +1,7 @@
+analysis:
+  base_model_dir: 'tmp/models'
+  tensorboard_dir: 'tensorboard'
+
 prediction:
   base_model_dir: 'tmp/models'
   auto:

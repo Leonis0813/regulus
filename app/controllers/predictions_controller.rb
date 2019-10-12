@@ -1,4 +1,6 @@
 class PredictionsController < ApplicationController
+  include ModelUtil
+
   def manage
     @prediction = Prediction.new
     @predictions = Prediction.all.order(created_at: :desc).page(params[:page])
@@ -65,18 +67,7 @@ class PredictionsController < ApplicationController
 
   private
 
-  def output_model(dir, model)
-    FileUtils.mkdir_p(dir)
-    File.open(File.join(dir, model.original_filename), 'w+b') do |file|
-      file.write(model.read)
-    end
-  end
-
   def prediction_params
     %i[model]
-  end
-
-  def valid_model?(model)
-    model&.respond_to?(:original_filename) and model.original_filename.end_with?('.zip')
   end
 end

@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   get '/analyses' => 'analyses#manage'
   post '/analyses' => 'analyses#execute'
+  put '/analyses/result' => 'analyses#upload_result'
 
   get '/predictions' => 'predictions#manage'
   post '/predictions' => 'predictions#execute'

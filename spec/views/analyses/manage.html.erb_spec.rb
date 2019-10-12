@@ -33,6 +33,12 @@ describe 'analyses/manage', type: :view do
   shared_examples '入力フォームが表示されていること' do
     form_xpath = '//form[@id="new_analysis"]'
 
+    it '分析結果を確認するリンクが表示されていること' do
+      span = @html.xpath('//div[@id="new-analysis"]/div/span[@id="analysis-result"]')
+      is_asserted_by { span.present? }
+      is_asserted_by { span.text == 'こちら' }
+    end
+
     %w[from to pair batch_size].each do |param|
       input_xpath = "#{form_xpath}/div[@class='form-group']"
 
