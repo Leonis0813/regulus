@@ -7,12 +7,7 @@ class PredictionsController < ApplicationController
   end
 
   def execute
-    attributes = params.permit(*prediction_params)
-    absent_keys = prediction_params - attributes.keys.map(&:to_sym)
-    unless absent_keys.empty?
-      error_codes = absent_keys.map {|key| "absent_param_#{key}" }
-      raise BadRequest, error_codes
-    end
+    check_absent_params(%i[model], execute_params)
 
     model = attributes[:model]
     raise BadRequest, 'invalid_param_model' unless model.respond_to?(:original_filename)
@@ -39,35 +34,41 @@ class PredictionsController < ApplicationController
   end
 
   def settings
-    raise BadRequest, 'absent_param_auto' unless params[:auto] and params[:auto][:status]
+    check_absent_params(%i[auto], request.request_parameters)
 
-    status = params[:auto][:status]
-    raise BadRequest, 'invalid_param_auto' unless %w[active inactive].include?(status)
+    auto = request.request_parameters[:auto]
+    check_absent_params(%i[pair status], auto)
 
-    setting_file = File.open(Rails.root.join(Settings.prediction.auto.setting_file), 'w')
-    setting = {'status' => status}
+    status = auto[:status]
+    raise BadRequest, 'invalid_param_status' unless %w[active inactive].include?(status)
+
+    file_path = Rails.root.join(Settings.prediction.auto.config_file)
+    configs = YAML.load_file(file_path).deep_stringify_keys
+    configs.reject! {|config| config.pair == auto[:pair] }
+    new_config = {'pair' => auto[:pair], 'status' => status}
 
     if status == 'active'
-      model = params[:auto][:model]
-      raise BadRequest, 'invalid_param_auto' unless valid_model?(model)
+      check_absent_params(%i[model], auto)
+
+      model = auto[:model]
+      raise BadRequest, 'invalid_param_model' unless valid_model?(model)
 
       model_dir = Rails.root.join(
         Settings.prediction.base_model_dir,
         Settings.prediction.auto.model_dir,
       )
       output_model(model_dir, model)
-      setting['filename'] = model.original_filename
+      new_config['filename'] = model.original_filename
     end
 
-    YAML.dump(setting, setting_file)
-    setting_file.close
+    File.open(file_path, 'w') {|file| YAML.dump(configs.push(new_config), file) }
 
     render status: :ok, json: {}
   end
 
   private
 
-  def prediction_params
-    %i[model]
+  def execute_params
+    request.request_parameters.permit(:model)
   end
 end

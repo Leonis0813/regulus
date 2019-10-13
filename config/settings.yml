@@ -6,4 +6,4 @@ prediction:
   base_model_dir: 'tmp/models'
   auto:
     model_dir: 'auto'
-    setting_file: 'config/prediction.yml'
+    config_file: 'config/prediction.yml'
