@@ -7,13 +7,7 @@ class AnalysesController < ApplicationController
   end
 
   def execute
-    attributes = params.permit(*analysis_params)
-
-    absent_keys = analysis_params - attributes.keys.map(&:to_sym)
-    unless absent_keys.empty?
-      error_codes = absent_keys.sort.map {|key| "absent_param_#{key}" }
-      raise BadRequest, error_codes
-    end
+    check_absent_params(%i[batch_size from pair to], execute_params)
 
     analysis = Analysis.new(attributes.merge(state: Analysis::STATE_PROCESSING))
     unless analysis.save
@@ -28,7 +22,7 @@ class AnalysesController < ApplicationController
   end
 
   def upload_result
-    raise BadRequest, 'absent_param_model' unless params[:model]
+    check_absent_params(%i[model], request.request_parameters)
 
     model = params[:model]
     raise BadRequest, 'invalid_param_model' unless valid_model?(model)
@@ -47,7 +41,7 @@ class AnalysesController < ApplicationController
 
   private
 
-  def analysis_params
-    %i[batch_size from pair to]
+  def execute_params
+    request.request_parameters.permit(:batch_size, :from, :pair, :to)
   end
 end
