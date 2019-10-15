@@ -2,15 +2,15 @@
   <div class='col-lg-4'>
     <ul class='nav nav-tabs'>
       <li class='active'>
-        <a href='#new-prediction' data-toggle='tab'>ジョブ登録</a>
+        <a href='#tab-prediction' data-toggle='tab'>ジョブ登録</a>
       </li>
       <li>
-        <a href='#setting' data-toggle='tab'>設定</a>
+        <a href='#tab-setting' data-toggle='tab'>設定</a>
       </li>
     </ul>
 
     <div class='tab-content'>
-      <div id='new-prediction' class='well tab-pane active'>
+      <div id='tab-prediction' class='well tab-pane active'>
         <div>
           <h3 style='display:inline'>レートを予測</h3>
         </div>
@@ -23,17 +23,28 @@
           <%= f.submit 'リセット', :type => 'reset', :class => 'btn btn-default btn-sm' %>
         <% end %>
       </div>
-      <div id='setting' class='well tab-pane'>
+      <div id='tab-setting' class='well tab-pane'>
         <div>
           <h3 style='display:inline'>定期予測設定</h3>
         </div>
-        <%= form_tag predictions_settings_path, multipart: true, remote: true do %>
+        <%= form_tag predictions_settings_path, method: :put, id: 'setting', multipart: true, remote: true do %>
           <div class='form-group'>
-            <%= label_tag :model, 'モデル' %><br>
-            <%= file_field_tag  :model, {:class => 'form-control', :name => :model, :required => true} %>
+            <%= label_tag :status, '状態' %><br>
+            <%= radio_button_tag 'auto[status]', :active, checked: true %>
+            <%= label_tag :auto_status_active, '有効', style: 'padding-left: 3px' %>
+            <%= radio_button_tag 'auto[status]', :inactive %>
+            <%= label_tag :auto_status_inactive, '無効', style: 'padding-left: 3px' %>
           </div>
-          <%= submit_tag '実行', :class => 'btn btn-primary btn-sm btn-submit' %>
-          <%= submit_tag 'リセット', :type => 'reset', :class => 'btn btn-default btn-sm' %>
+          <div id='form-active', class='form-group form-setting'>
+            <%= label_tag :auto_model, 'モデル' %><br>
+            <%= file_field_tag  'auto[model]', :class => 'form-control form-active' %>
+          </div>
+          <div id='form-inactive' class='form-group form-setting not-selected'>
+            <%= label_tag :auto_pair, 'ペア' %><br>
+            <%= select_tag 'auto[pair]', options_for_select(Settings.pairs), class: 'form-control form-inactive' %>
+          </div>
+          <%= submit_tag '実行', class: 'btn btn-primary btn-sm btn-submit' %>
+          <%= submit_tag 'リセット', type: 'reset', class: 'btn btn-default btn-sm' %>
         <% end %>
       </div>
     </div>

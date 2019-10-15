@@ -22,6 +22,26 @@ $ ->
     })
     return
 
+  $('input[name="auto[status]"]:radio').on 'change', ->
+    $('.form-active,.form-inactive').prop('disabled', true)
+    $('.form-setting').addClass('not-selected')
+    $('.form-' + $(this).val()).prop('disabled', false)
+    $('#form-' + $(this).val()).removeClass('not-selected')
+    return
+
+  $('#setting').on 'submit', ->
+    formData = new FormData()
+    file = $('#auto_model')[0].files[0]
+    if file == undefined
+      formData.append('auto[status]', 'inactive')
+      formData.append('auto[pair]', $('#pair').val())
+    else
+      formData.append('auto[status]', 'active')
+      formData.append('auto[model]', file)
+    $('#model').prop('disabled', true)
+    $('#pair').prop('disabled', true)
+    return
+
   $('#setting').on 'ajax:success', (event, config, status) ->
     if (config.status == 'active')
       message = '<li>' + config.pair + 'の定期予測を開始します</li>' +
