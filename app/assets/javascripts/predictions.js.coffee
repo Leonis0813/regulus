@@ -22,7 +22,7 @@ $ ->
     })
     return
 
-  $('#btn-prediction-setting').on 'ajax:success', (event, config, status) ->
+  $('#setting').on 'ajax:success', (event, config, status) ->
     if (config.status == 'active')
       message = '<li>' + config.pair + 'の定期予測を開始します</li>' +
         '<li>次の予測から設定したモデルが利用されます</li>'
@@ -37,7 +37,7 @@ $ ->
     })
     return
 
-  $('#new_prediction').on 'ajax:error', (event, xhr, status, error) ->
+  $('#setting').on 'ajax:error', (event, xhr, status, error) ->
     bootbox.alert({
       title: 'エラーが発生しました',
       message: '入力値を見直してください',

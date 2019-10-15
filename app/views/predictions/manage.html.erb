@@ -1,20 +1,41 @@
 <div class='row center-block'>
   <div class='col-lg-4'>
-    <div id='new-prediction' class='well'>
-      <div>
-        <h3 style='display:inline'>レートを予測</h3>
-        <button id='btn-prediction-setting' class='btn btn-default btn-sm' style='height:32px;float:right'>
-          <span class='glyphicon glyphicon-cog' style='font-size:18px'></span>
-        </button>
-      </div>
-      <%= form_for @prediction, :html => {:multipart => true}, :url => predictions_path, :remote => true do |f| %>
-        <div class='form-group'>
-          <%= f.label :model, 'モデル' %><br>
-          <%= f.file_field :model, {:class => 'form-control', :name => :model, :required => true} %>
+    <ul class='nav nav-tabs'>
+      <li class='active'>
+        <a href='#new-prediction' data-toggle='tab'>ジョブ登録</a>
+      </li>
+      <li>
+        <a href='#setting' data-toggle='tab'>設定</a>
+      </li>
+    </ul>
+
+    <div class='tab-content'>
+      <div id='new-prediction' class='well tab-pane active'>
+        <div>
+          <h3 style='display:inline'>レートを予測</h3>
         </div>
-        <%= f.submit '実行', :class => 'btn btn-primary btn-sm btn-submit' %>
-        <%= f.submit 'リセット', :type => 'reset', :class => 'btn btn-default btn-sm' %>
-      <% end %>
+        <%= form_for @prediction, :html => {:multipart => true}, :url => predictions_path, :remote => true do |f| %>
+          <div class='form-group'>
+            <%= f.label :model, 'モデル' %><br>
+            <%= f.file_field :model, {:class => 'form-control', :name => :model, :required => true} %>
+          </div>
+          <%= f.submit '実行', :class => 'btn btn-primary btn-sm btn-submit' %>
+          <%= f.submit 'リセット', :type => 'reset', :class => 'btn btn-default btn-sm' %>
+        <% end %>
+      </div>
+      <div id='setting' class='well tab-pane'>
+        <div>
+          <h3 style='display:inline'>定期予測設定</h3>
+        </div>
+        <%= form_tag predictions_settings_path, multipart: true, remote: true do %>
+          <div class='form-group'>
+            <%= label_tag :model, 'モデル' %><br>
+            <%= file_field_tag  :model, {:class => 'form-control', :name => :model, :required => true} %>
+          </div>
+          <%= submit_tag '実行', :class => 'btn btn-primary btn-sm btn-submit' %>
+          <%= submit_tag 'リセット', :type => 'reset', :class => 'btn btn-default btn-sm' %>
+        <% end %>
+      </div>
     </div>
   </div>
 
