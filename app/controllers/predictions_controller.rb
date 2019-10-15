@@ -63,7 +63,7 @@ class PredictionsController < ApplicationController
 
     File.open(file_path, 'w') {|file| YAML.dump(configs.push(new_config), file) }
 
-    render status: :ok, json: {}
+    render status: :ok, json: new_config
   end
 
   private
