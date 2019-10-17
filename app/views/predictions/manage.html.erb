@@ -17,7 +17,7 @@
         <%= form_for @prediction, html: {multipart: true}, url: predictions_path, remote: true do |f| %>
           <div class='form-group'>
             <%= f.label :model, 'モデル' %><br>
-            <%= f.file_field :model, {class: 'form-control', name: :model, required: true} %>
+            <%= f.file_field :model, class: 'form-control', name: :model, required: true %>
           </div>
           <%= f.submit '実行', class: 'btn btn-primary btn-sm btn-submit' %>
           <%= f.submit 'リセット', type: 'reset', class: 'btn btn-default btn-sm' %>
@@ -54,8 +54,9 @@
     <div>
       <h3 style='display:inline;padding: 10px 0px'>ジョブ実行履歴</h3>
     </div>
-    <% from = @predictions.total_count == 0 ? 0 : @predictions.offset_value + 1 %>
-    <% info = {:total_count => @predictions.total_count, :from => from, :to => @predictions.offset_value + @predictions.size} %>
+    <% from = @predictions.total_count.zero? ? 0 : @predictions.offset_value + 1 %>
+    <% to = @predictions.offset_value + @predictions.size %>
+    <% info = {total_count: @predictions.total_count, from: from, to: to} %>
     <h4 style='padding: 10px 0px'><%= t('views.pagination.info', info) %></h4>
     <%= paginate @predictions %>
     <table class='table table-hover'>
