@@ -95,7 +95,7 @@ GEM
     connection_pool (2.2.2)
     cork (0.3.0)
       colored2 (~> 3.1)
-    crass (1.0.4)
+    crass (1.0.5)
     daemon-spawn (0.4.2)
     danger (6.1.0)
       claide (~> 1.0)
