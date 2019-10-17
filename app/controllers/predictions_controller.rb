@@ -37,15 +37,16 @@ class PredictionsController < ApplicationController
     check_absent_params(%i[auto], request.request_parameters)
 
     auto = request.request_parameters[:auto]
-    check_absent_params(%i[pair status], auto)
+    check_absent_params(%i[status], auto)
 
     status = auto[:status]
     raise BadRequest, 'invalid_param_status' unless %w[active inactive].include?(status)
 
     file_path = Rails.root.join(Settings.prediction.auto.config_file)
-    configs = YAML.load_file(file_path).deep_stringify_keys
-    configs.reject! {|config| config.pair == auto[:pair] }
-    new_config = {'pair' => auto[:pair], 'status' => status}
+    configs = []
+    configs = YAML.load_file(file_path) if File.exists?(file_path)
+    configs.map!(&:deep_stringify_keys)
+    new_config = {'status' => status}
 
     if status == 'active'
       check_absent_params(%i[model], auto)
@@ -53,17 +54,32 @@ class PredictionsController < ApplicationController
       model = auto[:model]
       raise BadRequest, 'invalid_param_model' unless valid_model?(model)
 
-      model_dir = Rails.root.join(
+      auto_dir = Rails.root.join(
         Settings.prediction.base_model_dir,
         Settings.prediction.auto.model_dir,
       )
-      output_model(model_dir, model)
-      new_config['filename'] = model.original_filename
+      tmp_dir = File.join(auto_dir, 'tmp')
+      output_model(tmp_dir, model)
+      unzip_model(File.join(tmp_dir, model.original_filename), tmp_dir)
+
+      pair = YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair']
+      pair_dir = File.join(auto_dir, pair)
+      FileUtils.rm_rf(pair_dir) if File.exists?(pair_dir)
+      FileUtils.mv(tmp_dir, pair_dir)
+
+      configs.reject! {|config| config['pair'] == pair }
+      new_config.merge!('filename' => model.original_filename, 'pair' => pair)
+    else
+      check_absent_params(%i[pair], auto)
+      configs.reject! {|config| config['pair'] == auto[:pair] }
+      new_config['pair'] = auto[:pair]
     end
 
     File.open(file_path, 'w') {|file| YAML.dump(configs.push(new_config), file) }
 
-    render status: :ok, json: new_config
+    @prediction = Prediction.new
+    @predictions = Prediction.all.order(created_at: :desc).page(1)
+    render action: :manage
   end
 
   private

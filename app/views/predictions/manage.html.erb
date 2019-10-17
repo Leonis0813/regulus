@@ -27,7 +27,7 @@
         <div>
           <h3 style='display:inline'>定期予測設定</h3>
         </div>
-        <%= form_tag predictions_settings_path, method: :put, id: 'setting', multipart: true, remote: true do %>
+        <%= form_tag predictions_settings_path, method: :put, id: 'setting', multipart: true do %>
           <div class='form-group'>
             <%= label_tag :status, '状態' %><br>
             <%= radio_button_tag 'auto[status]', :active, checked: true %>
@@ -43,7 +43,7 @@
             <%= label_tag :auto_pair, 'ペア' %><br>
             <%= select_tag 'auto[pair]', options_for_select(Settings.pairs), class: 'form-control form-inactive' %>
           </div>
-          <%= submit_tag '実行', class: 'btn btn-primary btn-sm btn-submit' %>
+          <%= submit_tag '実行', class: 'btn btn-primary btn-sm' %>
           <%= submit_tag 'リセット', type: 'reset', class: 'btn btn-default btn-sm' %>
         <% end %>
       </div>
