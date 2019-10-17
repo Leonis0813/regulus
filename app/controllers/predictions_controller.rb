@@ -44,7 +44,7 @@ class PredictionsController < ApplicationController
 
     file_path = Rails.root.join(Settings.prediction.auto.config_file)
     configs = []
-    configs = YAML.load_file(file_path) if File.exists?(file_path)
+    configs = YAML.load_file(file_path) if File.exist?(file_path)
     configs.map!(&:deep_stringify_keys)
     new_config = {'status' => status}
 
@@ -64,11 +64,12 @@ class PredictionsController < ApplicationController
 
       pair = YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair']
       pair_dir = File.join(auto_dir, pair)
-      FileUtils.rm_rf(pair_dir) if File.exists?(pair_dir)
+      FileUtils.rm_rf(pair_dir) if File.exist?(pair_dir)
       FileUtils.mv(tmp_dir, pair_dir)
 
       configs.reject! {|config| config['pair'] == pair }
-      new_config.merge!('filename' => model.original_filename, 'pair' => pair)
+      new_config['filename'] = model.original_filename
+      new_config['pair'] = pair
     else
       check_absent_params(%i[pair], auto)
       configs.reject! {|config| config['pair'] == auto[:pair] }

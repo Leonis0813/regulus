@@ -32,6 +32,10 @@ module PredictionHelper
     end
   end
 
+  def pairs
+    Settings.pairs
+  end
+
   private
 
   def icon_class_by_result(result)

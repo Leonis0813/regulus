@@ -9,9 +9,9 @@ class ApplicationController < ActionController::Base
 
   def check_absent_params(required_param_keys, request_param)
     absent_keys = required_param_keys - request_param.keys.map(&:to_sym)
-    if absent_keys.present?
-      error_codes = absent_keys.map {|key| "absent_param_#{key}" }
-      raise BadRequest, error_codes
-    end
+    return unless absent_keys.present?
+
+    error_codes = absent_keys.map {|key| "absent_param_#{key}" }
+    raise BadRequest, error_codes
   end
 end
