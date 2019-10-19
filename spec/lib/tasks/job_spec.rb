@@ -11,12 +11,12 @@ describe 'job:prediction' do
 
   shared_context '設定ファイルを作成' do |param|
     before(:all) do
-      File.open(Rails.root.join(prediction.auto.setting_file), 'w') do |file|
+      File.open(Rails.root.join(prediction.auto.config_file), 'w') do |file|
         YAML.dump(param, file)
       end
     end
 
-    after(:all) { FileUtils.rm(Rails.root.join(prediction.auto.setting_file)) }
+    after(:all) { FileUtils.rm(Rails.root.join(prediction.auto.config_file)) }
   end
 
   shared_context 'タスクを実行' do
@@ -27,7 +27,7 @@ describe 'job:prediction' do
   end
 
   context '定期予測が無効な場合' do
-    include_context '設定ファイルを作成', 'status' => 'inactive'
+    include_context '設定ファイルを作成', ['status' => 'inactive', 'pair' => 'USDJPY']
     include_context 'タスクを実行'
 
     it '予測ジョブが作成されていないこと' do
@@ -44,7 +44,8 @@ describe 'job:prediction' do
     end
     after(:all) { FileUtils.rm_rf(model_dir) }
     include_context 'トランザクション作成'
-    include_context '設定ファイルを作成', 'status' => 'active', 'filename' => filename
+    include_context '設定ファイルを作成',
+                    ['status' => 'active', 'filename' => filename, 'pair' => 'USDJPY']
     include_context 'タスクを実行'
 
     it '予測ジョブが作成されていること' do

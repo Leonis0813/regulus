@@ -17,39 +17,26 @@ describe 'ブラウザで予測する', type: :request do
     describe '定期予測の設定を行う' do
       before(:all) do
         @wait.until do
-          res = @driver.find_element(:id, 'btn-prediction-setting').click rescue false
+          res = @driver.find_element(:xpath, '//a[text()="設定"]').click rescue false
           res.nil? ? true : false
         end
 
-        xpath = '//button[@data-bb-handler="ok"]'
+        xpath = '//input[@id="auto_status_inactive"]'
+        @wait.until do
+          res = @driver.find_element(:xpath, xpath).click rescue false
+          res.nil? ? true : false
+        end
+
+        xpath = '//form[@id="setting"]/input[@value="実行"]'
         @wait.until do
           res = @driver.find_element(:xpath, xpath).click rescue false
           res.nil? ? true : false
         end
       end
 
-      after(:all) do
-        xpath = '//button[@data-bb-handler="ok"]'
-        @wait.until do
-          res = @driver.find_element(:xpath, xpath).click rescue false
-          res.nil? ? true : false
-        end
-      end
-
-      it '成功時のダイアログのタイトルが正しいこと' do
-        xpath = '//div[@class="modal-header"]/h4[@class="modal-title"]'
-        text = 'モデルを設定しました'
-        is_asserted_by do
-          @wait.until { @driver.find_element(:xpath, xpath).text == text rescue false }
-        end
-      end
-
-      it '成功時のダイアログのメッセージが正しいこと' do
-        xpath = '//div[@class="modal-body"]/div'
-        text = '次の予測から設定したモデルが利用されます'
-        is_asserted_by do
-          @wait.until { @driver.find_element(:xpath, xpath).text == text rescue false }
-        end
+      it 'ジョブ登録フォームに戻っていること' do
+        xpath = '//li[@class="active"]/a[text()="ジョブ登録"]'
+        is_asserted_by { @wait.until { @driver.find_element(:xpath, xpath) } }
       end
     end
   end

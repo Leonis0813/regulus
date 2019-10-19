@@ -1,6 +1,10 @@
 application_id: 'test_app_id'
 application_key: 'test_app_key'
 
+analysis:
+  base_model_dir: 'spec/fixtures'
+  tensorboard_dir: 'tensorboard'
+
 prediction:
   base_model_dir: 'tmp/models'
   auto:
