@@ -9,7 +9,7 @@ class AnalysesController < ApplicationController
   def execute
     check_absent_params(%i[batch_size from pair to], execute_params)
 
-    analysis = Analysis.new(attributes.merge(state: Analysis::STATE_PROCESSING))
+    analysis = Analysis.new(execute_params.merge(state: Analysis::STATE_PROCESSING))
     unless analysis.save
       error_codes = analysis.errors.messages.keys.sort.map do |key|
         "invalid_param_#{key}"
@@ -42,6 +42,6 @@ class AnalysesController < ApplicationController
   private
 
   def execute_params
-    request.request_parameters.permit(:batch_size, :from, :pair, :to)
+    @execute_params ||= request.request_parameters.slice(:batch_size, :from, :pair, :to)
   end
 end

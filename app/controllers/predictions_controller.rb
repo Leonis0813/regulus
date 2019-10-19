@@ -9,11 +9,11 @@ class PredictionsController < ApplicationController
   def execute
     check_absent_params(%i[model], execute_params)
 
-    model = attributes[:model]
+    model = execute_params[:model]
     raise BadRequest, 'invalid_param_model' unless model.respond_to?(:original_filename)
 
     prediction = Prediction.new(
-      attributes.merge(
+      execute_params.merge(
         prediction_id: SecureRandom.hex,
         model: model.original_filename,
         means: Prediction::MEANS_MANUAL,
@@ -86,6 +86,6 @@ class PredictionsController < ApplicationController
   private
 
   def execute_params
-    request.request_parameters.permit(:model)
+    @execute_params ||= request.request_parameters.slice(:model)
   end
 end

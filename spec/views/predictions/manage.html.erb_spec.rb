@@ -52,8 +52,8 @@ describe 'predictions/manage', type: :view do
 
   shared_examples '入力フォームが表示されていること' do
     [
-      ['prediction', 'ジョブ登録'],
-      ['setting', '設定'],
+      %w[prediction ジョブ登録],
+      %w[setting 設定],
     ].each do |href, text|
       it "#{text}のタブが表示されていること" do
         xpath = [
