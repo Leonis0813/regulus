@@ -1,3 +1,6 @@
+# 4.8.0 (2019/10/19)
+- [UPDATE] prediction view to predict multiple pairs automatically
+
 # 4.7.0 (2019/10/12)
 - [UPDATE] analysis view to confirm result by tensorboard
 
