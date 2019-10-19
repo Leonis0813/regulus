@@ -51,17 +51,29 @@ describe 'predictions/manage', type: :view do
   end
 
   shared_examples '入力フォームが表示されていること' do
-    form_xpath = '//form[@id="new_prediction"]'
-
-    it '設定ボタンが表示されていること' do
-      xpath = [
-        row_xpath,
-        'div[@class="col-lg-4"]',
-        'div[@id="new-prediction"]',
-        'div/button[@id="btn-prediction-setting"]',
-      ].join('/')
-      is_asserted_by { @html.xpath(xpath).present? }
+    [
+      %w[prediction ジョブ登録],
+      %w[setting 設定],
+    ].each do |href, text|
+      it "#{text}のタブが表示されていること" do
+        xpath = [
+          row_xpath,
+          'div[@class="col-lg-4"]',
+          'ul[@class="nav nav-tabs"]',
+          'li',
+          "a[@href='#tab-#{href}']",
+        ].join('/')
+        is_asserted_by { @html.xpath(xpath).present? }
+        is_asserted_by { @html.xpath(xpath).text == text }
+      end
     end
+
+    it_behaves_like 'ジョブ登録用のフォームが表示されていること'
+    it_behaves_like '設定用のフォームが表示されていること'
+  end
+
+  shared_examples 'ジョブ登録用のフォームが表示されていること' do
+    form_xpath = '//form[@id="new_prediction"]'
 
     %w[model].each do |param|
       input_xpath = "#{form_xpath}/div[@class='form-group']"
@@ -74,6 +86,54 @@ describe 'predictions/manage', type: :view do
       it "prediction_#{param}を含む<input>タグがあること" do
         input = @html.xpath("#{input_xpath}/input[@id='prediction_#{param}']")
         is_asserted_by { input.present? }
+      end
+    end
+
+    %w[submit reset].each do |type|
+      it "typeが#{type}のボタンがあること" do
+        button = @html.xpath("#{form_xpath}/input[@type='#{type}']")
+        is_asserted_by { button.present? }
+      end
+    end
+  end
+
+  shared_examples '設定用のフォームが表示されていること' do
+    form_xpath = '//form[@id="setting"]'
+
+    %w[auto_status_active auto_status_inactive].each do |status|
+      input_xpath = "#{form_xpath}/div[@class='form-group']"
+
+      it "#{status}を含む<label>タグがあること" do
+        label = @html.xpath("#{input_xpath}/label[@for='#{status}']")
+        is_asserted_by { label.present? }
+      end
+
+      it "#{status}を含む<input>タグがあること" do
+        input = @html.xpath("#{input_xpath}/input[@id='#{status}']")
+        is_asserted_by { input.present? }
+      end
+    end
+
+    it 'モデルを設定するフォームがあること' do
+      base_xpath = [form_xpath, 'div[@id="form-active"]'].join('/')
+      label_xpath = [base_xpath, 'label[@for="auto_model"]'].join('/')
+      is_asserted_by { @html.xpath(label_xpath).present? }
+
+      input_xpath = [base_xpath, 'input[@id="auto_model"]'].join('/')
+      is_asserted_by { @html.xpath(input_xpath).present? }
+    end
+
+    it 'ペアを選択するフォームがあること' do
+      base_xpath = [form_xpath, 'div[@id="form-inactive"]'].join('/')
+      label_xpath = [base_xpath, 'label[@for="auto_pair"]'].join('/')
+      is_asserted_by { @html.xpath(label_xpath).present? }
+
+      select_xpath = [base_xpath, 'select[@id="auto_pair"]'].join('/')
+      is_asserted_by { @html.xpath(select_xpath).present? }
+
+      Settings.pairs.each do |pair|
+        xpath = [select_xpath, "option[@value='#{pair}']"].join('/')
+        is_asserted_by { @html.xpath(xpath).present? }
       end
     end
 
