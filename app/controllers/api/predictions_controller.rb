@@ -3,7 +3,7 @@ module Api
     def index
       query = Query.new(index_param)
       if query.valid?
-        @predictions = Prediction.where(index_param.slice(:means))
+        @predictions = Prediction.where(index_param.slice(:means, :pair))
                                  .order(created_at: :desc)
                                  .page(query.page)
                                  .per(query.per_page)
@@ -17,7 +17,7 @@ module Api
     private
 
     def index_param
-      @index_param ||= params.permit(:means, :page, :per_page)
+      @index_param ||= params.permit(:means, :page, :pair, :per_page)
     end
   end
 end

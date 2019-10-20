@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe '自動予測結果を検索する', type: :request do
   before(:all) do
-    query = {means: 'auto'}
+    query = {means: 'auto', pair: 'EURJPY'}
     response = http_client.get("#{base_url}/api/predictions", query, app_auth_header)
     @response_status = response.status
     @response_body = JSON.parse(response.body) rescue response.body
@@ -17,6 +17,7 @@ describe '自動予測結果を検索する', type: :request do
     @response_body['predictions'].each do |prediction|
       is_asserted_by { prediction.keys.sort == PredictionHelper.response_keys.sort }
       is_asserted_by { prediction['means'] == 'auto' }
+      is_asserted_by { prediction['pair'] == 'EURJPY' }
     end
   end
 end

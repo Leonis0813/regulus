@@ -8,6 +8,7 @@ describe Query, type: :model do
       valid_attribute = {
         means: %w[manual auto] + [nil],
         page: 2,
+        pair: %w[AUDJPY CADJPY CHFJPY EURJPY EURUSD GBPJPY NZDJPY USDJPY] + [nil],
         per_page: 50,
       }
 
@@ -18,6 +19,7 @@ describe Query, type: :model do
       invalid_attribute = {
         means: %w[invalid],
         page: [0],
+        pair: %w[invalid],
         per_page: [0],
       }
 
