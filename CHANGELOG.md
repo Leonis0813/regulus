@@ -1,3 +1,6 @@
+# 4.8.1 (2019/10/20)
+- [UPDATE] index api to search by pair
+
 # 4.8.0 (2019/10/19)
 - [UPDATE] prediction view to predict multiple pairs automatically
 - [UPDATE] gems
