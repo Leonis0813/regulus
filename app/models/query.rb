@@ -1,11 +1,14 @@
 class Query
   include ActiveModel::Model
 
-  attribute_names = %i[means page per_page]
+  attribute_names = %i[means page pair per_page]
   attr_accessor(*attribute_names)
 
   validates :means,
-            inclusion: {in: %w[auto manual], message: 'invalid'},
+            inclusion: {in: Prediction::MEANS_LIST, message: 'invalid'},
+            allow_nil: true
+  validates :pair,
+            inclusion: {in: Prediction::PAIR_LIST, message: 'invalid'},
             allow_nil: true
   validates :page, :per_page,
             numericality: {
