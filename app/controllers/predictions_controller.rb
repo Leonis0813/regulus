@@ -73,7 +73,9 @@ class PredictionsController < ApplicationController
       new_config['pair'] = auto[:pair]
     end
 
-    File.open(file_path, 'w') {|file| YAML.dump(configs.push(new_config), file) }
+    File.open(Rails.root.join(Settings.prediction.auto.config_file), 'w') do |file|
+      YAML.dump(configs.push(new_config), file)
+    end
 
     @prediction = Prediction.new
     @predictions = Prediction.all.order(created_at: :desc).page(1)
