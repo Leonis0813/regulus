@@ -1,5 +1,6 @@
 # 4.8.2 (2019/11/03)
 - [FIX] config file handling
+- [UPDATE] gems
 
 # 4.8.1 (2019/10/20)
 - [UPDATE] index api to search by pair
