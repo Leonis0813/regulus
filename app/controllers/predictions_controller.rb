@@ -43,8 +43,8 @@ class PredictionsController < ApplicationController
     raise BadRequest, 'invalid_param_status' unless %w[active inactive].include?(status)
 
     file_path = Rails.root.join(Settings.prediction.auto.config_file)
-    configs = []
-    configs = YAML.load_file(file_path) if File.exist?(file_path)
+    configs = YAML.load_file(file_path)
+    configs ||= []
     configs.map!(&:deep_stringify_keys)
     new_config = {'status' => status}
 
