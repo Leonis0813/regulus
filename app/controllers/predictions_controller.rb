@@ -2,6 +2,7 @@ class PredictionsController < ApplicationController
   include ModelUtil
 
   def manage
+    configs
     @prediction = Prediction.new
     @predictions = Prediction.all.order(created_at: :desc).page(params[:page])
   end
@@ -42,10 +43,6 @@ class PredictionsController < ApplicationController
     status = auto[:status]
     raise BadRequest, 'invalid_param_status' unless %w[active inactive].include?(status)
 
-    file_path = Rails.root.join(Settings.prediction.auto.config_file)
-    configs = YAML.load_file(file_path)
-    configs ||= []
-    configs.map!(&:deep_stringify_keys)
     new_config = {'status' => status}
 
     if status == 'active'
@@ -76,7 +73,9 @@ class PredictionsController < ApplicationController
       new_config['pair'] = auto[:pair]
     end
 
-    File.open(file_path, 'w') {|file| YAML.dump(configs.push(new_config), file) }
+    File.open(Rails.root.join(Settings.prediction.auto.config_file), 'w') do |file|
+      YAML.dump(configs.push(new_config), file)
+    end
 
     @prediction = Prediction.new
     @predictions = Prediction.all.order(created_at: :desc).page(1)
@@ -87,5 +86,14 @@ class PredictionsController < ApplicationController
 
   def execute_params
     @execute_params ||= request.request_parameters.slice(:model)
+  end
+
+  def configs
+    return @configs if @configs
+
+    file_path = Rails.root.join(Settings.prediction.auto.config_file)
+    @configs = YAML.load_file(file_path)
+    @configs ||= []
+    @configs.map!(&:deep_stringify_keys)
   end
 end

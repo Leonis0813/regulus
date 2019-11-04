@@ -27,7 +27,7 @@ describe 'analyses/manage', type: :view do
                     from: expected[:from] || 1,
                     to: expected[:to] || per_page
     it_behaves_like 'テーブルが表示されていること',
-                    rows: expected[:rows] || per_page
+                    columns: expected[:columns] || per_page
   end
 
   shared_examples '入力フォームが表示されていること' do
@@ -80,34 +80,15 @@ describe 'analyses/manage', type: :view do
     end
   end
 
-  shared_examples 'テーブルが表示されていること' do |rows: 0|
-    before(:each) do
-      @table = @html.xpath("#{table_panel_xpath}/table[@class='table table-hover']")
-    end
+  shared_examples 'テーブルが表示されていること' do |columns: 0|
+    table_xpath = "#{ViewHelper.table_panel_xpath}/table[@class='table table-hover']"
+    expected = {rows: 6, columns: columns, headers: %w[実行開始日時 期間 ペア バッチサイズ 状態]}
 
-    it '6列のテーブルが表示されていること' do
-      is_asserted_by { @table.xpath('//thead/th').size == 6 }
-    end
-
-    %w[実行開始日時 期間 ペア バッチサイズ 状態].each_with_index do |text, i|
-      it "#{i + 1}列目のヘッダーが#{text}であること" do
-        is_asserted_by { @table.xpath('//thead/th')[i].text == text }
-      end
-    end
+    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, expected
 
     it '再実行ボタンが配置されている列があること' do
-      xpath = [
-        table_panel_xpath,
-        'table[@class="table table-hover"]',
-        'thead',
-        'th[@class="rebuild"]',
-      ].join('/')
-      header_rebuild = @table.xpath(xpath)
+      header_rebuild = @html.xpath("#{table_xpath}/thead/th[@class='rebuild']")
       is_asserted_by { header_rebuild.present? }
-    end
-
-    it 'ジョブの数が正しいこと' do
-      is_asserted_by { @table.xpath('//tbody/tr').size == rows }
     end
   end
 

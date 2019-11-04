@@ -1,3 +1,6 @@
+# 4.9.0 (2019/11/04)
+- [UPDATE] prediction view to display current setting for auto prediction
+
 # 4.8.2 (2019/11/03)
 - [FIX] config file handling
 - [UPDATE] gems
