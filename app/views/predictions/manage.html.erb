@@ -78,7 +78,7 @@
     <% info = {total_count: @predictions.total_count, from: from, to: to} %>
     <h4 style='padding: 10px 0px'><%= t('views.pagination.info', info) %></h4>
     <%= paginate @predictions %>
-    <table class='table table-hover'>
+    <table id='table-job' class='table table-hover'>
       <thead>
         <th width='150'>実行開始日時</th>
         <th>モデル</th>

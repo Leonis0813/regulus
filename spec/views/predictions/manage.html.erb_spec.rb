@@ -31,6 +31,8 @@ describe 'predictions/manage', type: :view do
       'range' => 'orange',
     },
   }
+  status_to_class_map = {'active' => 'success', 'inactive' => 'danger'}
+  status_to_text_map = {'active' => '有効', 'inactive' => '無効'}
 
   shared_context '予測ジョブを登録する' do |total: per_page, attribute: default_attribute|
     before(:all) do
@@ -46,8 +48,8 @@ describe 'predictions/manage', type: :view do
                     total: expected[:total] || per_page,
                     from: expected[:from] || 1,
                     to: expected[:to] || per_page
-    it_behaves_like 'テーブルが表示されていること',
-                    rows: expected[:rows] || per_page
+    it_behaves_like 'ジョブ実行履歴を通知するテーブルが表示されていること',
+                    columns: expected[:columns] || per_page
   end
 
   shared_examples '入力フォームが表示されていること' do
@@ -143,26 +145,45 @@ describe 'predictions/manage', type: :view do
         is_asserted_by { button.present? }
       end
     end
+
+    it_behaves_like '現在の設定を通知するテーブルが表示されていること'
   end
 
-  shared_examples 'テーブルが表示されていること' do |rows: 0|
-    before(:each) do
-      @table = @html.xpath("#{table_panel_xpath}/table[@class='table table-hover']")
-    end
+  shared_examples '現在の設定を通知するテーブルが表示されていること' do
+    table_xpath = '//table[@id="table-setting"]'
 
-    it '6列のテーブルが表示されていること' do
-      is_asserted_by { @table.xpath('//thead/th').size == 6 }
-    end
+    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, {
+      row_size: 2,
+      column_size: Settings.pairs.size,
+      headers: %w[ペア 状態],
+    }
+  end
 
-    %w[実行開始日時 モデル 期間 ペア 方法 結果].each_with_index do |text, i|
-      it "#{i + 1}列目のヘッダーが#{text}であること" do
-        is_asserted_by { @table.xpath('//thead/th')[i].text == text }
+  shared_examples '設定の状態が正しいこと' do |configs|
+    tr_xpath = '//table[@id="table-setting"]/tbody/tr'
+
+    it do
+      @html.xpath(tr_xpath).each do |column|
+        pair, status = column.children.search('td').map(&:text)
+        config = configs.find {|config| config['pair'] == pair }
+        config ||= {'status' => 'inactive'}
+
+        is_asserted_by { status == status_to_text_map[config['status']] }
+        is_asserted_by do
+          column.attribute('class').value == status_to_class_map[config['status']]
+        end
       end
     end
+  end
 
-    it 'ジョブの数が正しいこと' do
-      is_asserted_by { @table.xpath('//tbody/tr').size == rows }
-    end
+  shared_examples 'ジョブ実行履歴を通知するテーブルが表示されていること' do |columns: 0|
+    table_xpath = '//table[@id="table-job"]'
+
+    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, {
+      row_size: 6,
+      column_size: columns,
+      headers: %w[実行開始日時 モデル 期間 ペア 方法 結果],
+    }
   end
 
   shared_examples 'ジョブの状態が正しいこと' do |state: nil, result: nil|
@@ -207,11 +228,23 @@ describe 'predictions/manage', type: :view do
   before(:all) do
     Kaminari.config.default_per_page = per_page
     @prediction = Prediction.new
+    @configs = []
   end
 
   before(:each) do
     render template: 'predictions/manage', layout: 'layouts/application'
     @html ||= Nokogiri.parse(response)
+  end
+
+  context '自動予測設定が有効になっている場合' do
+    config = {'pair' => 'USDJPY', 'status' => 'active', 'filename' => 'test.zip'}
+    before(:all) { @configs = [config] }
+    after(:all) { @configs = [] }
+    include_context 'トランザクション作成'
+    include_context '予測ジョブを登録する'
+    include_context 'HTML初期化'
+    it_behaves_like '画面共通テスト'
+    it_behaves_like '設定の状態が正しいこと', [config]
   end
 
   context '実行中の場合' do
