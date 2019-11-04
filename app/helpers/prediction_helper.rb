@@ -36,8 +36,8 @@ module PredictionHelper
     Settings.pairs
   end
 
-  def config_to_display(pair)
-    target_config = @configs.find {|config| config['pair'] == pair }
+  def config_to_display(configs, pair)
+    target_config = configs.find {|config| config['pair'] == pair }
     {
       'color' => color_by_config(target_config),
       'status' => status_by_config(target_config),

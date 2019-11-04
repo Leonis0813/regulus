@@ -57,7 +57,7 @@
           </thead>
           <tbody>
             <% pairs.each do |pair| %>
-              <% config = config_to_display(pair) %>
+              <% config = config_to_display(@configs, pair) %>
               <tr class='<%= config['color'] %>'>
                 <td><%= pair %></td>
                 <td><%= config['status'] %></td>
