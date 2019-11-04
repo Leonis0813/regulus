@@ -151,39 +151,31 @@ describe 'predictions/manage', type: :view do
 
   shared_examples '現在の設定を通知するテーブルが表示されていること' do
     table_xpath = '//table[@id="table-setting"]'
+    expected = {rows: 2, columns: Settings.pairs.size, headers: %w[ペア 状態]}
 
-    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, {
-      row_size: 2,
-      column_size: Settings.pairs.size,
-      headers: %w[ペア 状態],
-    }
+    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, expected
   end
 
   shared_examples '設定の状態が正しいこと' do |configs|
-    tr_xpath = '//table[@id="table-setting"]/tbody/tr'
-
     it do
-      @html.xpath(tr_xpath).each do |column|
+      @html.xpath('//table[@id="table-setting"]/tbody/tr').each do |column|
         pair, status = column.children.search('td').map(&:text)
-        config = configs.find {|config| config['pair'] == pair }
-        config ||= {'status' => 'inactive'}
+        tr_class = column.attribute('class').value
 
-        is_asserted_by { status == status_to_text_map[config['status']] }
-        is_asserted_by do
-          column.attribute('class').value == status_to_class_map[config['status']]
-        end
+        target_config = configs.find {|config| config['pair'] == pair }
+        target_config ||= {'status' => 'inactive'}
+
+        is_asserted_by { status == status_to_text_map[target_config['status']] }
+        is_asserted_by { tr_class == status_to_class_map[target_config['status']] }
       end
     end
   end
 
   shared_examples 'ジョブ実行履歴を通知するテーブルが表示されていること' do |columns: 0|
     table_xpath = '//table[@id="table-job"]'
+    expected = {rows: 6, columns: columns, headers: %w[実行開始日時 モデル 期間 ペア 方法 結果]}
 
-    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, {
-      row_size: 6,
-      column_size: columns,
-      headers: %w[実行開始日時 モデル 期間 ペア 方法 結果],
-    }
+    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, expected
   end
 
   shared_examples 'ジョブの状態が正しいこと' do |state: nil, result: nil|

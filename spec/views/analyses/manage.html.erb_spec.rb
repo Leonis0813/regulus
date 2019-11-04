@@ -82,12 +82,9 @@ describe 'analyses/manage', type: :view do
 
   shared_examples 'テーブルが表示されていること' do |columns: 0|
     table_xpath = "#{ViewHelper.table_panel_xpath}/table[@class='table table-hover']"
+    expected = {rows: 6, columns: columns, headers: %w[実行開始日時 期間 ペア バッチサイズ 状態]}
 
-    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, {
-      row_size: 6,
-      column_size: columns,
-      headers: %w[実行開始日時 期間 ペア バッチサイズ 状態],
-    }
+    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, expected
 
     it '再実行ボタンが配置されている列があること' do
       header_rebuild = @html.xpath("#{table_xpath}/thead/th[@class='rebuild']")

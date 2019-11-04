@@ -96,7 +96,7 @@ end
 
 shared_examples 'テーブルが正しく表示されていること' do |table_xpath, expected|
   it '列数が正しいこと' do
-    is_asserted_by { @html.xpath("#{table_xpath}/thead/th").size == expected[:row_size] }
+    is_asserted_by { @html.xpath("#{table_xpath}/thead/th").size == expected[:rows] }
   end
 
   expected[:headers].each_with_index do |text, i|
@@ -107,7 +107,7 @@ shared_examples 'テーブルが正しく表示されていること' do |table_
 
   it '行数が正しいこと' do
     is_asserted_by do
-      @html.xpath("#{table_xpath}/tbody/tr").size == expected[:column_size]
+      @html.xpath("#{table_xpath}/tbody/tr").size == expected[:columns]
     end
   end
 end
