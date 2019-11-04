@@ -43,7 +43,7 @@ describe 'predictions/manage', type: :view do
 
   shared_examples '画面共通テスト' do |expected: {}|
     it_behaves_like 'ヘッダーが表示されていること'
-    it_behaves_like '入力フォームが表示されていること'
+    it_behaves_like '入力フォームが表示されていること', expected[:configs] || []
     it_behaves_like '表示件数情報が表示されていること',
                     total: expected[:total] || per_page,
                     from: expected[:from] || 1,
@@ -52,7 +52,7 @@ describe 'predictions/manage', type: :view do
                     columns: expected[:columns] || per_page
   end
 
-  shared_examples '入力フォームが表示されていること' do
+  shared_examples '入力フォームが表示されていること' do |configs|
     [
       %w[prediction ジョブ登録],
       %w[setting 設定],
@@ -71,7 +71,7 @@ describe 'predictions/manage', type: :view do
     end
 
     it_behaves_like 'ジョブ登録用のフォームが表示されていること'
-    it_behaves_like '設定用のフォームが表示されていること'
+    it_behaves_like '設定用のフォームが表示されていること', configs
   end
 
   shared_examples 'ジョブ登録用のフォームが表示されていること' do
@@ -99,7 +99,7 @@ describe 'predictions/manage', type: :view do
     end
   end
 
-  shared_examples '設定用のフォームが表示されていること' do
+  shared_examples '設定用のフォームが表示されていること' do |configs|
     form_xpath = '//form[@id="setting"]'
 
     %w[auto_status_active auto_status_inactive].each do |status|
@@ -147,6 +147,7 @@ describe 'predictions/manage', type: :view do
     end
 
     it_behaves_like '現在の設定を通知するテーブルが表示されていること'
+    it_behaves_like '設定の状態が正しいこと', configs
   end
 
   shared_examples '現在の設定を通知するテーブルが表示されていること' do
@@ -235,8 +236,7 @@ describe 'predictions/manage', type: :view do
     include_context 'トランザクション作成'
     include_context '予測ジョブを登録する'
     include_context 'HTML初期化'
-    it_behaves_like '画面共通テスト'
-    it_behaves_like '設定の状態が正しいこと', [config]
+    it_behaves_like '画面共通テスト', expected: {configs: [config]}
   end
 
   context '実行中の場合' do
