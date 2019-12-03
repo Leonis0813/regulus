@@ -1,5 +1,6 @@
 # 4.9.1 (2019/12/02)
 - [UPDATE] ruby version to 2.6.3
+- [UPDATE] gems
 
 # 4.9.0 (2019/11/04)
 - [UPDATE] prediction view to display current setting for auto prediction
