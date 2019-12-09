@@ -1,3 +1,6 @@
+# 4.9.2 (2019/12/09)
+- [UPDATE] analysis mail contents to send raw data
+
 # 4.9.1 (2019/12/02)
 - [UPDATE] ruby version to 2.6.3
 - [UPDATE] gems

@@ -36,6 +36,8 @@ vfunc = np.vectorize(value)
 moving_average = pd.DataFrame()
 length = np.inf
 
+raw_data = pd.DataFrame()
+
 for pair in PAIRS:
   for period in PERIODS:
     cursor.execute(
@@ -47,10 +49,12 @@ for pair in PAIRS:
       'ORDER BY `time`'
     )
     values = vfunc(cursor.fetchall())
-    values = min_max(values)
-    length = len(values) if length > len(values) else length
-    moving_average[pair + '_' + period] = values
+    normalized_values = min_max(values)
+    length = len(normalized_values) if length > len(normalized_values) else length
+    raw_data[pair + '_' + period] = values
+    moving_average[pair + '_' + period] = normalized_values
 
+raw_data.to_csv(WORKDIR + '/tmp/raw_data.csv', index=False)
 training_data = pd.DataFrame()
 
 for pair in PAIRS:
