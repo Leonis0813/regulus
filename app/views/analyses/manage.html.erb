@@ -1,8 +1,11 @@
 <div class='row center-block'>
   <div class='col-lg-4'>
     <div id='new-analysis' class='well'>
-      <div>
+      <div style='padding-bottom: 10px'>
         <h3 style='display:inline'>レートを分析</h3>
+      </div>
+      <div>
+        分析結果の確認は<span id='analysis-result' style='font-weight: bold; cursor: pointer'>こちら</span>
       </div>
       <%= form_for @analysis, {:url => analyses_path, :remote => true} do |f| %>
         <%= label_tag '期間' %>

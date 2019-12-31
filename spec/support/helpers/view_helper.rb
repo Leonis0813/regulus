@@ -47,4 +47,6 @@ module ViewHelper
   def table_panel_xpath
     [row_xpath, 'div[@class="col-lg-8 well"]'].join('/')
   end
+
+  module_function :table_panel_xpath, :row_xpath
 end

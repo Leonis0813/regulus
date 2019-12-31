@@ -1,5 +1,19 @@
+pairs:
+  - 'USDJPY'
+  - 'AUDJPY'
+  - 'CADJPY'
+  - 'CHFJPY'
+  - 'EURJPY'
+  - 'EURUSD'
+  - 'GBPJPY'
+  - 'NZDJPY'
+
+analysis:
+  base_model_dir: 'tmp/models'
+  tensorboard_dir: 'tensorboard'
+
 prediction:
   base_model_dir: 'tmp/models'
   auto:
     model_dir: 'auto'
-    setting_file: 'config/prediction.yml'
+    config_file: 'config/prediction.yml'

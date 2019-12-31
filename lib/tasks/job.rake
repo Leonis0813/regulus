@@ -1,29 +1,30 @@
 namespace :job do
   desc 'Execute prediction'
   task prediction: :environment do
-    if File.exist?(setting_file)
-      setting = YAML.load_file(setting_file)
+    if File.exist?(config_file)
+      configs = YAML.load_file(config_file)
 
-      if setting['status'] == 'active'
+      configs.each do |config|
+        next if config['status'] == 'inactive'
+
         attribute = {
           prediction_id: SecureRandom.hex,
-          model: setting['filename'],
+          model: config['filename'],
           means: Prediction::MEANS_AUTO,
           state: Prediction::STATE_PROCESSING,
         }
         prediction = Prediction.create!(attribute)
-        model_dir = Rails.root.join(config.base_model_dir, config.auto.model_dir)
+        model_dir = Rails.root.join(
+          Settings.prediction.base_model_dir,
+          Settings.prediction.auto.model_dir,
+        )
         PredictionJob.perform_later(prediction.id, model_dir.to_s)
       end
     end
   end
 
-  def setting_file
-    File.join(rails_root, config.auto.setting_file)
-  end
-
-  def config
-    Settings.prediction
+  def config_file
+    File.join(rails_root, Settings.prediction.auto.config_file)
   end
 
   def rails_root

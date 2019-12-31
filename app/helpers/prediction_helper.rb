@@ -32,6 +32,18 @@ module PredictionHelper
     end
   end
 
+  def pairs
+    Settings.pairs
+  end
+
+  def config_to_display(configs, pair)
+    target_config = configs.find {|config| config['pair'] == pair }
+    {
+      'color' => color_by_config(target_config),
+      'status' => status_by_config(target_config),
+    }
+  end
+
   private
 
   def icon_class_by_result(result)
@@ -53,6 +65,22 @@ module PredictionHelper
       'red'
     when 'range'
       'orange'
+    end
+  end
+
+  def color_by_config(config)
+    if config and config['status'] == 'active'
+      'success'
+    else
+      'danger'
+    end
+  end
+
+  def status_by_config(config)
+    if config and config['status'] == 'active'
+      '有効'
+    else
+      '無効'
     end
   end
 end

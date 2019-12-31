@@ -93,3 +93,21 @@ shared_examples 'ページングボタンが表示されていること' do |mod
     is_asserted_by { list_gap.text == '...' }
   end
 end
+
+shared_examples 'テーブルが正しく表示されていること' do |table_xpath, expected|
+  it '列数が正しいこと' do
+    is_asserted_by { @html.xpath("#{table_xpath}/thead/th").size == expected[:rows] }
+  end
+
+  expected[:headers].each_with_index do |text, i|
+    it "#{i + 1}列目のヘッダーが#{text}であること" do
+      is_asserted_by { @html.xpath("#{table_xpath}/thead/th")[i].text == text }
+    end
+  end
+
+  it '行数が正しいこと' do
+    is_asserted_by do
+      @html.xpath("#{table_xpath}/tbody/tr").size == expected[:columns]
+    end
+  end
+end

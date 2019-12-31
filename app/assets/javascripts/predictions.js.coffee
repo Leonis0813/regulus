@@ -22,56 +22,10 @@ $ ->
     })
     return
 
-  $('#btn-prediction-setting').on 'click', ->
-    bootbox.dialog({
-      title: '<span style="font-size:20px">定期予測で利用するモデルを設定してください</span>',
-      message: '<form id="prediction-settings">' +
-        '<input id="auto-model" class="form-control" type="file">' +
-        '</form>',
-      buttons: {
-        cancel: {
-          label: 'キャンセル',
-          className: 'btn-default',
-          callback: ->
-            return
-        },
-        ok: {
-          label: '保存',
-          className: 'btn-primary',
-          callback: ->
-            $('#prediction-settings').on 'submit', (event) ->
-              formData = new FormData()
-              file = $('#auto-model')[0].files[0]
-              if file == undefined
-                formData.append('auto[status]', 'inactive')
-              else
-                formData.append('auto[status]', 'active')
-                formData.append('auto[model]', file)
-
-              $.ajax({
-                type: 'POST',
-                url: '/regulus/predictions/settings',
-                data: formData,
-                processData: false,
-                contentType: false,
-              }).done((data) ->
-                bootbox.alert({
-                  title: 'モデルを設定しました',
-                  message: '次の予測から設定したモデルが利用されます'
-                })
-                return
-              ).fail((xhr, status, error) ->
-                bootbox.alert({
-                  title: 'モデルの設定に失敗しました',
-                  message: '入力したモデルを見直すか、しばらく待ってから再設定してください'
-                })
-                return
-              )
-              return false
-            $('#prediction-settings').submit()
-            return
-        }
-      }
-    })
+  $('input[name="auto[status]"]:radio').on 'change', ->
+    $('.form-active,.form-inactive').prop('disabled', true)
+    $('.form-setting').addClass('not-selected')
+    $('.form-' + $(this).val()).prop('disabled', false)
+    $('#form-' + $(this).val()).removeClass('not-selected')
     return
   return

@@ -16,7 +16,7 @@ describe Api::PredictionsController, type: :controller do
   before(:all) do
     now = Time.zone.now
     @predictions = Array.new(5) do |i|
-      create(:prediction, means: 'auto', created_at: now - i)
+      create(:prediction, means: 'auto', pair: 'EURJPY', created_at: now - i)
     end
     @predictions += Array.new(6) do |i|
       create(:prediction, means: 'manual', created_at: now - 10 - i)
@@ -27,6 +27,7 @@ describe Api::PredictionsController, type: :controller do
     [
       [{means: 'auto'}, [0, 1, 2, 3, 4]],
       [{page: 2}, [10]],
+      [{pair: 'EURJPY'}, [0, 1, 2, 3, 4]],
       [{per_page: 2}, [0, 1]],
       [{means: 'manual', page: 2, per_page: 2}, [7, 8]],
     ].each do |query, indexes|
@@ -50,8 +51,9 @@ describe Api::PredictionsController, type: :controller do
     [
       {means: 'invalid'},
       {page: 'invalid'},
+      {pair: 'invalid'},
       {per_page: 'invalid'},
-      {means: 'invalid', page: 'invalid', per_page: 'invalid'},
+      {means: 'invalid', pair: 'invalid', page: 'invalid', per_page: 'invalid'},
     ].each do |query|
       context "#{query}を指定した場合" do
         errors = query.keys.map {|key| {'error_code' => "invalid_param_#{key}"} }

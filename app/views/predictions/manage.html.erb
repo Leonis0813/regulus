@@ -1,20 +1,71 @@
 <div class='row center-block'>
   <div class='col-lg-4'>
-    <div id='new-prediction' class='well'>
-      <div>
-        <h3 style='display:inline'>レートを予測</h3>
-        <button id='btn-prediction-setting' class='btn btn-default btn-sm' style='height:32px;float:right'>
-          <span class='glyphicon glyphicon-cog' style='font-size:18px'></span>
-        </button>
-      </div>
-      <%= form_for @prediction, :html => {:multipart => true}, :url => predictions_path, :remote => true do |f| %>
-        <div class='form-group'>
-          <%= f.label :model, 'モデル' %><br>
-          <%= f.file_field :model, {:class => 'form-control', :name => :model, :required => true} %>
+    <ul class='nav nav-tabs'>
+      <li class='active'>
+        <a href='#tab-prediction' data-toggle='tab'>ジョブ登録</a>
+      </li>
+      <li>
+        <a href='#tab-setting' data-toggle='tab'>設定</a>
+      </li>
+    </ul>
+
+    <div class='tab-content'>
+      <div id='tab-prediction' class='well tab-pane active'>
+        <div>
+          <h3 style='display:inline'>レートを予測</h3>
         </div>
-        <%= f.submit '実行', :class => 'btn btn-primary btn-sm btn-submit' %>
-        <%= f.submit 'リセット', :type => 'reset', :class => 'btn btn-default btn-sm' %>
-      <% end %>
+        <%= form_for @prediction, html: {multipart: true}, url: predictions_path, remote: true do |f| %>
+          <div class='form-group'>
+            <%= f.label :model, 'モデル' %><br>
+            <%= f.file_field :model, class: 'form-control', name: :model, required: true %>
+          </div>
+          <%= f.submit '実行', class: 'btn btn-primary btn-sm btn-submit' %>
+          <%= f.submit 'リセット', type: 'reset', class: 'btn btn-default btn-sm' %>
+        <% end %>
+      </div>
+      <div id='tab-setting' class='well tab-pane'>
+        <div>
+          <h3 style='display:inline'>定期予測設定</h3>
+        </div>
+        <%= form_tag predictions_settings_path, method: :put, id: 'setting', multipart: true do %>
+          <div class='form-group'>
+            <%= label_tag :status, '状態' %><br>
+            <%= radio_button_tag 'auto[status]', :active, checked: true %>
+            <%= label_tag :auto_status_active, '有効', style: 'padding-left: 3px' %>
+            <%= radio_button_tag 'auto[status]', :inactive %>
+            <%= label_tag :auto_status_inactive, '無効', style: 'padding-left: 3px' %>
+          </div>
+          <div id='form-active' class='form-group form-setting'>
+            <%= label_tag :auto_model, 'モデル' %><br>
+            <%= file_field_tag 'auto[model]', class: 'form-control form-active' %>
+          </div>
+          <div id='form-inactive' class='form-group form-setting not-selected'>
+            <%= label_tag :auto_pair, 'ペア' %><br>
+            <%= select_tag 'auto[pair]', options_for_select(pairs), class: 'form-control form-inactive' %>
+          </div>
+          <%= submit_tag '実行', class: 'btn btn-primary btn-sm' %>
+          <%= submit_tag 'リセット', type: 'reset', class: 'btn btn-default btn-sm' %>
+        <% end %>
+        <hr id='hr-setting'>
+        <div style='padding-bottom: 10px'>
+          <h3 style='display:inline'>現在の設定</h3>
+        </div>
+        <table id='table-setting' class='table table-hover' style='border-radius: 4px'>
+          <thead>
+            <th>ペア</th>
+            <th>状態</th>
+          </thead>
+          <tbody>
+            <% pairs.each do |pair| %>
+              <% config = config_to_display(@configs, pair) %>
+              <tr class='<%= config['color'] %>'>
+                <td><%= pair %></td>
+                <td><%= config['status'] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -22,11 +73,12 @@
     <div>
       <h3 style='display:inline;padding: 10px 0px'>ジョブ実行履歴</h3>
     </div>
-    <% from = @predictions.total_count == 0 ? 0 : @predictions.offset_value + 1 %>
-    <% info = {:total_count => @predictions.total_count, :from => from, :to => @predictions.offset_value + @predictions.size} %>
+    <% from = @predictions.total_count.zero? ? 0 : @predictions.offset_value + 1 %>
+    <% to = @predictions.offset_value + @predictions.size %>
+    <% info = {total_count: @predictions.total_count, from: from, to: to} %>
     <h4 style='padding: 10px 0px'><%= t('views.pagination.info', info) %></h4>
     <%= paginate @predictions %>
-    <table class='table table-hover'>
+    <table id='table-job' class='table table-hover'>
       <thead>
         <th width='150'>実行開始日時</th>
         <th>モデル</th>

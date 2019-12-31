@@ -1,3 +1,31 @@
+# 4.9.2 (2019/12/09)
+- [UPDATE] analysis mail contents to send raw data
+
+# 4.9.1 (2019/12/02)
+- [UPDATE] ruby version to 2.6.3
+- [UPDATE] gems
+
+# 4.9.0 (2019/11/04)
+- [UPDATE] prediction view to display current setting for auto prediction
+
+# 4.8.2 (2019/11/03)
+- [FIX] config file handling
+- [UPDATE] gems
+
+# 4.8.1 (2019/10/20)
+- [UPDATE] index api to search by pair
+
+# 4.8.0 (2019/10/19)
+- [UPDATE] prediction view to predict multiple pairs automatically
+- [UPDATE] gems
+
+# 4.7.0 (2019/10/12)
+- [UPDATE] analysis view to confirm result by tensorboard
+
+# 4.6.0 (2019/10/03)
+- [UPDATE] learning script to output training data
+- [UPDATE] gems
+
 # 4.5.2 (2019/09/21)
 - [FIX] bug for production
 - [ADD] logging for error message and backtrace

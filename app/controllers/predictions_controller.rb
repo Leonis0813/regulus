@@ -1,22 +1,20 @@
 class PredictionsController < ApplicationController
+  include ModelUtil
+
   def manage
+    configs
     @prediction = Prediction.new
     @predictions = Prediction.all.order(created_at: :desc).page(params[:page])
   end
 
   def execute
-    attributes = params.permit(*prediction_params)
-    absent_keys = prediction_params - attributes.keys.map(&:to_sym)
-    unless absent_keys.empty?
-      error_codes = absent_keys.map {|key| "absent_param_#{key}" }
-      raise BadRequest, error_codes
-    end
+    check_absent_params(%i[model], execute_params)
 
-    model = attributes[:model]
+    model = execute_params[:model]
     raise BadRequest, 'invalid_param_model' unless model.respond_to?(:original_filename)
 
     prediction = Prediction.new(
-      attributes.merge(
+      execute_params.merge(
         prediction_id: SecureRandom.hex,
         model: model.original_filename,
         means: Prediction::MEANS_MANUAL,
@@ -37,46 +35,65 @@ class PredictionsController < ApplicationController
   end
 
   def settings
-    raise BadRequest, 'absent_param_auto' unless params[:auto] and params[:auto][:status]
+    check_absent_params(%i[auto], request.request_parameters)
 
-    status = params[:auto][:status]
-    raise BadRequest, 'invalid_param_auto' unless %w[active inactive].include?(status)
+    auto = request.request_parameters[:auto]
+    check_absent_params(%i[status], auto)
 
-    setting_file = File.open(Rails.root.join(Settings.prediction.auto.setting_file), 'w')
-    setting = {'status' => status}
+    status = auto[:status]
+    raise BadRequest, 'invalid_param_status' unless %w[active inactive].include?(status)
+
+    new_config = {'status' => status}
 
     if status == 'active'
-      model = params[:auto][:model]
-      raise BadRequest, 'invalid_param_auto' unless valid_model?(model)
+      check_absent_params(%i[model], auto)
 
-      model_dir = Rails.root.join(
+      model = auto[:model]
+      raise BadRequest, 'invalid_param_model' unless valid_model?(model)
+
+      auto_dir = Rails.root.join(
         Settings.prediction.base_model_dir,
         Settings.prediction.auto.model_dir,
       )
-      output_model(model_dir, model)
-      setting['filename'] = model.original_filename
+      tmp_dir = File.join(auto_dir, 'tmp')
+      output_model(tmp_dir, model)
+      unzip_model(File.join(tmp_dir, model.original_filename), tmp_dir)
+
+      pair = YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair']
+      pair_dir = File.join(auto_dir, pair)
+      FileUtils.rm_rf(pair_dir) if File.exist?(pair_dir)
+      FileUtils.mv(tmp_dir, pair_dir)
+
+      configs.reject! {|config| config['pair'] == pair }
+      new_config['filename'] = model.original_filename
+      new_config['pair'] = pair
+    else
+      check_absent_params(%i[pair], auto)
+      configs.reject! {|config| config['pair'] == auto[:pair] }
+      new_config['pair'] = auto[:pair]
     end
 
-    YAML.dump(setting, setting_file)
-    setting_file.close
+    File.open(Rails.root.join(Settings.prediction.auto.config_file), 'w') do |file|
+      YAML.dump(configs.push(new_config), file)
+    end
 
-    render status: :ok, json: {}
+    @prediction = Prediction.new
+    @predictions = Prediction.all.order(created_at: :desc).page(1)
+    render action: :manage
   end
 
   private
 
-  def output_model(dir, model)
-    FileUtils.mkdir_p(dir)
-    File.open(File.join(dir, model.original_filename), 'w+b') do |file|
-      file.write(model.read)
-    end
+  def execute_params
+    @execute_params ||= request.request_parameters.slice(:model)
   end
 
-  def prediction_params
-    %i[model]
-  end
+  def configs
+    return @configs if @configs
 
-  def valid_model?(model)
-    model&.respond_to?(:original_filename) and model.original_filename.end_with?('.zip')
+    file_path = Rails.root.join(Settings.prediction.auto.config_file)
+    @configs = YAML.load_file(file_path)
+    @configs ||= []
+    @configs.map!(&:deep_stringify_keys)
   end
 end

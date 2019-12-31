@@ -1,18 +1,20 @@
 import mysql.connector as mysql
 import numpy as np
-import tensorflow as tf
 import os
+import pandas as pd
 import sys
+import tensorflow as tf
 import yaml
 
 args = sys.argv
+WORKDIR = os.path.dirname(os.path.abspath(args[0]))
 FROM = args[1]
 TO = args[2]
 TARGET_PAIR = args[3]
-BATCH_SIZE = args[4]
+BATCH_SIZE = int(args[4])
 PERIODS = ['25', '75', '200']
 PAIRS = ['USDJPY', 'EURJPY', 'EURUSD', 'AUDJPY', 'GBPJPY', 'CADJPY', 'CHFJPY', 'NZDJPY']
-Settings = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
+Settings = yaml.load(open(WORKDIR + '/settings.yml', 'r+'))
 
 def value(moving_average):
   return moving_average['value']
@@ -31,11 +33,12 @@ connection = mysql.connect(
 
 cursor = connection.cursor(dictionary=True)
 vfunc = np.vectorize(value)
-moving_average = {}
+moving_average = pd.DataFrame()
 length = np.inf
 
+raw_data = pd.DataFrame()
+
 for pair in PAIRS:
-  moving_average[pair] = {}
   for period in PERIODS:
     cursor.execute(
       'SELECT value FROM moving_averages ' \
@@ -46,26 +49,37 @@ for pair in PAIRS:
       'ORDER BY `time`'
     )
     values = vfunc(cursor.fetchall())
-    values = min_max(values)
-    length = len(values) if length > len(values) else length
-    moving_average[pair][period] = values
+    normalized_values = min_max(values)
+    length = len(normalized_values) if length > len(normalized_values) else length
+    raw_data[pair + '_' + period] = values
+    moving_average[pair + '_' + period] = normalized_values
 
-inputs = np.empty((0, 720), float)
-labels = np.empty((0, 1), int)
+raw_data.to_csv(WORKDIR + '/tmp/raw_data.csv', index=False)
+training_data = pd.DataFrame()
+
+for pair in PAIRS:
+  for period in PERIODS:
+    for index in range(0, 30):
+      key = pair + '_' + period
+      new_key = key + '_' + str(index)
+      training_data[new_key] = moving_average[key][index:(length - 54 + index)].values
+
+labels = []
+latests = []
+futures = []
+target_moving_average = moving_average[TARGET_PAIR + '_25']
 
 for i in range(0, length - 54):
-  input = np.empty(0)
-  for pair in PAIRS:
-    for period in PERIODS:
-      input = np.append(input, np.array(moving_average[pair][period][i:i+30]))
+  latests += [target_moving_average[i + 30 - 1]]
+  futures += [target_moving_average[i + 54 - 1]]
 
-  inputs = np.append(inputs, np.array([input]), axis=0)
+for i in range(0, length - 54):
+  labels += [1] if (latests[i] < futures[i]) else [0]
 
-  target_moving_average = moving_average[TARGET_PAIR]['25']
-  if (target_moving_average[i + 30] + 0.01 < target_moving_average[i + 54]):
-    labels = np.append(labels, np.array([[1]]), axis=0)
-  else:
-    labels = np.append(labels, np.array([[0]]), axis=0)
+training_data['latest'] = latests
+training_data['future'] = futures
+training_data['label'] = labels
+training_data.to_csv(WORKDIR + '/tmp/training_data.csv', index=False)
 
 x = tf.placeholder(tf.float32, [None, 720])
 
@@ -98,14 +112,19 @@ init = tf.global_variables_initializer()
 saver = tf.train.Saver()
 
 with tf.Session() as sess:
+  with tf.name_scope('summary'):
+    tf.summary.scalar('loss', loss)
+    merged = tf.summary.merge_all()
+    writer = tf.summary.FileWriter(WORKDIR + '/tmp/logs', sess.graph)
+
   sess.run(init)
 
   for i in range(10000):
-    step = i + 1
+    batch_data = training_data.sample(n=BATCH_SIZE)
+    labels = []
+    for label in batch_data['label'].values:
+      labels += [[label]]
+    inputs = batch_data.drop(['latest', 'future', 'label'], axis=1).values
+    sess.run(train_step, feed_dict={x:inputs, y:labels})
 
-    indices = np.random.randint(0, len(inputs), int(BATCH_SIZE), int)
-    batch_data = inputs[indices]
-    batch_label = labels[indices]
-    sess.run(train_step, feed_dict={x:batch_data, y:batch_label})
-
-  saver.save(sess, os.path.dirname(os.path.abspath(args[0])) + '/tmp/model.ckpt')
+  saver.save(sess, WORKDIR + '/tmp/model.ckpt')

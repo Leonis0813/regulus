@@ -31,6 +31,8 @@ describe 'predictions/manage', type: :view do
       'range' => 'orange',
     },
   }
+  status_to_class_map = {'active' => 'success', 'inactive' => 'danger'}
+  status_to_text_map = {'active' => '有効', 'inactive' => '無効'}
 
   shared_context '予測ジョブを登録する' do |total: per_page, attribute: default_attribute|
     before(:all) do
@@ -41,27 +43,39 @@ describe 'predictions/manage', type: :view do
 
   shared_examples '画面共通テスト' do |expected: {}|
     it_behaves_like 'ヘッダーが表示されていること'
-    it_behaves_like '入力フォームが表示されていること'
+    it_behaves_like '入力フォームが表示されていること', expected[:configs] || []
     it_behaves_like '表示件数情報が表示されていること',
                     total: expected[:total] || per_page,
                     from: expected[:from] || 1,
                     to: expected[:to] || per_page
-    it_behaves_like 'テーブルが表示されていること',
-                    rows: expected[:rows] || per_page
+    it_behaves_like 'ジョブ実行履歴を通知するテーブルが表示されていること',
+                    columns: expected[:columns] || per_page
   end
 
-  shared_examples '入力フォームが表示されていること' do
-    form_xpath = '//form[@id="new_prediction"]'
-
-    it '設定ボタンが表示されていること' do
-      xpath = [
-        row_xpath,
-        'div[@class="col-lg-4"]',
-        'div[@id="new-prediction"]',
-        'div/button[@id="btn-prediction-setting"]',
-      ].join('/')
-      is_asserted_by { @html.xpath(xpath).present? }
+  shared_examples '入力フォームが表示されていること' do |configs|
+    [
+      %w[prediction ジョブ登録],
+      %w[setting 設定],
+    ].each do |href, text|
+      it "#{text}のタブが表示されていること" do
+        xpath = [
+          row_xpath,
+          'div[@class="col-lg-4"]',
+          'ul[@class="nav nav-tabs"]',
+          'li',
+          "a[@href='#tab-#{href}']",
+        ].join('/')
+        is_asserted_by { @html.xpath(xpath).present? }
+        is_asserted_by { @html.xpath(xpath).text == text }
+      end
     end
+
+    it_behaves_like 'ジョブ登録用のフォームが表示されていること'
+    it_behaves_like '設定用のフォームが表示されていること', configs
+  end
+
+  shared_examples 'ジョブ登録用のフォームが表示されていること' do
+    form_xpath = '//form[@id="new_prediction"]'
 
     %w[model].each do |param|
       input_xpath = "#{form_xpath}/div[@class='form-group']"
@@ -85,24 +99,84 @@ describe 'predictions/manage', type: :view do
     end
   end
 
-  shared_examples 'テーブルが表示されていること' do |rows: 0|
-    before(:each) do
-      @table = @html.xpath("#{table_panel_xpath}/table[@class='table table-hover']")
-    end
+  shared_examples '設定用のフォームが表示されていること' do |configs|
+    form_xpath = '//form[@id="setting"]'
 
-    it '6列のテーブルが表示されていること' do
-      is_asserted_by { @table.xpath('//thead/th').size == 6 }
-    end
+    %w[auto_status_active auto_status_inactive].each do |status|
+      input_xpath = "#{form_xpath}/div[@class='form-group']"
 
-    %w[実行開始日時 モデル 期間 ペア 方法 結果].each_with_index do |text, i|
-      it "#{i + 1}列目のヘッダーが#{text}であること" do
-        is_asserted_by { @table.xpath('//thead/th')[i].text == text }
+      it "#{status}を含む<label>タグがあること" do
+        label = @html.xpath("#{input_xpath}/label[@for='#{status}']")
+        is_asserted_by { label.present? }
+      end
+
+      it "#{status}を含む<input>タグがあること" do
+        input = @html.xpath("#{input_xpath}/input[@id='#{status}']")
+        is_asserted_by { input.present? }
       end
     end
 
-    it 'ジョブの数が正しいこと' do
-      is_asserted_by { @table.xpath('//tbody/tr').size == rows }
+    it 'モデルを設定するフォームがあること' do
+      base_xpath = [form_xpath, 'div[@id="form-active"]'].join('/')
+      label_xpath = [base_xpath, 'label[@for="auto_model"]'].join('/')
+      is_asserted_by { @html.xpath(label_xpath).present? }
+
+      input_xpath = [base_xpath, 'input[@id="auto_model"]'].join('/')
+      is_asserted_by { @html.xpath(input_xpath).present? }
     end
+
+    it 'ペアを選択するフォームがあること' do
+      base_xpath = [form_xpath, 'div[@id="form-inactive"]'].join('/')
+      label_xpath = [base_xpath, 'label[@for="auto_pair"]'].join('/')
+      is_asserted_by { @html.xpath(label_xpath).present? }
+
+      select_xpath = [base_xpath, 'select[@id="auto_pair"]'].join('/')
+      is_asserted_by { @html.xpath(select_xpath).present? }
+
+      Settings.pairs.each do |pair|
+        xpath = [select_xpath, "option[@value='#{pair}']"].join('/')
+        is_asserted_by { @html.xpath(xpath).present? }
+      end
+    end
+
+    %w[submit reset].each do |type|
+      it "typeが#{type}のボタンがあること" do
+        button = @html.xpath("#{form_xpath}/input[@type='#{type}']")
+        is_asserted_by { button.present? }
+      end
+    end
+
+    it_behaves_like '現在の設定を通知するテーブルが表示されていること'
+    it_behaves_like '設定の状態が正しいこと', configs
+  end
+
+  shared_examples '現在の設定を通知するテーブルが表示されていること' do
+    table_xpath = '//table[@id="table-setting"]'
+    expected = {rows: 2, columns: Settings.pairs.size, headers: %w[ペア 状態]}
+
+    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, expected
+  end
+
+  shared_examples '設定の状態が正しいこと' do |configs|
+    it do
+      @html.xpath('//table[@id="table-setting"]/tbody/tr').each do |column|
+        pair, status = column.children.search('td').map(&:text)
+        tr_class = column.attribute('class').value
+
+        target_config = configs.find {|config| config['pair'] == pair }
+        target_config ||= {'status' => 'inactive'}
+
+        is_asserted_by { status == status_to_text_map[target_config['status']] }
+        is_asserted_by { tr_class == status_to_class_map[target_config['status']] }
+      end
+    end
+  end
+
+  shared_examples 'ジョブ実行履歴を通知するテーブルが表示されていること' do |columns: 0|
+    table_xpath = '//table[@id="table-job"]'
+    expected = {rows: 6, columns: columns, headers: %w[実行開始日時 モデル 期間 ペア 方法 結果]}
+
+    it_behaves_like 'テーブルが正しく表示されていること', table_xpath, expected
   end
 
   shared_examples 'ジョブの状態が正しいこと' do |state: nil, result: nil|
@@ -147,11 +221,22 @@ describe 'predictions/manage', type: :view do
   before(:all) do
     Kaminari.config.default_per_page = per_page
     @prediction = Prediction.new
+    @configs = []
   end
 
   before(:each) do
     render template: 'predictions/manage', layout: 'layouts/application'
     @html ||= Nokogiri.parse(response)
+  end
+
+  context '自動予測設定が有効になっている場合' do
+    config = {'pair' => 'USDJPY', 'status' => 'active', 'filename' => 'test.zip'}
+    before(:all) { @configs = [config] }
+    after(:all) { @configs = [] }
+    include_context 'トランザクション作成'
+    include_context '予測ジョブを登録する'
+    include_context 'HTML初期化'
+    it_behaves_like '画面共通テスト', expected: {configs: [config]}
   end
 
   context '実行中の場合' do
