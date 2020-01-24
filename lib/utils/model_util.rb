@@ -22,7 +22,8 @@ module ModelUtil
 
   def zip_model(entry_dir, zipfile_path)
     Zip::File.open(zipfile_path, ::Zip::File::CREATE) do |zipfile|
-      write_entries(entry_dir, Dir[File.join(entry_dir, '*')], '', zipfile)
+      entries = Dir.entries(entry_dir) - %w[. ..]
+      write_entries(entry_dir, entries, '', zipfile)
     end
   end
 
@@ -43,7 +44,7 @@ module ModelUtil
 
   def recursively_deflate_directory(entry_dir, file_path, zipfile, zipfile_path)
     zipfile.mkdir(zipfile_path)
-    sub_entries = Dir[File.join(file_path, '*')]
+    sub_entries = Dir.entries(file_path) - %w[. ..]
     write_entries(entry_dir, sub_entries, zipfile_path, zipfile)
   end
 
