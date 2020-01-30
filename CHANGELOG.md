@@ -1,5 +1,6 @@
-# 4.9.3 (2020/01/24)
+# 4.9.3 (2020/01/30)
 - [FIX] analysis mailer to add logs in attachment
+- [FIX] model directory in job:prediction task
 
 # 4.9.2 (2019/12/09)
 - [UPDATE] analysis mail contents to send raw data
