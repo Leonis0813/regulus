@@ -17,6 +17,7 @@ namespace :job do
         model_dir = Rails.root.join(
           Settings.prediction.base_model_dir,
           Settings.prediction.auto.model_dir,
+          config['pair'],
         )
         PredictionJob.perform_later(prediction.id, model_dir.to_s)
       end

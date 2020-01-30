@@ -1,8 +1,8 @@
 # coding: utf-8
 
-require 'zip'
-
 class AnalysisMailer < ApplicationMailer
+  include ModelUtil
+
   default from: 'Leonis.0813@gmail.com'
 
   def completed(analysis)
@@ -11,16 +11,9 @@ class AnalysisMailer < ApplicationMailer
     tmp_dir = Rails.root.join('tmp', 'models', analysis.id.to_s)
 
     Dir.mktmpdir(nil, Rails.root.join('tmp', 'files')) do |dir|
-      zip_file_name = File.join(dir, 'analysis.zip')
-
-      Zip::File.open(zip_file_name, Zip::File::CREATE) do |zip|
-        Dir[File.join(tmp_dir, '*')].each do |file_name|
-          file_name = File.basename(file_name)
-          zip.add(file_name, File.join(tmp_dir, file_name))
-        end
-      end
-
-      attachments['analysis.zip'] = File.read(zip_file_name)
+      zipfile_path = File.join(dir, 'analysis.zip')
+      zip_model(tmp_dir, zipfile_path)
+      attachments['analysis.zip'] = File.read(zipfile_path)
       mail(to: 'Leonis.0813@gmail.com', subject: subject, template_name: 'success')
     end
   end
