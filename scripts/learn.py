@@ -13,8 +13,10 @@ TO = args[2]
 TARGET_PAIR = args[3]
 BATCH_SIZE = int(args[4])
 PERIODS = ['25', '75', '200']
-PAIRS = ['USDJPY', 'EURJPY', 'EURUSD', 'AUDJPY', 'GBPJPY', 'CADJPY', 'CHFJPY', 'NZDJPY']
 Settings = yaml.load(open(WORKDIR + '/settings.yml', 'r+'))
+
+def open(candle_stick):
+  return candle_stick['open']
 
 def value(moving_average):
   return moving_average['value']
@@ -31,71 +33,78 @@ connection = mysql.connect(
   database = Settings['mysql']['database'],
 )
 
-cursor = connection.cursor(dictionary=True)
-vfunc = np.vectorize(value)
-moving_average = pd.DataFrame()
+raw_data = pd.DataFrame()
+normalized_data = pd.DataFrame()
 length = np.inf
 
-raw_data = pd.DataFrame()
+cursor = connection.cursor(dictionary=True)
+cursor.execute(
+  'SELECT open FROM candle_sticks ' \
+  'WHERE `from` BETWEEN "' + FROM + '" AND "' + TO + '" AND ' \
+    'pair = "' + TARGET_PAIR + '" AND ' \
+    'time_frame = "D1" AND ' \
+  'ORDER BY `from`'
+)
+records = cursor.fetchall()
+opens = (record['open'] for record in records)
+raw_data['open'] = opens
+normalized_data['open'] = min_max(opens)
 
-for pair in PAIRS:
-  for period in PERIODS:
-    cursor.execute(
-      'SELECT value FROM moving_averages ' \
-      'WHERE `time` BETWEEN "' + FROM + '" AND "' + TO + '" AND ' \
-        'pair = "' + pair + '" AND ' \
-        'time_frame = "H1" AND ' \
-        'period = ' + period + ' ' \
-      'ORDER BY `time`'
-    )
-    values = vfunc(cursor.fetchall())
-    normalized_values = min_max(values)
-    length = len(normalized_values) if length > len(normalized_values) else length
-    raw_data[pair + '_' + period] = values
-    moving_average[pair + '_' + period] = normalized_values
+vfunc = np.vectorize(value)
+for period in PERIODS:
+  cursor.execute(
+    'SELECT value FROM moving_averages ' \
+    'WHERE `time` BETWEEN "' + FROM + '" AND "' + TO + '" AND ' \
+      'pair = "' + TARGET_PAIR + '" AND ' \
+      'time_frame = "D1" AND ' \
+      'period = ' + period + ' ' \
+    'ORDER BY `time`'
+  )
+  values = vfunc(cursor.fetchall())
+  normalized_values = min_max(values)
+  length = len(normalized_values) if length > len(normalized_values) else length
+  raw_data['ma_' + period] = values
+  normalized_data['ma_' + period] = normalized_values
 
 raw_data.to_csv(WORKDIR + '/tmp/raw_data.csv', index=False)
+normalized_data.to_csv(WORKDIR + '/tmp/normalized_data.csv', index=False)
+
 training_data = pd.DataFrame()
 
-for pair in PAIRS:
-  for period in PERIODS:
-    for index in range(0, 30):
-      key = pair + '_' + period
-      new_key = key + '_' + str(index)
-      training_data[new_key] = moving_average[key][index:(length - 54 + index)].values
+for index in range(0, 20):
+  key = 'open_' + str(index)
+  training_data[key] = normalized_data['open'][index:(length + index - 20 - 1)].values
 
+for period in PERIODS:
+  for index in range(0, 20):
+    key = 'ma_' + period
+    new_key = key + '_' + str(index)
+    training_data[new_key] = normalized_data[key][index:(index + index - 20 - 1)].values
+
+latests = normalized_data['open'][19:38].values
+futures = normalized_data['open'][20:39].values
 labels = []
-latests = []
-futures = []
-target_moving_average = moving_average[TARGET_PAIR + '_25']
-
-for i in range(0, length - 54):
-  latests += [target_moving_average[i + 30 - 1]]
-  futures += [target_moving_average[i + 54 - 1]]
-
-for i in range(0, length - 54):
+for i in range(0, 20):
   labels += [1] if (latests[i] < futures[i]) else [0]
 
-training_data['latest'] = latests
-training_data['future'] = futures
 training_data['label'] = labels
 training_data.to_csv(WORKDIR + '/tmp/training_data.csv', index=False)
 
-x = tf.placeholder(tf.float32, [None, 720])
+x = tf.placeholder(tf.float32, [None, 80])
 
-w_1 = tf.Variable(tf.truncated_normal([720, 512], stddev=0.1), name="w1")
-b_1 = tf.Variable(tf.zeros([512]), name="b1")
+w_1 = tf.Variable(tf.truncated_normal([80, 64], stddev=0.1), name="w1")
+b_1 = tf.Variable(tf.zeros([64]), name="b1")
 h_1 = tf.nn.relu(tf.matmul(x, w_1) + b_1)
 
-w_2 = tf.Variable(tf.truncated_normal([512, 128], stddev=0.1), name="w2")
-b_2 = tf.Variable(tf.zeros([128]), name="b2")
+w_2 = tf.Variable(tf.truncated_normal([64, 32], stddev=0.1), name="w2")
+b_2 = tf.Variable(tf.zeros([32]), name="b2")
 h_2 = tf.nn.relu(tf.matmul(h_1, w_2) + b_2)
 
-w_3 = tf.Variable(tf.truncated_normal([128, 32], stddev=0.1), name="w3")
-b_3 = tf.Variable(tf.zeros([32]), name="b3")
+w_3 = tf.Variable(tf.truncated_normal([32, 16], stddev=0.1), name="w3")
+b_3 = tf.Variable(tf.zeros([16]), name="b3")
 h_3 = tf.nn.relu(tf.matmul(h_2, w_3) + b_3)
 
-w_4 = tf.Variable(tf.truncated_normal([32, 8], stddev=0.1), name="w4")
+w_4 = tf.Variable(tf.truncated_normal([16, 8], stddev=0.1), name="w4")
 b_4 = tf.Variable(tf.zeros([8]), name="b4")
 h_4 = tf.nn.relu(tf.matmul(h_3, w_4) + b_4)
 
@@ -124,7 +133,7 @@ with tf.Session() as sess:
     labels = []
     for label in batch_data['label'].values:
       labels += [[label]]
-    inputs = batch_data.drop(['latest', 'future', 'label'], axis=1).values
+    inputs = batch_data.drop(['label'], axis=1).values
     sess.run(train_step, feed_dict={x:inputs, y:labels})
 
   saver.save(sess, WORKDIR + '/tmp/model.ckpt')
