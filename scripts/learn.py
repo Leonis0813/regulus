@@ -12,19 +12,7 @@ FROM = args[1]
 TO = args[2]
 TARGET_PAIR = args[3]
 BATCH_SIZE = int(args[4])
-PERIODS = ['25', '75', '200']
 Settings = yaml.load(open(WORKDIR + '/settings.yml', 'r+'))
-
-def open(candle_stick):
-  return candle_stick['open']
-
-def value(moving_average):
-  return moving_average['value']
-
-def min_max(x):
-  min = x.min(axis=0, keepdims=True)
-  max = x.max(axis=0, keepdims=True)
-  return 2.0 * ((x - min) / (max - min) - 0.5)
 
 connection = mysql.connect(
   host = Settings['mysql']['host'],
@@ -34,60 +22,43 @@ connection = mysql.connect(
 )
 
 raw_data = pd.DataFrame()
-normalized_data = pd.DataFrame()
-length = np.inf
 
 cursor = connection.cursor(dictionary=True)
 cursor.execute(
-  'SELECT open FROM candle_sticks ' \
-  'WHERE `from` BETWEEN "' + FROM + '" AND "' + TO + '" AND ' \
-    'pair = "' + TARGET_PAIR + '" AND ' \
-    'time_frame = "D1" AND ' \
-  'ORDER BY `from`'
+  open(WORKDIR + '/training_data.sql').read()
+  .replace("${FROM}", FROM)
+  .replace("${TO}", TO)
+  .replace("${PAIR}", TARGET_PAIR)
 )
 records = cursor.fetchall()
-opens = (record['open'] for record in records)
-raw_data['open'] = opens
-normalized_data['open'] = min_max(opens)
 
-vfunc = np.vectorize(value)
-for period in PERIODS:
-  cursor.execute(
-    'SELECT value FROM moving_averages ' \
-    'WHERE `time` BETWEEN "' + FROM + '" AND "' + TO + '" AND ' \
-      'pair = "' + TARGET_PAIR + '" AND ' \
-      'time_frame = "D1" AND ' \
-      'period = ' + period + ' ' \
-    'ORDER BY `time`'
-  )
-  values = vfunc(cursor.fetchall())
-  normalized_values = min_max(values)
-  length = len(normalized_values) if length > len(normalized_values) else length
-  raw_data['ma_' + period] = values
-  normalized_data['ma_' + period] = normalized_values
+for record in records:
+  raw_data = raw_data.append(record, ignore_index=True)
+
+normalized_data = pd.DataFrame()
+normalized_data['time'] = raw_data['time']
+for column in list(set(raw_data.columns) - set(['time'])):
+  normalized_data[column] = raw_data[column] / raw_data[column].abs().max()
 
 raw_data.to_csv(WORKDIR + '/tmp/raw_data.csv', index=False)
 normalized_data.to_csv(WORKDIR + '/tmp/normalized_data.csv', index=False)
 
 training_data = pd.DataFrame()
 
-for index in range(0, 20):
-  key = 'open_' + str(index)
-  training_data[key] = normalized_data['open'][index:(length + index - 20 - 1)].values
+for row_index in range(0, len(normalized_data) - 20):
+  row = {}
 
-for period in PERIODS:
-  for index in range(0, 20):
-    key = 'ma_' + period
-    new_key = key + '_' + str(index)
-    training_data[new_key] = normalized_data[key][index:(index + index - 20 - 1)].values
+  for date_index in range(0, 20):
+    row.update({
+      'open_' + str(date_index): normalized_data['open'][row_index + date_index],
+      'ma25_' + str(date_index): normalized_data['ma25'][row_index + date_index],
+      'ma75_' + str(date_index): normalized_data['ma75'][row_index + date_index],
+      'ma200_' + str(date_index): normalized_data['ma200'][row_index + date_index],
+    })
 
-latests = normalized_data['open'][19:38].values
-futures = normalized_data['open'][20:39].values
-labels = []
-for i in range(0, 20):
-  labels += [1] if (latests[i] < futures[i]) else [0]
+  row['label'] = 1 if row['open_19'] < normalized_data['open'][row_index + 20] else 0
+  training_data = training_data.append(row, ignore_index=True)
 
-training_data['label'] = labels
 training_data.to_csv(WORKDIR + '/tmp/training_data.csv', index=False)
 
 x = tf.placeholder(tf.float32, [None, 80])
