@@ -93,6 +93,17 @@ saver = tf.train.Saver()
 
 with tf.Session() as sess:
   with tf.name_scope('summary'):
+    tf.summary.histogram('w_1', w_1)
+    tf.summary.histogram('b_1', b_1)
+    tf.summary.histogram('w_2', w_2)
+    tf.summary.histogram('b_2', b_2)
+    tf.summary.histogram('w_3', w_3)
+    tf.summary.histogram('b_3', b_3)
+    tf.summary.histogram('w_4', w_4)
+    tf.summary.histogram('b_4', b_4)
+    tf.summary.histogram('w_5', w_5)
+    tf.summary.histogram('b_5', b_5)
+    tf.summary.histogram('out', out)
     tf.summary.scalar('loss', loss)
     merged = tf.summary.merge_all()
     writer = tf.summary.FileWriter(WORKDIR + '/tmp/logs', sess.graph)
@@ -105,6 +116,8 @@ with tf.Session() as sess:
     for label in batch_data['label'].values:
       labels += [[label]]
     inputs = batch_data.drop(['label'], axis=1).values
-    sess.run(train_step, feed_dict={x:inputs, y:labels})
+    _, summary = sess.run([train_step, merged], feed_dict={x:inputs, y:labels})
+    if i % 100 == 0:
+      writer.add_summary(summary, i)
 
   saver.save(sess, WORKDIR + '/tmp/model.ckpt')
