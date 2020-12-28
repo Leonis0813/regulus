@@ -37,8 +37,20 @@ for record in records:
 
 normalized_data = pd.DataFrame()
 normalized_data['time'] = raw_data['time']
+max = max(
+  raw_data['open'].max(),
+  raw_data['ma25'].max(),
+  raw_data['ma75'].max(),
+  raw_data['ma200'].max()
+)
+min = min(
+  raw_data['open'].min(),
+  raw_data['ma25'].min(),
+  raw_data['ma75'].min(),
+  raw_data['ma200'].min()
+)
 for column in list(set(raw_data.columns) - set(['time'])):
-  normalized_data[column] = raw_data[column] / raw_data[column].abs().max()
+  normalized_data[column] = 2.0 * (raw_data[column] - min) / (max - min) - 1.0
 
 raw_data.to_csv(WORKDIR + '/tmp/raw_data.csv', index=False)
 normalized_data.to_csv(WORKDIR + '/tmp/normalized_data.csv', index=False)
@@ -79,11 +91,11 @@ w_4 = tf.Variable(tf.truncated_normal([16, 8], stddev=0.1), name="w4")
 b_4 = tf.Variable(tf.zeros([8]), name="b4")
 h_4 = tf.nn.relu(tf.matmul(h_3, w_4) + b_4)
 
-w_5 = tf.Variable(tf.truncated_normal([8, 1], stddev=0.1), name="w5")
-b_5 = tf.Variable(tf.zeros([1]), name="b5")
+w_5 = tf.Variable(tf.truncated_normal([8, 2], stddev=0.1), name="w5")
+b_5 = tf.Variable(tf.zeros([2]), name="b5")
 out = tf.nn.softmax(tf.matmul(h_4, w_5) + b_5)
 
-y = tf.placeholder(tf.float32, [None, 1])
+y = tf.placeholder(tf.float32, [None, 2])
 loss = tf.reduce_mean(tf.square(y - out))
 train_step = tf.train.GradientDescentOptimizer(0.5).minimize(loss)
 
@@ -93,6 +105,17 @@ saver = tf.train.Saver()
 
 with tf.Session() as sess:
   with tf.name_scope('summary'):
+    tf.summary.histogram('w_1', w_1)
+    tf.summary.histogram('b_1', b_1)
+    tf.summary.histogram('w_2', w_2)
+    tf.summary.histogram('b_2', b_2)
+    tf.summary.histogram('w_3', w_3)
+    tf.summary.histogram('b_3', b_3)
+    tf.summary.histogram('w_4', w_4)
+    tf.summary.histogram('b_4', b_4)
+    tf.summary.histogram('w_5', w_5)
+    tf.summary.histogram('b_5', b_5)
+    tf.summary.histogram('out', out)
     tf.summary.scalar('loss', loss)
     merged = tf.summary.merge_all()
     writer = tf.summary.FileWriter(WORKDIR + '/tmp/logs', sess.graph)
@@ -103,8 +126,10 @@ with tf.Session() as sess:
     batch_data = training_data.sample(n=BATCH_SIZE)
     labels = []
     for label in batch_data['label'].values:
-      labels += [[label]]
+      labels += [[1.0, 0.0]] if label == 1.0 else [[0.0, 1.0]]
     inputs = batch_data.drop(['label'], axis=1).values
-    sess.run(train_step, feed_dict={x:inputs, y:labels})
+    _, summary = sess.run([train_step, merged], feed_dict={x:inputs, y:labels})
+    if i % 100 == 0:
+      writer.add_summary(summary, i)
 
   saver.save(sess, WORKDIR + '/tmp/model.ckpt')

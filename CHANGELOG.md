@@ -1,5 +1,6 @@
 # 4.9.4 (2020/12/28)
 - [UPDATE] learning algorithm
+- [UPDATE] learning script to add variables to summary
 
 # 4.9.3 (2020/01/30)
 - [FIX] analysis mailer to add logs in attachment
