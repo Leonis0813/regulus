@@ -79,11 +79,11 @@ w_4 = tf.Variable(tf.truncated_normal([16, 8], stddev=0.1), name="w4")
 b_4 = tf.Variable(tf.zeros([8]), name="b4")
 h_4 = tf.nn.relu(tf.matmul(h_3, w_4) + b_4)
 
-w_5 = tf.Variable(tf.truncated_normal([8, 1], stddev=0.1), name="w5")
-b_5 = tf.Variable(tf.zeros([1]), name="b5")
+w_5 = tf.Variable(tf.truncated_normal([8, 2], stddev=0.1), name="w5")
+b_5 = tf.Variable(tf.zeros([2]), name="b5")
 out = tf.nn.softmax(tf.matmul(h_4, w_5) + b_5)
 
-y = tf.placeholder(tf.float32, [None, 1])
+y = tf.placeholder(tf.float32, [None, 2])
 loss = tf.reduce_mean(tf.square(y - out))
 train_step = tf.train.GradientDescentOptimizer(0.5).minimize(loss)
 
@@ -114,7 +114,7 @@ with tf.Session() as sess:
     batch_data = training_data.sample(n=BATCH_SIZE)
     labels = []
     for label in batch_data['label'].values:
-      labels += [[label]]
+      labels += [[1.0, 0.0]] if label == 1.0 else [[0.0, 1.0]]
     inputs = batch_data.drop(['label'], axis=1).values
     _, summary = sess.run([train_step, merged], feed_dict={x:inputs, y:labels})
     if i % 100 == 0:
