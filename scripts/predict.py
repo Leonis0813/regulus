@@ -6,18 +6,10 @@ import sys
 import yaml
 
 args = sys.argv
-PERIODS = ['25', '75', '200']
-PAIRS = ['USDJPY', 'EURJPY', 'EURUSD', 'AUDJPY', 'GBPJPY', 'CADJPY', 'CHFJPY', 'NZDJPY']
-Settings = yaml.load(open(os.path.dirname(os.path.abspath(args[0])) + '/settings.yml', 'r+'))
-result_file = open(os.path.dirname(os.path.abspath(args[0])) + '/tmp/result.yml', 'w')
-
-def value(record):
-  return record['value']
-
-def min_max(x):
-  min = x.min(axis=0, keepdims=True)
-  max = x.max(axis=0, keepdims=True)
-  return 2.0 * ((x - min) / (max - min) - 0.5)
+WORKDIR = os.path.dirname(os.path.abspath(args[0]))
+TARGET_PAIR = args[1]
+Settings = yaml.load(open(WORKDIR + '/settings.yml', 'r+'))
+result_file = open(WORKDIR + '/tmp/result.yml', 'w')
 
 connection = mysql.connect(
   host = Settings['mysql']['host'],
@@ -27,26 +19,33 @@ connection = mysql.connect(
 )
 
 cursor = connection.cursor(dictionary=True)
-vfunc = np.vectorize(value)
-test_data = np.empty((0, 720), float)
-input = np.empty(0, float)
+cursor.execute(open(WORKDIR + '/test_data.sql').read().replace("${PAIR}", TARGET_PAIR))
+records = cursor.fetchall()
 
-for pair in PAIRS:
-  for period in PERIODS:
-    cursor.execute(
-      'SELECT value FROM moving_averages ' \
-      'WHERE pair = "' + pair + '" AND ' \
-        'time_frame = "H1" AND ' \
-        'period = ' + period + ' ' \
-      'ORDER BY `time` DESC ' \
-      'LIMIT 30'
-    )
-    values = vfunc(cursor.fetchall())
-    values = values[::-1]
-    values = min_max(values)
-    input = np.append(input, np.array(values))
+raw_data = pd.DataFrame()
+for record in records:
+  raw_data = raw_data.append(record, ignore_index=True)
 
-test_data = np.append(test_data, np.array([input]), axis=0)
+normalized_data = pd.DataFrame()
+max = max(
+  raw_data['open'].max(),
+  raw_data['ma25'].max(),
+  raw_data['ma75'].max(),
+  raw_data['ma200'].max()
+)
+min = min(
+  raw_data['open'].min(),
+  raw_data['ma25'].min(),
+  raw_data['ma75'].min(),
+  raw_data['ma200'].min()
+)
+for column in raw_data.columns:
+  normalized_data[column] = 2.0 * (raw_data[column] - min) / (max - min) - 1.0
+
+raw_data.to_csv(WORKDIR + '/tmp/raw_data.csv', index=False)
+normalized_data.to_csv(WORKDIR + '/tmp/normalized_data.csv', index=False)
+
+test_data = normalized_data.to_numpy.ravel()
 
 x = tf.placeholder(tf.float32, [None, 720])
 
@@ -76,15 +75,6 @@ with tf.Session() as sess:
   saver.restore(sess, os.path.dirname(os.path.abspath(args[0])) + '/tmp/model.ckpt')
   result = sess.run(out, feed_dict={x:test_data})
 
-  cursor.execute(
-    'SELECT `time` FROM moving_averages ' \
-    'WHERE pair = "USDJPY" AND ' \
-      'time_frame = "H1" AND ' \
-      'period = 25 ' \
-    'ORDER BY `time` DESC ' \
-    'LIMIT 30'
-  )
-  records = cursor.fetchall()
   result_file.write("from: " + records[-1]['time'].strftime('%Y-%m-%d %H:%M:%S') + "\n")
   result_file.write("to: " + records[0]['time'].strftime('%Y-%m-%d %H:%M:%S') + "\n")
 
