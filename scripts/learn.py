@@ -57,7 +57,7 @@ normalized_data.to_csv(WORKDIR + '/tmp/normalized_data.csv', index=False)
 
 training_data = pd.DataFrame()
 
-for row_index in range(0, len(normalized_data) - 20):
+for row_index in range(0, len(normalized_data) - 21):
   row = {}
 
   for date_index in range(0, 20):
@@ -68,7 +68,7 @@ for row_index in range(0, len(normalized_data) - 20):
       'ma200_' + str(date_index): normalized_data['ma200'][row_index + date_index],
     })
 
-  row['label'] = 1 if row['open_19'] < normalized_data['open'][row_index + 20] else 0
+  row['label'] = 1 if row['open_19'] < normalized_data['open'][row_index + 21] else 0
   training_data = training_data.append(row, ignore_index=True)
 
 training_data.to_csv(WORKDIR + '/tmp/training_data.csv', index=False)
