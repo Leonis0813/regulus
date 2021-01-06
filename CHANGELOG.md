@@ -1,6 +1,7 @@
-# 4.9.4 (2020/12/28)
+# 4.9.4 (2021/01/06)
 - [UPDATE] learning algorithm
 - [UPDATE] learning script to add variables to summary
+- [UPDATE] predicting script for model
 
 # 4.9.3 (2020/01/30)
 - [FIX] analysis mailer to add logs in attachment
