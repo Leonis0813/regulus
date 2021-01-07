@@ -17,3 +17,4 @@ prediction:
   auto:
     model_dir: 'auto'
     config_file: 'config/prediction.yml'
+  wait_latest: false
