@@ -8,17 +8,14 @@ import yaml
 
 args = sys.argv
 WORKDIR = os.path.dirname(os.path.abspath(args[0]))
-FROM = args[1]
-TO = args[2]
-TARGET_PAIR = args[3]
-BATCH_SIZE = int(args[4])
-Settings = yaml.load(open(WORKDIR + '/settings.yml', 'r+'))
+param = yaml.load(open(WORKDIR + '/tmp/parameter.yml', 'r+'))
+database = yaml.load(open(WORKDIR + '/../config/zosma/database.yml', 'r+'))
 
 connection = mysql.connect(
-  host = Settings['mysql']['host'],
-  user = Settings['mysql']['user'],
-  password = Settings['mysql']['password'],
-  database = Settings['mysql']['database'],
+  host = database[param['env']]['host'],
+  user = database[param['env']]['username'],
+  password = database[param['env']]['password'],
+  database = database[param['env']]['database'],
 )
 
 raw_data = pd.DataFrame()
@@ -26,9 +23,9 @@ raw_data = pd.DataFrame()
 cursor = connection.cursor(dictionary=True)
 cursor.execute(
   open(WORKDIR + '/training_data.sql').read()
-  .replace("${FROM}", FROM)
-  .replace("${TO}", TO)
-  .replace("${PAIR}", TARGET_PAIR)
+  .replace("${FROM}", param['from'])
+  .replace("${TO}", param['to'])
+  .replace("${PAIR}", param['pair'])
 )
 records = cursor.fetchall()
 
@@ -57,7 +54,7 @@ normalized_data.to_csv(WORKDIR + '/tmp/normalized_data.csv', index=False)
 
 training_data = pd.DataFrame()
 
-for row_index in range(0, len(normalized_data) - 20):
+for row_index in range(0, len(normalized_data) - 21):
   row = {}
 
   for date_index in range(0, 20):
@@ -68,7 +65,7 @@ for row_index in range(0, len(normalized_data) - 20):
       'ma200_' + str(date_index): normalized_data['ma200'][row_index + date_index],
     })
 
-  row['label'] = 1 if row['open_19'] < normalized_data['open'][row_index + 20] else 0
+  row['label'] = 1 if row['open_19'] < normalized_data['open'][row_index + 21] else 0
   training_data = training_data.append(row, ignore_index=True)
 
 training_data.to_csv(WORKDIR + '/tmp/training_data.csv', index=False)
@@ -123,7 +120,7 @@ with tf.Session() as sess:
   sess.run(init)
 
   for i in range(10000):
-    batch_data = training_data.sample(n=BATCH_SIZE)
+    batch_data = training_data.sample(n=param['batch_size'])
     labels = []
     for label in batch_data['label'].values:
       labels += [[1.0, 0.0]] if label == 1.0 else [[0.0, 1.0]]
