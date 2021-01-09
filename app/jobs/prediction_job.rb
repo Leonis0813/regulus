@@ -46,7 +46,7 @@ class PredictionJob < ApplicationJob
       found = Zosma::CandleStick.exists?(
         from: latest.strftime('%F 00:00:00'),
         to: latest.strftime('%F 23:59:59'),
-        pair: pair
+        pair: pair,
         time_frame: 'D1',
       )
       break if found
@@ -57,7 +57,7 @@ class PredictionJob < ApplicationJob
     MAX_RETRY.times do
       found = Zosma::MovingAverage.exists?(
         time: latest.strftime('%F 00:00:00'),
-        pair: pair
+        pair: pair,
         time_frame: 'D1',
       )
       break if found
