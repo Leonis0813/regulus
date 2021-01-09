@@ -8,19 +8,19 @@ import yaml
 
 args = sys.argv
 WORKDIR = os.path.dirname(os.path.abspath(args[0]))
-TARGET_PAIR = args[1]
-Settings = yaml.load(open(WORKDIR + '/settings.yml', 'r+'))
+param = yaml.load(open(WORKDIR + '/tmp/parameter.yml', 'r+'))
+mysql = yaml.load(open(WORKDIR + '../config/zosma/database.yml', 'r+'))
 result_file = open(WORKDIR + '/tmp/result.yml', 'w')
 
 connection = mysql.connect(
-  host = Settings['mysql']['host'],
-  user = Settings['mysql']['user'],
-  password = Settings['mysql']['password'],
-  database = Settings['mysql']['database'],
+  host = mysql[param['env']]['host'],
+  user = mysql[param['env']]['username'],
+  password = mysql[param['env']]['password'],
+  database = mysql[param['env']]['database'],
 )
 
 cursor = connection.cursor(dictionary=True)
-cursor.execute(open(WORKDIR + '/test_data.sql').read().replace("${PAIR}", TARGET_PAIR))
+cursor.execute(open(WORKDIR + '/test_data.sql').read().replace("${PAIR}", param['pair']))
 records = cursor.fetchall()
 
 raw_data = pd.DataFrame()

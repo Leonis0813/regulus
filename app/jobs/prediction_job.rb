@@ -16,9 +16,14 @@ class PredictionJob < ApplicationJob
     unzip_model(File.join(model_dir, prediction.model), tmp_dir)
 
     pair = YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair']
+    param = {pair: pair, env: Rails.env}
+    parameter_file = File.join(tmp_dir, 'parameter.yml')
+    File.open(parameter_file, 'w') {|file| YAML.dump(param, file) }
     prediction.update!(pair: pair)
 
-    polling_zosma(pair) if Settings.prediction.wait_latest
+    if Settings.prediction.wait_latest and prediction.means == Prediction::MEANS_AUTO
+      polling_zosma(pair)
+    end
     execute_script('predict.py')
 
     FileUtils.mv(File.join(tmp_dir, 'result.yml'), model_dir)
@@ -39,8 +44,8 @@ class PredictionJob < ApplicationJob
 
     MAX_RETRY.times do
       found = Zosma::CandleStick.exists?(
-        from: 1.day.ago.strftime('%F 00:00:00'),
-        to: 1.day.ago.strftime('%F 23:59:59'),
+        from: latest.strftime('%F 00:00:00'),
+        to: latest.strftime('%F 23:59:59'),
         pair: pair
         time_frame: 'D1',
       )
@@ -51,7 +56,7 @@ class PredictionJob < ApplicationJob
 
     MAX_RETRY.times do
       found = Zosma::MovingAverage.exists?(
-        time: 1.day.ago.strftime('%F 00:00:00'),
+        time: latest.strftime('%F 00:00:00'),
         pair: pair
         time_frame: 'D1',
       )
@@ -59,5 +64,9 @@ class PredictionJob < ApplicationJob
       sleep(60)
     end
     raise StandardError unless found
+  end
+
+  def latest
+    Date.now.monday? ? 3.days.ago : 1.day.ago
   end
 end
