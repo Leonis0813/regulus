@@ -9,7 +9,7 @@ import yaml
 args = sys.argv
 WORKDIR = os.path.dirname(os.path.abspath(args[0]))
 param = yaml.load(open(WORKDIR + '/tmp/parameter.yml', 'r+'))
-mysql = yaml.load(open(WORKDIR + '../config/zosma/database.yml', 'r+'))
+mysql = yaml.load(open(WORKDIR + '/../config/zosma/database.yml', 'r+'))
 
 connection = mysql.connect(
   host = mysql[param['env']]['host'],
