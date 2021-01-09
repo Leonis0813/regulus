@@ -3,8 +3,8 @@ class AnalysisJob < ApplicationJob
 
   def perform(analysis_id)
     analysis = Analysis.find(analysis_id)
-    script_dir = Rails.root.join('scripts')
-    FileUtils.mkdir_p(File.join(script_dir, 'tmp'))
+    tmp_dir = Rails.root.join('scripts/tmp')
+    FileUtils.mkdir_p(tmp_dir)
 
     param = {
       from: analysis.from.strftime('%F %T'),
@@ -17,9 +17,8 @@ class AnalysisJob < ApplicationJob
     File.open(parameter_file, 'w') {|file| YAML.dump(param, file) }
     execute_script('learn.py')
 
-    from = File.join(script_dir, 'tmp')
     to = Rails.root.join('tmp', 'models', analysis_id.to_s)
-    FileUtils.mv(from, to)
+    FileUtils.mv(tmp_dir, to)
     File.open(File.join(to, 'metadata.yml'), 'w') do |file|
       YAML.dump({'pair' => analysis.pair}, file)
     end
