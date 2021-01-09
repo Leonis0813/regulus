@@ -50,6 +50,7 @@ class PredictionJob < ApplicationJob
         time_frame: 'D1',
       )
       break if found
+
       sleep(60)
     end
     raise StandardError unless found
@@ -61,6 +62,7 @@ class PredictionJob < ApplicationJob
         time_frame: 'D1',
       )
       break if found
+
       sleep(60)
     end
     raise StandardError unless found
