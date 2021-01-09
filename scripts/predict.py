@@ -9,14 +9,14 @@ import yaml
 args = sys.argv
 WORKDIR = os.path.dirname(os.path.abspath(args[0]))
 param = yaml.load(open(WORKDIR + '/tmp/parameter.yml', 'r+'))
-mysql = yaml.load(open(WORKDIR + '/../config/zosma/database.yml', 'r+'))
+database = yaml.load(open(WORKDIR + '/../config/zosma/database.yml', 'r+'))
 result_file = open(WORKDIR + '/tmp/result.yml', 'w')
 
 connection = mysql.connect(
-  host = mysql[param['env']]['host'],
-  user = mysql[param['env']]['username'],
-  password = mysql[param['env']]['password'],
-  database = mysql[param['env']]['database'],
+  host = database[param['env']]['host'],
+  user = database[param['env']]['username'],
+  password = database[param['env']]['password'],
+  database = database[param['env']]['database'],
 )
 
 cursor = connection.cursor(dictionary=True)
