@@ -6,13 +6,16 @@ class AnalysisJob < ApplicationJob
     script_dir = Rails.root.join('scripts')
     FileUtils.mkdir_p(File.join(script_dir, 'tmp'))
 
-    args = [
-      "'#{analysis.from.strftime('%F %T')}'",
-      "'#{analysis.to.strftime('%F %T')}'",
-      analysis.pair,
-      analysis.batch_size,
-    ]
-    execute_script('learn.py', args)
+    param = {
+      from: analysis.from.strftime('%F %T'),
+      to: analysis.to.strftime('%F %T'),
+      pair: analysis.pair,
+      batch_size: analysis.batch_size,
+      env: Rails.env,
+    }
+    parameter_file = File.join(tmp_dir, 'parameter.yml')
+    File.open(parameter_file, 'w') {|file| YAML.dump(param, file) }
+    execute_script('learn.py')
 
     from = File.join(script_dir, 'tmp')
     to = Rails.root.join('tmp', 'models', analysis_id.to_s)

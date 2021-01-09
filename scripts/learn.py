@@ -8,17 +8,14 @@ import yaml
 
 args = sys.argv
 WORKDIR = os.path.dirname(os.path.abspath(args[0]))
-FROM = args[1]
-TO = args[2]
-TARGET_PAIR = args[3]
-BATCH_SIZE = int(args[4])
-Settings = yaml.load(open(WORKDIR + '/settings.yml', 'r+'))
+param = yaml.load(open(WORKDIR + '/tmp/parameter.yml', 'r+'))
+mysql = yaml.load(open(WORKDIR + '../config/zosma/database.yml', 'r+'))
 
 connection = mysql.connect(
-  host = Settings['mysql']['host'],
-  user = Settings['mysql']['user'],
-  password = Settings['mysql']['password'],
-  database = Settings['mysql']['database'],
+  host = mysql[param['env']]['host'],
+  user = mysql[param['env']]['username'],
+  password = mysql[param['env']]['password'],
+  database = mysql[param['env']]['database'],
 )
 
 raw_data = pd.DataFrame()
@@ -26,9 +23,9 @@ raw_data = pd.DataFrame()
 cursor = connection.cursor(dictionary=True)
 cursor.execute(
   open(WORKDIR + '/training_data.sql').read()
-  .replace("${FROM}", FROM)
-  .replace("${TO}", TO)
-  .replace("${PAIR}", TARGET_PAIR)
+  .replace("${FROM}", param['from'])
+  .replace("${TO}", param['to'])
+  .replace("${PAIR}", param['pair'])
 )
 records = cursor.fetchall()
 
@@ -123,7 +120,7 @@ with tf.Session() as sess:
   sess.run(init)
 
   for i in range(10000):
-    batch_data = training_data.sample(n=BATCH_SIZE)
+    batch_data = training_data.sample(n=param['batch_size'])
     labels = []
     for label in batch_data['label'].values:
       labels += [[1.0, 0.0]] if label == 1.0 else [[0.0, 1.0]]
