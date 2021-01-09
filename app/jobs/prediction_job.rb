@@ -16,7 +16,7 @@ class PredictionJob < ApplicationJob
     unzip_model(File.join(model_dir, prediction.model), tmp_dir)
 
     pair = YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair']
-    param = {pair: pair, env: Rails.env}
+    param = {pair: pair, env: Rails.env.to_s}.stringify_keys
     parameter_file = File.join(tmp_dir, 'parameter.yml')
     File.open(parameter_file, 'w') {|file| YAML.dump(param, file) }
     prediction.update!(pair: pair)

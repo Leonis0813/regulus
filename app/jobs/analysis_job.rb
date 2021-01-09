@@ -11,8 +11,8 @@ class AnalysisJob < ApplicationJob
       to: analysis.to.strftime('%F %T'),
       pair: analysis.pair,
       batch_size: analysis.batch_size,
-      env: Rails.env,
-    }
+      env: Rails.env.to_s,
+    }.stringify_keys
     parameter_file = File.join(tmp_dir, 'parameter.yml')
     File.open(parameter_file, 'w') {|file| YAML.dump(param, file) }
     execute_script('learn.py')
