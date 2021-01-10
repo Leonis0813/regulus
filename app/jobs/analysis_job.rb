@@ -3,20 +3,22 @@ class AnalysisJob < ApplicationJob
 
   def perform(analysis_id)
     analysis = Analysis.find(analysis_id)
-    script_dir = Rails.root.join('scripts')
-    FileUtils.mkdir_p(File.join(script_dir, 'tmp'))
+    tmp_dir = Rails.root.join('scripts/tmp')
+    FileUtils.mkdir_p(tmp_dir)
 
-    args = [
-      "'#{analysis.from.strftime('%F %T')}'",
-      "'#{analysis.to.strftime('%F %T')}'",
-      analysis.pair,
-      analysis.batch_size,
-    ]
-    execute_script('learn.py', args)
+    param = {
+      from: analysis.from.strftime('%F %T'),
+      to: analysis.to.strftime('%F %T'),
+      pair: analysis.pair,
+      batch_size: analysis.batch_size,
+      env: Rails.env.to_s,
+    }.stringify_keys
+    parameter_file = File.join(tmp_dir, 'parameter.yml')
+    File.open(parameter_file, 'w') {|file| YAML.dump(param, file) }
+    execute_script('learn.py')
 
-    from = File.join(script_dir, 'tmp')
     to = Rails.root.join('tmp', 'models', analysis_id.to_s)
-    FileUtils.mv(from, to)
+    FileUtils.mv(tmp_dir, to)
     File.open(File.join(to, 'metadata.yml'), 'w') do |file|
       YAML.dump({'pair' => analysis.pair}, file)
     end

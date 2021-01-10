@@ -1,4 +1,7 @@
-# 4.9.4 (2020/03/04)
+# 4.9.4 (2021/01/10)
+- [UPDATE] learning algorithm
+- [UPDATE] learning script to add variables to summary
+- [UPDATE] predicting script for model
 - [UPDATE] gems
 
 # 4.9.3 (2020/01/30)
