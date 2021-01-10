@@ -1,3 +1,8 @@
+# 4.9.4 (2021/01/10)
+- [UPDATE] learning algorithm
+- [UPDATE] learning script to add variables to summary
+- [UPDATE] predicting script for model
+
 # 4.9.3 (2020/01/30)
 - [FIX] analysis mailer to add logs in attachment
 - [FIX] model directory in job:prediction task
