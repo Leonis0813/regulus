@@ -2,6 +2,7 @@
 - [UPDATE] learning algorithm
 - [UPDATE] learning script to add variables to summary
 - [UPDATE] predicting script for model
+- [UPDATE] gems
 
 # 4.9.3 (2020/01/30)
 - [FIX] analysis mailer to add logs in attachment

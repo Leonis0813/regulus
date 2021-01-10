@@ -25,6 +25,7 @@ gem 'unicorn', '~> 5.4.0'
 gem 'whenever', require: false
 
 group :development do
+  gem 'erb_lint', '< 0.0.36'
   gem 'pronto'
   gem 'pronto-coffeelint', require: false
   gem 'pronto-erb_lint', require: false
@@ -32,6 +33,7 @@ group :development do
   gem 'rubocop'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
+  gem 'rugged', '~> 0.28.0'
   gem 'web-console'
 end
 
