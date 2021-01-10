@@ -1,4 +1,4 @@
-# 4.9.4 (2021/01/06)
+# 4.9.4 (2021/01/10)
 - [UPDATE] learning algorithm
 - [UPDATE] learning script to add variables to summary
 - [UPDATE] predicting script for model
