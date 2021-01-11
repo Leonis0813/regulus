@@ -1,3 +1,6 @@
+# 4.9.5 (2021/01/11)
+- [FIX] prediction job error
+
 # 4.9.4 (2021/01/10)
 - [UPDATE] learning algorithm
 - [UPDATE] learning script to add variables to summary
