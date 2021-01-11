@@ -69,6 +69,6 @@ class PredictionJob < ApplicationJob
   end
 
   def latest
-    Date.now.monday? ? 3.days.ago : 1.day.ago
+    Date.today.monday? ? 3.days.ago : 1.day.ago
   end
 end
