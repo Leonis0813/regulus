@@ -1,3 +1,6 @@
+# 4.9.6 (2021/01/13)
+- [UPDATE] gems
+
 # 4.9.5 (2021/01/11)
 - [FIX] prediction job error
 
