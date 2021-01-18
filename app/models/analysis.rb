@@ -19,14 +19,6 @@ class Analysis < ApplicationRecord
             inclusion: {in: STATE_LIST, message: 'invalid'},
             allow_nil: true
 
-  after_initialize if: :new_record? do |analysis|
-    candle_sticks = Zosma::CandleStick.daily.select(:from).order(:from)
-    moving_averages = Zosma::MovingAverage.daily.select(:time).order(:time)
-
-    analysis.from = [candle_sticks.first.from, moving_averages.first.time].max
-    analysis.to = [candle_sticks.last.from, moving_averages.last.time].min
-  end
-
   private
 
   def valid_period?

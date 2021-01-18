@@ -2,7 +2,14 @@ class AnalysesController < ApplicationController
   include ModelUtil
 
   def manage
-    @analysis = Analysis.new
+    candle_sticks = Zosma::CandleStick.daily.select(:from).order(:from)
+    moving_averages = Zosma::MovingAverage.daily.select(:time).order(:time)
+
+    @analysis = Analysis.new(
+      from: [candle_sticks.first.from, moving_averages.first.time].max,
+      to: [candle_sticks.last.from, moving_averages.last.time].min,
+    )
+
     @analyses = Analysis.all.order(created_at: :desc).page(params[:page])
   end
 
