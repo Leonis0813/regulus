@@ -13,7 +13,6 @@ development:
 test:
   <<: *default
   username: test
-  database: zosma_test
 
 production:
   <<: *default
