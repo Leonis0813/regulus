@@ -1,3 +1,6 @@
+# 4.9.7 (2021/01/20)
+- [UPDATE] gems
+
 # 4.9.6 (2021/01/20)
 - [UPDATE] analysis view to set default value for calendar
 - [UPDATE] gems
