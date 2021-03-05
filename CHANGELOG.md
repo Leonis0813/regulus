@@ -1,3 +1,6 @@
+# 4.9.7 (2021/03/05)
+- [UPDATE] ruby version to 2.7.2
+
 # 4.9.6 (2021/01/20)
 - [UPDATE] analysis view to set default value for calendar
 - [UPDATE] gems
