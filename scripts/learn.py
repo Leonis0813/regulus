@@ -32,6 +32,8 @@ records = cursor.fetchall()
 for record in records:
   raw_data = raw_data.append(record, ignore_index=True)
 
+raw_data = raw_data.reindex(columns=['time', 'ma25', 'ma75', 'ma200', 'open'])
+
 normalized_data = pd.DataFrame()
 normalized_data['time'] = raw_data['time']
 max = max(
@@ -48,6 +50,8 @@ min = min(
 )
 for column in list(set(raw_data.columns) - set(['time'])):
   normalized_data[column] = 2.0 * (raw_data[column] - min) / (max - min) - 1.0
+
+normalized_data = normalized_data.reindex(columns=['time', 'ma25', 'ma75', 'ma200', 'open'])
 
 raw_data.to_csv(WORKDIR + '/tmp/raw_data.csv', index=False)
 normalized_data.to_csv(WORKDIR + '/tmp/normalized_data.csv', index=False)
@@ -67,6 +71,13 @@ for row_index in range(0, len(normalized_data) - 21):
 
   row['label'] = 1 if row['open_19'] < normalized_data['open'][row_index + 21] else 0
   training_data = training_data.append(row, ignore_index=True)
+
+columns = []
+for column in ['ma25', 'ma75', 'ma200', 'open']:
+  for date_index in range(0, 20):
+    columns.append(column + str(date_index))
+columns.append('label')
+training_data = training_data.reindex(columns=columns)
 
 training_data.to_csv(WORKDIR + '/tmp/training_data.csv', index=False)
 
