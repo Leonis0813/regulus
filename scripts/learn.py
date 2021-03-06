@@ -10,6 +10,7 @@ args = sys.argv
 WORKDIR = os.path.dirname(os.path.abspath(args[0]))
 param = yaml.load(open(WORKDIR + '/tmp/parameter.yml', 'r+'))
 database = yaml.load(open(WORKDIR + '/../config/zosma/database.yml', 'r+'))
+metadata_file = open(WORKDIR + '/tmp/metadata.yml', 'w')
 
 connection = mysql.connect(
   host = database[param['env']]['host'],
@@ -48,6 +49,9 @@ min = min(
   raw_data['ma75'].min(),
   raw_data['ma200'].min()
 )
+metadata_file.write("max: " + str(max) + "\n")
+metadata_file.write("min: " + str(min) + "\n")
+metadata_file.close()
 for column in list(set(raw_data.columns) - set(['time'])):
   normalized_data[column] = 2.0 * (raw_data[column] - min) / (max - min) - 1.0
 
