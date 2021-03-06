@@ -79,7 +79,7 @@ for row_index in range(0, len(normalized_data) - 21):
 columns = []
 for column in ['ma25', 'ma75', 'ma200', 'open']:
   for date_index in range(0, 20):
-    columns.append(column + str(date_index))
+    columns.append(column + '_' + str(date_index))
 columns.append('label')
 training_data = training_data.reindex(columns=columns)
 
