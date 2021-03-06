@@ -4,10 +4,6 @@ class Prediction < ApplicationRecord
   MEANS_AUTO = 'auto'.freeze
   MEANS_LIST = [MEANS_MANUAL, MEANS_AUTO].freeze
   RESULT_LIST = %w[up down range].freeze
-  STATE_PROCESSING = Analysis::STATE_PROCESSING
-  STATE_COMPLETED = Analysis::STATE_COMPLETED
-  STATE_ERROR = Analysis::STATE_ERROR
-  STATE_LIST = Analysis::STATE_LIST
 
   validate :valid_period?
   validates :prediction_id, :model, :state,
@@ -30,6 +26,11 @@ class Prediction < ApplicationRecord
   validates :state,
             inclusion: {in: STATE_LIST, message: 'invalid'},
             allow_nil: true
+
+  after_initialize if: :new_record? do |prediction|
+    prediction.prediction_id = SecureRandom.hex
+    prediction.state = DEFAULT_STATE
+  end
 
   private
 
