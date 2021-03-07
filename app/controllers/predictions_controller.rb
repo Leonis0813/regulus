@@ -13,14 +13,11 @@ class PredictionsController < ApplicationController
     model = execute_params[:model]
     raise BadRequest, 'invalid_param_model' unless model.respond_to?(:original_filename)
 
-    prediction = Prediction.new(
-      execute_params.merge(
-        prediction_id: SecureRandom.hex,
-        model: model.original_filename,
-        means: Prediction::MEANS_MANUAL,
-        state: Prediction::STATE_PROCESSING,
-      ),
+    attribute = execute_params.merge(
+      model: model.original_filename,
+      means: Prediction::MEANS_MANUAL,
     )
+    prediction = Prediction.new(attribute)
 
     unless prediction.save
       error_codes = prediction.errors.messages.keys.map {|key| "invalid_param_#{key}" }

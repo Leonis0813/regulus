@@ -4,16 +4,12 @@ class Prediction < ApplicationRecord
   MEANS_AUTO = 'auto'.freeze
   MEANS_LIST = [MEANS_MANUAL, MEANS_AUTO].freeze
   RESULT_LIST = %w[up down range].freeze
-  STATE_PROCESSING = Analysis::STATE_PROCESSING
-  STATE_COMPLETED = Analysis::STATE_COMPLETED
-  STATE_ERROR = Analysis::STATE_ERROR
-  STATE_LIST = Analysis::STATE_LIST
 
   validate :valid_period?
   validates :prediction_id, :model, :state,
             presence: {message: 'absent'}
   validates :prediction_id,
-            format: {with: /\A[0-9a-zA-Z]{32}\z/, message: 'invalid'},
+            format: {with: /\A[0-9a-f]{32}\z/, message: 'invalid'},
             allow_nil: true
   validates :model,
             format: {with: /\.zip\z/, message: 'invalid'},
@@ -30,6 +26,21 @@ class Prediction < ApplicationRecord
   validates :state,
             inclusion: {in: STATE_LIST, message: 'invalid'},
             allow_nil: true
+
+  belongs_to :analysis
+
+  after_initialize if: :new_record? do |prediction|
+    prediction.prediction_id = SecureRandom.hex
+    prediction.state = DEFAULT_STATE
+  end
+
+  def set_analysis!
+    metadata = YAML.load_file(Rails.root.join('scripts/tmp/metadata.yml'))
+    analysis = Analysis.find_by(analysis_id: metadata['analysis_id'])
+    raise StandardError if analysis.nil?
+
+    update!(analysis: analysis)
+  end
 
   private
 

@@ -16,7 +16,7 @@ class AnalysesController < ApplicationController
   def execute
     check_absent_params(%i[batch_size from pair to], execute_params)
 
-    analysis = Analysis.new(execute_params.merge(state: Analysis::STATE_PROCESSING))
+    analysis = Analysis.new(execute_params)
     unless analysis.save
       error_codes = analysis.errors.messages.keys.sort.map do |key|
         "invalid_param_#{key}"

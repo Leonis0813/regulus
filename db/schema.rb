@@ -10,19 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190814104812) do
+ActiveRecord::Schema.define(version: 20210307080243) do
 
   create_table "analyses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.datetime "from",       default: '1970-01-01 00:00:00', null: false
-    t.datetime "to",         default: '2286-11-20 17:46:40', null: false
-    t.string   "pair",       default: "USDJPY",              null: false
-    t.integer  "batch_size", default: 0,                     null: false
-    t.string   "state",                                      null: false
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
+    t.string   "analysis_id"
+    t.datetime "from",                   default: '1970-01-01 00:00:00', null: false
+    t.datetime "to",                     default: '2286-11-20 17:46:40', null: false
+    t.string   "pair",                   default: "USDJPY",              null: false
+    t.integer  "batch_size",             default: 0,                     null: false
+    t.float    "min",         limit: 24
+    t.float    "max",         limit: 24
+    t.string   "state",                                                  null: false
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
+    t.index ["analysis_id"], name: "index_analyses_on_analysis_id", unique: true, using: :btree
   end
 
   create_table "predictions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer  "analysis_id"
     t.string   "prediction_id", default: "",       null: false
     t.string   "model",                            null: false
     t.datetime "from"
@@ -33,6 +38,7 @@ ActiveRecord::Schema.define(version: 20190814104812) do
     t.string   "state",                            null: false
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
+    t.index ["analysis_id"], name: "index_predictions_on_analysis_id", using: :btree
   end
 
 end
