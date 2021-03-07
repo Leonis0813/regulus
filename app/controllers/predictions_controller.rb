@@ -56,7 +56,8 @@ class PredictionsController < ApplicationController
       output_model(tmp_dir, model)
       unzip_model(File.join(tmp_dir, model.original_filename), tmp_dir)
 
-      pair = YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair']
+      metadata = YAML.load_file(File.join(tmp_dir, 'metadata.yml'))
+      pair = Analysis.find_by(analysis_id: metadata['analysis_id']).pair
       pair_dir = File.join(auto_dir, pair)
       FileUtils.rm_rf(pair_dir) if File.exist?(pair_dir)
       FileUtils.mv(tmp_dir, pair_dir)
