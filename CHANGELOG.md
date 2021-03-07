@@ -1,3 +1,8 @@
+# 4.9.8 (2021/03/07)
+- [FIX] csv file to change column order
+- [FIX] test data array order
+- [FIX] normalization process
+
 # 4.9.7 (2021/03/05)
 - [UPDATE] ruby version to 2.7.2
 - [UPDATE] gems
