@@ -31,9 +31,6 @@ normalized_data = pd.DataFrame()
 for column in list(set(raw_data.columns) - set(['time'])):
   normalized_data[column] = 2.0 * (raw_data[column] - param['min') / (param['max'] - param['min']) - 1.0
 
-raw_data.to_csv(WORKDIR + '/tmp/raw_data.csv', index=False)
-normalized_data.to_csv(WORKDIR + '/tmp/normalized_data.csv', index=False)
-
 test_data = []
 for column in ['ma25', 'ma75', 'ma200', 'open']:
   for index in range(0, 20):
