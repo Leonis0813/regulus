@@ -34,6 +34,14 @@ class Prediction < ApplicationRecord
     prediction.state = DEFAULT_STATE
   end
 
+  def set_analysis!
+    metadata = YAML.load_file(Rails.root.join('scripts/tmp/metadata.yml'))
+    analysis = Analysis.find_by(analysis_id: metadata['analysis_id'])
+    raise StandardError if analysis.nil?
+
+    update!(analysis: analysis)
+  end
+
   private
 
   def valid_period?
@@ -42,13 +50,5 @@ class Prediction < ApplicationRecord
 
     errors.add(:from, 'invalid')
     errors.add(:to, 'invalid')
-  end
-
-  def set_analysis!
-    metadata = YAML.load_file(Rails.root.join('scripts/tmp/metadata.yml'))
-    analysis = Analysis.find_by(analysis_id: metadata['analysis_id'])
-    raise StandardError if analysis.nil?
-
-    update!(analysis: analysis)
   end
 end
