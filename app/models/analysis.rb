@@ -6,7 +6,7 @@ class Analysis < ApplicationRecord
   validates :analysis_id, :batch_size, :pair, :state,
             presence: {message: 'absent'}
   validates :analysis_id,
-            format: {with: /\A[0-9a-zA-Z]{32}\z/, message: 'invalid'},
+            format: {with: /\A[0-9a-f]{32}\z/, message: 'invalid'},
             allow_nil: true
   validates :pair,
             inclusion: {in: PAIR_LIST, message: 'invalid'},

@@ -26,8 +26,9 @@ describe Prediction, type: :model do
     end
 
     describe '異常系' do
+      absent_keys = %i[model]
       invalid_attribute = {
-        prediction_id: ['0' * 33],
+        prediction_id: ['invalid', 'g' * 32],
         model: %w[invalid],
         pair: %w[invalid],
         means: %w[invalid],
@@ -38,7 +39,6 @@ describe Prediction, type: :model do
         from: %w[1000-01-02 1000/01/02 02-01-1000 02/01/1000 10000102],
         to: %w[1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101],
       }
-      absent_keys = %i[model state]
 
       it_behaves_like '必須パラメーターがない場合のテスト', absent_keys
       it_behaves_like '不正な値を指定した場合のテスト', invalid_attribute
