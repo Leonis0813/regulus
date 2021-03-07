@@ -17,10 +17,11 @@ class PredictionJob < ApplicationJob
 
     prediction.set_analysis!
 
+    pair = prediction.analysis.pair
     param = {
-      min: analysis.min,
-      max: analysis.max,
-      pair: analysis.pair,
+      min: prediction.analysis.min,
+      max: prediction.analysis.max,
+      pair: pair,
       env: Rails.env.to_s,
     }.stringify_keys
     parameter_file = File.join(tmp_dir, 'parameter.yml')
