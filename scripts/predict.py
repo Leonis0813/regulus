@@ -35,13 +35,9 @@ raw_data.to_csv(WORKDIR + '/tmp/raw_data.csv', index=False)
 normalized_data.to_csv(WORKDIR + '/tmp/normalized_data.csv', index=False)
 
 test_data = []
-for index in range(0, 20):
-  test_data.extend([
-    normalized_data['open'][index],
-    normalized_data['ma25'][index],
-    normalized_data['ma75'][index],
-    normalized_data['ma200'][index],
-  ])
+for column in ['ma25', 'ma75', 'ma200', 'open']:
+  for index in range(0, 20):
+    test_data.append(normalized_data[column][index])
 
 x = tf.placeholder(tf.float32, [None, 80])
 
