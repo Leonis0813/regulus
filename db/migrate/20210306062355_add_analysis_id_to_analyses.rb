@@ -3,7 +3,8 @@ class AddAnalysisIdToAnalyses < ActiveRecord::Migration[5.0]
     add_column :analyses, :analysis_id, :string, after: :id
 
     Analysis.where(analysis_id: nil).each do |analysis|
-      analysis.update!(analysis_id: SecureRandom.hex)
+      analysis.analysis_id = SecureRandom.hex
+      analysis.save(validate: false)
     end
 
     add_index :analyses, :analysis_id, unique: true
