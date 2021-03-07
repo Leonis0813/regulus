@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210306063112) do
+ActiveRecord::Schema.define(version: 20210307080243) do
 
   create_table "analyses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "analysis_id"
@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20210306063112) do
   end
 
   create_table "predictions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer  "analysis_id"
     t.string   "prediction_id", default: "",       null: false
     t.string   "model",                            null: false
     t.datetime "from"
@@ -37,6 +38,7 @@ ActiveRecord::Schema.define(version: 20210306063112) do
     t.string   "state",                            null: false
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
+    t.index ["analysis_id"], name: "index_predictions_on_analysis_id", using: :btree
   end
 
 end
