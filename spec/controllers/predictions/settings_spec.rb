@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 describe PredictionsController, type: :controller do
+  test_analysis_id = '108b1ad5a0e5895452296fd540d00d4c'
   prediction = Settings.prediction
   model_file = 'analysis.zip'
   zip_file_path = Rails.root.join('spec', 'fixtures', model_file)
@@ -52,6 +53,9 @@ describe PredictionsController, type: :controller do
       is_asserted_by { File.exist?(file_path) }
     end
   end
+
+  include_context 'トランザクション作成'
+  before(:all) { create(:analysis, analysis_id: test_analysis_id) }
 
   describe '正常系' do
     context '定期予測を有効にする場合' do
