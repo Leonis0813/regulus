@@ -10,7 +10,7 @@ class PredictionJob < ApplicationJob
   def perform(prediction_id, model_dir)
     prediction = Prediction.find(prediction_id)
 
-    tmp_dir = Rails.root.join('scripts', 'tmp')
+    tmp_dir = Rails.root.join('scripts/tmp')
     FileUtils.rm_rf(tmp_dir)
     FileUtils.mkdir_p(tmp_dir)
     unzip_model(File.join(model_dir, prediction.model), tmp_dir)
