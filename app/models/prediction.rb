@@ -45,7 +45,7 @@ class Prediction < ApplicationRecord
   end
 
   def set_analysis!
-    metadata = YAML.load_file(Rails.root.join('scripts', 'tmp', 'metadata.yml'))
+    metadata = YAML.load_file(Rails.root.join('scripts/tmp/metadata.yml'))
     analysis = Analysis.find_by(analysis_id: metadata['analysis_id'])
     raise StandardError if analysis.nil?
 
