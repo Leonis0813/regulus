@@ -22,7 +22,6 @@ gem 'turbolinks'
 gem 'twitter-bootstrap-rails', '3.2.2'
 gem 'uglifier'
 gem 'unicorn', '~> 5.4.0'
-gem 'unicorn-rails'
 gem 'whenever', require: false
 
 group :development do
@@ -50,6 +49,7 @@ group :development, :test do
   gem 'headless'
   gem 'httpclient'
   gem 'pry'
+  gem 'puma'
   gem 'rspec-power_assert'
   gem 'rspec-rails'
   gem 'selenium-webdriver', '3.142.4'

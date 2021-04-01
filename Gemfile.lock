@@ -303,6 +303,8 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (4.0.6)
+    puma (5.2.2)
+      nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
     rack-protection (2.1.0)
@@ -470,9 +472,6 @@ GEM
     unicorn (5.4.1)
       kgio (~> 2.6)
       raindrops (~> 0.7)
-    unicorn-rails (2.2.1)
-      rack
-      unicorn
     vegas (0.1.11)
       rack (>= 1.0.0)
     web-console (3.7.0)
@@ -521,6 +520,7 @@ DEPENDENCIES
   pronto-erb_lint
   pronto-rubocop
   pry
+  puma
   rails (~> 5.0.0)
   remotipart
   resque
@@ -543,7 +543,6 @@ DEPENDENCIES
   twitter-bootstrap-rails (= 3.2.2)
   uglifier
   unicorn (~> 5.4.0)
-  unicorn-rails
   web-console
   whenever
 
