@@ -28,10 +28,14 @@ class Analysis < ApplicationRecord
 
   def start!
     update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
+    updated_attribute = attributes.slice(:analysis_id, :state, :performed_at)
+    ActionCable.server.broadcast('analysis', updated_attribute)
   end
 
   def completed!
     update!(state: STATE_COMPLETED)
+    updated_attribute = attributes.slice(:analysis_id, :state)
+    ActionCable.server.broadcast('analysis', updated_attribute)
   end
 
   private
