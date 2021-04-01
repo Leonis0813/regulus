@@ -1,3 +1,25 @@
+# 4.9.8 (2021/03/07)
+- [FIX] csv file to change column order
+- [FIX] test data array order
+- [FIX] normalization process
+
+# 4.9.7 (2021/03/05)
+- [UPDATE] ruby version to 2.7.2
+- [UPDATE] gems
+
+# 4.9.6 (2021/01/20)
+- [UPDATE] analysis view to set default value for calendar
+- [UPDATE] gems
+
+# 4.9.5 (2021/01/11)
+- [FIX] prediction job error
+
+# 4.9.4 (2021/01/10)
+- [UPDATE] learning algorithm
+- [UPDATE] learning script to add variables to summary
+- [UPDATE] predicting script for model
+- [UPDATE] gems
+
 # 4.9.3 (2020/01/30)
 - [FIX] analysis mailer to add logs in attachment
 - [FIX] model directory in job:prediction task

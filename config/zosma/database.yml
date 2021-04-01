@@ -1,0 +1,19 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8
+  pool: 5
+  host: localhost
+  password:
+  database: zosma
+
+development:
+  <<: *default
+  username: development
+
+test:
+  <<: *default
+  username: test
+
+production:
+  <<: *default
+  username: production
