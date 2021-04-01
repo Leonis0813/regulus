@@ -342,7 +342,7 @@ GEM
       ffi (~> 1.0)
     rchardet (1.8.0)
     rdoc (6.3.0)
-    redis (4.2.5)
+    redis (3.3.5)
     redis-namespace (1.8.1)
       redis (>= 3.0.4)
     ref (2.0.0)
@@ -522,7 +522,7 @@ DEPENDENCIES
   pry
   puma
   rails (~> 5.0.0)
-  redis
+  redis (~> 3.0)
   remotipart
   resque
   rspec-power_assert
