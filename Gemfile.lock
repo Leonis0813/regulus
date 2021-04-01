@@ -522,6 +522,7 @@ DEPENDENCIES
   pry
   puma
   rails (~> 5.0.0)
+  redis
   remotipart
   resque
   rspec-power_assert
