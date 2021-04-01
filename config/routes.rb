@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount ActionCable.server => '/cable'
+
   get '/analyses' => 'analyses#manage'
   post '/analyses' => 'analyses#execute'
   put '/analyses/result' => 'analyses#upload_result'
