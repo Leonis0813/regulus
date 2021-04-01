@@ -470,6 +470,9 @@ GEM
     unicorn (5.4.1)
       kgio (~> 2.6)
       raindrops (~> 0.7)
+    unicorn-rails (2.2.1)
+      rack
+      unicorn
     vegas (0.1.11)
       rack (>= 1.0.0)
     web-console (3.7.0)
@@ -540,6 +543,7 @@ DEPENDENCIES
   twitter-bootstrap-rails (= 3.2.2)
   uglifier
   unicorn (~> 5.4.0)
+  unicorn-rails
   web-console
   whenever
 
