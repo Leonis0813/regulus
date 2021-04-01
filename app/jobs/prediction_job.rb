@@ -9,6 +9,7 @@ class PredictionJob < ApplicationJob
 
   def perform(prediction_id, model_dir)
     prediction = Prediction.find(prediction_id)
+    prediction.start!
 
     tmp_dir = Rails.root.join('scripts/tmp')
     FileUtils.rm_rf(tmp_dir)
@@ -39,7 +40,7 @@ class PredictionJob < ApplicationJob
 
     FileUtils.rm_rf(tmp_dir)
     FileUtils.rm_rf(model_dir) if prediction.means == Prediction::MEANS_MANUAL
-    prediction.update!(state: Prediction::STATE_COMPLETED)
+    prediction.completed!
   rescue StandardError => e
     Rails.logger.error(e.message)
     Rails.logger.error(e.backtrace.join("\n"))

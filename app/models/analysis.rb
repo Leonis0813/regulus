@@ -26,6 +26,14 @@ class Analysis < ApplicationRecord
     analysis.state = DEFAULT_STATE
   end
 
+  def start!
+    update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
+  end
+
+  def completed!
+    update!(state: STATE_COMPLETED)
+  end
+
   private
 
   def valid_period?
