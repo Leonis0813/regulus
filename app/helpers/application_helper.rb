@@ -2,7 +2,7 @@
 
 module ApplicationHelper
   def time_to_string(time)
-    time.strftime('%Y/%m/%d %T')
+    time&.strftime('%Y/%m/%d %T')
   end
 
   def period_to_string(from, to)

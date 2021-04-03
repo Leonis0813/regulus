@@ -6,8 +6,6 @@ $ ->
     bootbox.alert({
       title: '分析を開始しました',
       message: '終了後、メールにて結果を通知します',
-      callback: ->
-        return
     })
     return
 
@@ -23,6 +21,10 @@ $ ->
 
   $('#new_analysis').on 'ajax:success', (event, xhr, status, error) ->
     successDialog()
+    $.ajax({
+      url: location.href,
+      dataType: 'script',
+    })
     return
 
   $('#new_analysis').on 'ajax:error', (event, xhr, status, error) ->
