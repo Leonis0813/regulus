@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210401113804) do
+ActiveRecord::Schema.define(version: 20210403063506) do
 
   create_table "analyses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "analysis_id"
@@ -33,7 +33,6 @@ ActiveRecord::Schema.define(version: 20210401113804) do
     t.string   "model",                            null: false
     t.datetime "from"
     t.datetime "to"
-    t.string   "pair"
     t.string   "means",         default: "manual", null: false
     t.string   "result"
     t.string   "state",                            null: false

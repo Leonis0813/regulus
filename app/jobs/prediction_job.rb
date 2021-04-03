@@ -27,7 +27,6 @@ class PredictionJob < ApplicationJob
     }.stringify_keys
     parameter_file = File.join(tmp_dir, 'parameter.yml')
     File.open(parameter_file, 'w') {|file| YAML.dump(param, file) }
-    prediction.update!(pair: pair)
 
     if Settings.prediction.wait_latest and prediction.means == Prediction::MEANS_AUTO
       polling_zosma(pair)

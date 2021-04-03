@@ -1,5 +1,4 @@
 class Prediction < ApplicationRecord
-  PAIR_LIST = Analysis::PAIR_LIST
   MEANS_MANUAL = 'manual'.freeze
   MEANS_AUTO = 'auto'.freeze
   MEANS_LIST = [MEANS_MANUAL, MEANS_AUTO].freeze
@@ -13,9 +12,6 @@ class Prediction < ApplicationRecord
             allow_nil: true
   validates :model,
             format: {with: /\.zip\z/, message: 'invalid'},
-            allow_nil: true
-  validates :pair,
-            inclusion: {in: PAIR_LIST, message: 'invalid'},
             allow_nil: true
   validates :means,
             inclusion: {in: MEANS_LIST, message: 'invalid'},
