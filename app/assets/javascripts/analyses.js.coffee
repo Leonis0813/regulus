@@ -7,7 +7,6 @@ $ ->
       title: '分析を開始しました',
       message: '終了後、メールにて結果を通知します',
       callback: ->
-        location.reload()
         return
     })
     return

@@ -38,6 +38,12 @@ class Analysis < ApplicationRecord
     ActionCable.server.broadcast('analysis', updated_attribute)
   end
 
+  def failed!
+    update!(state: STATE_ERROR)
+    updated_attribute = attributes.slice(:analysis_id, :state)
+    ActionCable.server.broadcast('analysis', updated_attribute)
+  end
+
   private
 
   def valid_period?

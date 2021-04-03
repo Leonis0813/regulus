@@ -34,7 +34,7 @@ class AnalysisJob < ApplicationJob
   rescue StandardError => e
     Rails.logger.error(e.message)
     Rails.logger.error(e.backtrace.join("\n"))
-    analysis.update!(state: 'error')
+    analysis.failed!
     AnalysisMailer.error(analysis).deliver_now
   end
 end
