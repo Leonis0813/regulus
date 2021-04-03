@@ -34,8 +34,7 @@ class PredictionJob < ApplicationJob
     execute_script('predict.py')
 
     FileUtils.mv(File.join(tmp_dir, 'result.yml'), model_dir)
-    result = YAML.load_file(File.join(model_dir, 'result.yml'))
-    prediction.update!(result)
+    prediction.import_result!(File.join(model_dir, 'result.yml'))
 
     FileUtils.rm_rf(tmp_dir)
     FileUtils.rm_rf(model_dir) if prediction.means == Prediction::MEANS_MANUAL
@@ -43,7 +42,7 @@ class PredictionJob < ApplicationJob
   rescue StandardError => e
     Rails.logger.error(e.message)
     Rails.logger.error(e.backtrace.join("\n"))
-    prediction.update!(state: Prediction::STATE_ERROR)
+    prediction.failed!
   end
 
   private

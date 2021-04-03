@@ -1,23 +1,23 @@
-<tr class='<%= state_to_class(prediction.state) %>'>
-  <td>
-    <%= time_to_string(prediction.created_at) %>
+<tr id='<%= prediction.prediction_id %>' class='<%= state_to_class(prediction.state) %>'>
+  <td class='performed_at'>
+    <%= time_to_string(prediction.performed_at) %>
   </td>
   <td>
     <%= prediction.model %>
   </td>
-  <td>
+  <td class='period'>
     <% if prediction.from and prediction.to %>
     開始: <%= time_to_string(prediction.from) %><br>
     終了: <%= time_to_string(prediction.to) %>
     <% end %>
   </td>
-  <td>
-    <%= prediction.analysis.pair %>
+  <td class='pair'>
+    <%= prediction.analysis&.pair %>
   </td>
   <td>
     <%= means_to_display(prediction.means) %>
   </td>
-  <td>
+  <td class='result'>
     <span class='glyphicon <%= icon_class(prediction) %>' style='color: <%= icon_color(prediction) %>'/>
   </td>
 </tr>

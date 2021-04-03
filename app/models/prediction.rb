@@ -36,21 +36,36 @@ class Prediction < ApplicationRecord
     raise StandardError if analysis.nil?
 
     update!(analysis: analysis)
+    broadcast('pair' => analysis.pair)
+  end
+
+  def import_result!(result_file)
+    result = YAML.load_file(result_file)
+    update!(result)
+    broadcast(result)
   end
 
   def start!
     update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
-    updated_attribute = attributes.slice(:prediction_id, :state, :performed_at)
-    ActionCable.server.broadcast('prediction', updated_attribute)
+    broadcast(attributes.slice(:state, :performed_at))
   end
 
   def completed!
     update!(state: STATE_COMPLETED)
-    updated_attribute = attributes.slice(:prediction_id, :state)
-    ActionCable.server.broadcast('prediction', updated_attribute)
+    broadcast(attributes.slice(:state))
+  end
+
+  def failed!
+    update!(state: STATE_ERROR)
+    broadcast(attributes.slice(:state))
   end
 
   private
+
+  def broadcast(updated_attribute = {})
+    updated_attribute['prediction_id'] =  prediction_id
+    ActionCable.server.broadcast('prediction', updated_attribute)
+  end
 
   def valid_period?
     return unless from and to
