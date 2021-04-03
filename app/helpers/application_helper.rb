@@ -22,6 +22,8 @@ module ApplicationHelper
 
   def state_to_title(state)
     case state
+    when 'waiting'
+      '実行待ち'
     when 'completed'
       '完了'
     when 'processing'

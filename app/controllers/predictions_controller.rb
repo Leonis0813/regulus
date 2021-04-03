@@ -90,7 +90,7 @@ class PredictionsController < ApplicationController
     return @configs if @configs
 
     file_path = Rails.root.join(Settings.prediction.auto.config_file)
-    @configs = YAML.load_file(file_path)
+    @configs = YAML.load_file(file_path) rescue nil
     @configs ||= []
     @configs.map!(&:deep_stringify_keys)
   end
