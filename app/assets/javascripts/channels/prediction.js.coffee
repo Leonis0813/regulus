@@ -2,7 +2,7 @@ App.prediction = App.cable.subscriptions.create "PredictionChannel",
   received: (prediction) ->
     trId = "##{prediction.prediction_id}"
 
-    if $(trId)
+    if $(trId).length
       @updateRow(trId, prediction)
     else
       $.ajax({
