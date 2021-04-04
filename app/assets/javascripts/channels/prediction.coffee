@@ -2,6 +2,16 @@ App.prediction = App.cable.subscriptions.create "PredictionChannel",
   received: (prediction) ->
     trId = "##{prediction.prediction_id}"
 
+    if $(trId)
+      @updateRow(trId, prediction)
+    else
+      $.ajax({
+        url: location.href,
+        dataType: 'script',
+      })
+    return
+
+  updateRow: (trId, prediction) ->
     switch prediction.state
       when 'processing'
         $(trId).addClass('warning')
@@ -12,7 +22,7 @@ App.prediction = App.cable.subscriptions.create "PredictionChannel",
         row.removeClass()
         row.addClass('success')
       when 'error'
-        row = $(trId)
+
         row.removeClass()
         row.addClass('danger')
         @changeResultColumn(trId, prediction.state)
