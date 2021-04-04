@@ -4,22 +4,11 @@ module PredictionHelper
   def icon_class(prediction)
     case prediction.state
     when 'processing'
-      'glyphicon-question-sign'
+      'glyphicon-question-sign glyphicon-black'
     when 'error'
-      'glyphicon-remove'
+      'glyphicon-remove glyphicon-red'
     when 'completed'
       icon_class_by_result(prediction.result)
-    end
-  end
-
-  def icon_color(prediction)
-    case prediction.state
-    when 'processing'
-      'black'
-    when 'error'
-      'red'
-    when 'completed'
-      icon_color_by_result(prediction.result)
     end
   end
 
@@ -49,22 +38,11 @@ module PredictionHelper
   def icon_class_by_result(result)
     case result
     when 'up'
-      'glyphicon-circle-arrow-up'
+      'glyphicon-circle-arrow-up glyphicon-blue'
     when 'down'
-      'glyphicon-circle-arrow-down'
+      'glyphicon-circle-arrow-down glyphicon-red'
     when 'range'
-      'glyphicon-circle-arrow-right'
-    end
-  end
-
-  def icon_color_by_result(result)
-    case result
-    when 'up'
-      'blue'
-    when 'down'
-      'red'
-    when 'range'
-      'orange'
+      'glyphicon-circle-arrow-right glyphicon-orange'
     end
   end
 

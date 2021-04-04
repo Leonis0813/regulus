@@ -40,24 +40,32 @@ class Prediction < ApplicationRecord
   end
 
   def import_result!(result_file)
-    result = YAML.load_file(result_file)
-    update!(result)
-    broadcast(result)
+    update!(YAML.load_file(result_file))
+    updated_attribute = {
+      'result' => result,
+      'from' => from.strftime('%Y/%m/%d %T'),
+      'to' => to.strftime('%Y/%m/%d %T'),
+    }
+    broadcast(updated_attribute)
   end
 
   def start!
     update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
-    broadcast(attributes.slice(:state, :performed_at))
+    updated_attribute = {
+      'state' => state,
+      'performed_at' => performed_at.strftime('%Y/%m/%d %T')
+    }
+    broadcast(updated_attribute)
   end
 
   def completed!
     update!(state: STATE_COMPLETED)
-    broadcast(attributes.slice(:state))
+    broadcast(attributes.slice('state'))
   end
 
   def failed!
     update!(state: STATE_ERROR)
-    broadcast(attributes.slice(:state))
+    broadcast(attributes.slice('state'))
   end
 
   private

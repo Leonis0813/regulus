@@ -6,7 +6,7 @@ App.prediction = App.cable.subscriptions.create "PredictionChannel",
       when 'processing'
         $(trId).addClass('warning')
         $("#{trId} > td.performed_at")[0].innerText = prediction.performed_at
-        changeResultColumn(trId, prediction.state)
+        @changeResultColumn(trId, prediction.state)
       when 'completed'
         row = $(trId)
         row.removeClass()
@@ -15,16 +15,18 @@ App.prediction = App.cable.subscriptions.create "PredictionChannel",
         row = $(trId)
         row.removeClass()
         row.addClass('danger')
-        changeResultColumn(trId, prediction.state)
+        @changeResultColumn(trId, prediction.state)
       else
         if prediction.pair
           $("##{prediction.prediction_id} > td.pair")[0].innerText = prediction.pair
         else if prediction.result
-          changeResultColumn(trId, 'completed', prediction.result)
+          column = $("##{prediction.prediction_id} > td.period")
+          column.append("開始: #{prediction.from}<br>終了: #{prediction.to}")
+          @changeResultColumn(trId, 'completed', prediction.result)
     return
 
   changeResultColumn: (trId, state, result = null) ->
-    column = $("#{trId} > td.result")
+    column = $("#{trId} > td.result > span")
     switch state
       when 'processing'
         column.addClass('glyphicon-question-sign glyphicon-black')
