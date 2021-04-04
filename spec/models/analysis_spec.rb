@@ -13,7 +13,7 @@ describe Analysis, type: :model do
         batch_size: 100,
         min: [1, 0.1, nil],
         max: [1, 0.1, nil],
-        state: %w[processing completed error],
+        state: %w[waiting processing completed error],
       }
 
       it_behaves_like '正常な値を指定した場合のテスト', valid_attribute

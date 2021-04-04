@@ -8,18 +8,11 @@ describe Prediction, type: :model do
       valid_attribute = {
         prediction_id: ['0' * 32],
         model: ['analysis.zip'],
-        from: [
-          '1000-01-01 00:00:00',
-          nil,
-        ],
-        to: [
-          '1001-01-01 00:00:00',
-          nil,
-        ],
-        pair: %w[AUDJPY CADJPY CHFJPY EURJPY EURUSD GBPJPY NZDJPY USDJPY] + [nil],
+        from: ['1000-01-01 00:00:00', nil],
+        to: ['1001-01-01 00:00:00', nil],
         means: %w[manual auto] + [nil],
         result: %w[up down range] + [nil],
-        state: %w[processing completed error],
+        state: %w[waiting processing completed error],
       }
 
       it_behaves_like '正常な値を指定した場合のテスト', valid_attribute
@@ -30,7 +23,6 @@ describe Prediction, type: :model do
       invalid_attribute = {
         prediction_id: ['invalid', 'g' * 32],
         model: %w[invalid],
-        pair: %w[invalid],
         means: %w[invalid],
         result: %w[invalid],
         state: %w[invalid],

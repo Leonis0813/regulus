@@ -8,7 +8,7 @@ class Query
             inclusion: {in: Prediction::MEANS_LIST, message: 'invalid'},
             allow_nil: true
   validates :pair,
-            inclusion: {in: Prediction::PAIR_LIST, message: 'invalid'},
+            inclusion: {in: Analysis::PAIR_LIST, message: 'invalid'},
             allow_nil: true
   validates :page, :per_page,
             numericality: {
