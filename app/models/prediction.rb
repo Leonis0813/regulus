@@ -53,7 +53,7 @@ class Prediction < ApplicationRecord
     update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
     updated_attribute = {
       'state' => state,
-      'performed_at' => performed_at.strftime('%Y/%m/%d %T')
+      'performed_at' => performed_at.strftime('%Y/%m/%d %T'),
     }
     broadcast(updated_attribute)
   end
@@ -71,7 +71,7 @@ class Prediction < ApplicationRecord
   private
 
   def broadcast(updated_attribute = {})
-    updated_attribute['prediction_id'] =  prediction_id
+    updated_attribute['prediction_id'] = prediction_id
     ActionCable.server.broadcast('prediction', updated_attribute)
   end
 
