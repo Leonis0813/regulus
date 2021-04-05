@@ -6,7 +6,6 @@ describe 'predictions/manage', type: :view do
   per_page = 1
   default_attribute = {
     model: 'analysis.zip',
-    pair: Prediction::PAIR_LIST.sample,
     state: 'processing',
   }
   means = {
@@ -36,7 +35,8 @@ describe 'predictions/manage', type: :view do
 
   shared_context '予測ジョブを登録する' do |total: per_page, attribute: default_attribute|
     before(:all) do
-      total.times { create(:prediction, attribute) }
+      analysis = create(:analysis, pair: Analysis::PAIR_LIST.sample)
+      total.times { create(:prediction, attribute.merge(analysis: analysis)) }
       @predictions = Prediction.order(created_at: :desc).page(1)
     end
   end
@@ -188,7 +188,7 @@ describe 'predictions/manage', type: :view do
     it 'ペアが正しいこと' do
       @rows.each_with_index do |row, i|
         displayed_pair = row.children.search('td')[3].text.strip
-        is_asserted_by { displayed_pair == @predictions[i].pair }
+        is_asserted_by { displayed_pair == @predictions[i].analysis.pair }
       end
     end
 
@@ -202,18 +202,11 @@ describe 'predictions/manage', type: :view do
     it 'アイコンが正しいこと' do
       @rows.each do |row|
         glyphicon_name = result ? icon_class[state][result] : icon_class[state]
-        span_class = "glyphicon glyphicon-#{glyphicon_name}"
+        glyphicon_color = result ? icon_color[state][result] : icon_color[state]
+        span_class = "glyphicon glyphicon-#{glyphicon_name} glyphicon-#{glyphicon_color}"
         icon = row.children.search('td')[5].children
                   .search("span[@class='#{span_class}']")
         is_asserted_by { icon.present? }
-      end
-    end
-
-    it 'アイコンの色が正しいこと' do
-      @rows.each do |row|
-        glyphicon_color = result ? icon_color[state][result] : icon_color[state]
-        color = row.children.search('td')[5].children.search('span').attribute('style')
-        is_asserted_by { color.value == "color: #{glyphicon_color}" }
       end
     end
   end
