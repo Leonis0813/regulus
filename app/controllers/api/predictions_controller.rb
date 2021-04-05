@@ -6,8 +6,8 @@ module Api
         db_query = {
           'means' => index_param[:means],
           'analyses.pair' => index_param[:pair],
-        }
-        @predictions = Prediction.join(:analysis)
+        }.compact
+        @predictions = Prediction.joins(:analysis)
                                  .where(db_query)
                                  .order(created_at: :desc)
                                  .page(query.page)

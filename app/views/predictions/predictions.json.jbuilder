@@ -6,8 +6,8 @@ json.predictions do
       :model,
       :from,
       :to,
-    ),
-    json.(prediction.analysis, :pair),
+    )
+    json.(prediction.analysis, :pair)
     json.(
       prediction,
       :means,
