@@ -90,7 +90,7 @@ describe Prediction, type: :model do
         @exceptioon = nil
         begin
           @prediction.set_analysis!
-        rescue => e
+        rescue StandardError => e
           @exception = e
         end
       end
@@ -118,8 +118,8 @@ describe Prediction, type: :model do
 
     it '予測結果がDBに保存されていること' do
       is_asserted_by { @prediction.result == @attribute[:result] }
-      is_asserted_by { @prediction.from == Time.parse(@attribute[:from]) }
-      is_asserted_by { @prediction.to == Time.parse(@attribute[:to]) }
+      is_asserted_by { @prediction.from == Time.zone.parse(@attribute[:from]) }
+      is_asserted_by { @prediction.to == Time.zone.parse(@attribute[:to]) }
     end
 
     it_behaves_like '更新情報がブロードキャストされていること'
