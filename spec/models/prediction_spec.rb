@@ -105,7 +105,7 @@ describe Prediction, type: :model do
     include_context 'トランザクション作成'
     include_context 'ActionCableのモックを作成'
     before do
-      FileUtils.mkdir_p(Rails.root.join('tmp')
+      FileUtils.mkdir_p(Rails.root.join('tmp'))
       result_file = Rails.root.join('tmp/result.yml')
       @attribute = {result: 'up', from: '2000-01-01 00:00:00', to: '2000-01-01 01:00:00'}
       File.open(result_file, 'w') do |file|
