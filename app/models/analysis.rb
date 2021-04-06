@@ -44,7 +44,8 @@ class Analysis < ApplicationRecord
   private
 
   def broadcast
-    updated_attribute = attributes.slice('analysis_id', 'state', 'performed_at')
+    updated_attribute = attributes.slice('analysis_id', 'state')
+    updated_attribute['performed_at'] = performed_at.strftime('%Y/%m/%d %T')
     ActionCable.server.broadcast('analysis', updated_attribute)
   end
 
