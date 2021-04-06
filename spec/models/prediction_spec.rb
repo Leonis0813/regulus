@@ -105,16 +105,17 @@ describe Prediction, type: :model do
     include_context 'トランザクション作成'
     include_context 'ActionCableのモックを作成'
     before do
-      @result_file = Rails.root.join('tmp/result.yml')
+      FileUtils.mkdir_p(Rails.root.join('tmp')
+      result_file = Rails.root.join('tmp/result.yml')
       @attribute = {result: 'up', from: '2000-01-01 00:00:00', to: '2000-01-01 01:00:00'}
-      File.open(@result_file, 'w') do |file|
+      File.open(result_file, 'w') do |file|
         YAML.dump(@attribute, file)
       end
       @prediction = create(:prediction)
-      @prediction.import_result!(@result_file)
+      @prediction.import_result!(result_file)
     end
 
-    after { FileUtils.rm_f(@result_file) }
+    after { FileUtils.rm_rf(Rails.root.join('tmp')) }
 
     it '予測結果がDBに保存されていること' do
       is_asserted_by { @prediction.result == @attribute[:result] }
