@@ -1,23 +1,29 @@
-<tr>
-  <td class='<%= state_to_class(analysis.state) %>'>
-    <%= time_to_string(analysis.created_at) %>
+<tr id='<%= analysis.analysis_id %>'>
+  <td class='performed_at <%= state_to_class(analysis.state) %>'>
+    <%= time_to_string(analysis.performed_at) %>
   </td>
-  <td class='<%= state_to_class(analysis.state) %>'>
+  <td class='period <%= state_to_class(analysis.state) %>'>
     開始: <%= time_to_string(analysis.from) %><br>
     終了: <%= time_to_string(analysis.to) %>
   </td>
-  <td class='<%= state_to_class(analysis.state) %>'>
+  <td class='pair <%= state_to_class(analysis.state) %>'>
     <%= analysis.pair %>
   </td>
-  <td class='<%= state_to_class(analysis.state) %>'>
+  <td class='batch_size <%= state_to_class(analysis.state) %>'>
     <%= analysis.batch_size %>
   </td>
-  <td class='<%= state_to_class(analysis.state) %>'>
+  <td class='state <%= state_to_class(analysis.state) %>'>
     <%= state_to_title(analysis.state) %>
   </td>
   <td class='rebuild'>
-    <%= button_tag(:type => 'button', :class => 'btn btn-default rebuild') do %>
-      <span class='glyphicon glyphicon-repeat' />
+    <%= form_tag analyses_path, remote: true, class: 'new-analysis', style: 'padding: 0px' do %>
+      <%= hidden_field_tag :from, time_to_string(analysis.from) %>
+      <%= hidden_field_tag :to, time_to_string(analysis.to) %>
+      <%= hidden_field_tag :pair, analysis.pair %>
+      <%= hidden_field_tag :batch_size, analysis.batch_size %>
+      <%= button_tag type: :submit, class: 'btn btn-default' do %>
+        <span class='glyphicon glyphicon-repeat' />
+      <% end %>
     <% end %>
   </td>
 </tr>

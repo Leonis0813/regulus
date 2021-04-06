@@ -41,7 +41,7 @@ shared_examples '表示件数情報が表示されていること' do |total: 0,
   end
 
   it '件数情報が表示されていること' do
-    number = @html.xpath("#{table_panel_xpath}/h4")
+    number = @html.xpath("#{table_panel_xpath}/span[@id='page-info']/h4")
     is_asserted_by { number.present? }
     is_asserted_by { number.text == "#{total}件中#{from}〜#{to}件を表示" }
   end

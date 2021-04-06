@@ -10,19 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210307080243) do
+ActiveRecord::Schema.define(version: 20210403063506) do
 
   create_table "analyses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "analysis_id"
-    t.datetime "from",                   default: '1970-01-01 00:00:00', null: false
-    t.datetime "to",                     default: '2286-11-20 17:46:40', null: false
-    t.string   "pair",                   default: "USDJPY",              null: false
-    t.integer  "batch_size",             default: 0,                     null: false
-    t.float    "min",         limit: 24
-    t.float    "max",         limit: 24
-    t.string   "state",                                                  null: false
-    t.datetime "created_at",                                             null: false
-    t.datetime "updated_at",                                             null: false
+    t.datetime "from",                    default: '1970-01-01 00:00:00', null: false
+    t.datetime "to",                      default: '2286-11-20 17:46:40', null: false
+    t.string   "pair",                    default: "USDJPY",              null: false
+    t.integer  "batch_size",              default: 0,                     null: false
+    t.float    "min",          limit: 24
+    t.float    "max",          limit: 24
+    t.string   "state",                                                   null: false
+    t.datetime "performed_at"
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
     t.index ["analysis_id"], name: "index_analyses_on_analysis_id", unique: true, using: :btree
   end
 
@@ -32,10 +33,10 @@ ActiveRecord::Schema.define(version: 20210307080243) do
     t.string   "model",                            null: false
     t.datetime "from"
     t.datetime "to"
-    t.string   "pair"
     t.string   "means",         default: "manual", null: false
     t.string   "result"
     t.string   "state",                            null: false
+    t.datetime "performed_at"
     t.datetime "created_at",                       null: false
     t.datetime "updated_at",                       null: false
     t.index ["analysis_id"], name: "index_predictions_on_analysis_id", using: :btree

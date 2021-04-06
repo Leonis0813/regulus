@@ -26,7 +26,27 @@ class Analysis < ApplicationRecord
     analysis.state = DEFAULT_STATE
   end
 
+  def start!
+    update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
+    broadcast
+  end
+
+  def completed!
+    update!(state: STATE_COMPLETED)
+    broadcast
+  end
+
+  def failed!
+    update!(state: STATE_ERROR)
+    broadcast
+  end
+
   private
+
+  def broadcast
+    updated_attribute = attributes.slice('analysis_id', 'state', 'performed_at')
+    ActionCable.server.broadcast('analysis', updated_attribute)
+  end
 
   def valid_period?
     errors.add(:from, 'invalid') unless from

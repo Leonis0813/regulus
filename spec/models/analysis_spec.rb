@@ -3,6 +3,19 @@
 require 'rails_helper'
 
 describe Analysis, type: :model do
+  shared_context 'モック作成' do
+  end
+
+  shared_examples '更新した状態がブロードキャストされていること' do |state|
+    it "状態が#{state}になっていること" do
+      is_asserted_by { @analysis.state == state }
+    end
+
+    it '状態がブロードキャストされていること' do
+      is_asserted_by { @called }
+    end
+  end
+
   describe '#validates' do
     describe '正常系' do
       valid_attribute = {
@@ -13,7 +26,7 @@ describe Analysis, type: :model do
         batch_size: 100,
         min: [1, 0.1, nil],
         max: [1, 0.1, nil],
-        state: %w[processing completed error],
+        state: %w[waiting processing completed error],
       }
 
       it_behaves_like '正常な値を指定した場合のテスト', valid_attribute
@@ -38,5 +51,45 @@ describe Analysis, type: :model do
       it_behaves_like '不正な値を指定した場合のテスト', invalid_attribute
       it_behaves_like '不正な期間を指定した場合のテスト', invalid_period
     end
+  end
+
+  describe '#start!' do
+    include_context 'トランザクション作成'
+    include_context 'ActionCableのモックを作成'
+    before do
+      @analysis = create(:analysis)
+      @analysis.start!
+    end
+
+    it '実行開始日時が設定されていること' do
+      is_asserted_by { @analysis.performed_at.present? }
+    end
+
+    it_behaves_like '更新した状態がブロードキャストされていること',
+                    Analysis::STATE_PROCESSING
+  end
+
+  describe '#completed!' do
+    include_context 'トランザクション作成'
+    include_context 'ActionCableのモックを作成'
+    before do
+      @analysis = create(:analysis)
+      @analysis.completed!
+    end
+
+    it_behaves_like '更新した状態がブロードキャストされていること',
+                    Analysis::STATE_COMPLETED
+  end
+
+  describe '#failed!' do
+    include_context 'トランザクション作成'
+    include_context 'ActionCableのモックを作成'
+    before do
+      @analysis = create(:analysis)
+      @analysis.failed!
+    end
+
+    it_behaves_like '更新した状態がブロードキャストされていること',
+                    Analysis::STATE_ERROR
   end
 end

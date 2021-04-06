@@ -303,6 +303,8 @@ GEM
       coderay (~> 1.1)
       method_source (~> 1.0)
     public_suffix (4.0.6)
+    puma (5.2.2)
+      nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
     rack-protection (2.1.0)
@@ -340,7 +342,7 @@ GEM
       ffi (~> 1.0)
     rchardet (1.8.0)
     rdoc (6.3.0)
-    redis (4.2.5)
+    redis (3.3.5)
     redis-namespace (1.8.1)
       redis (>= 3.0.4)
     ref (2.0.0)
@@ -518,7 +520,9 @@ DEPENDENCIES
   pronto-erb_lint
   pronto-rubocop
   pry
+  puma
   rails (~> 5.0.0)
+  redis (~> 3.0)
   remotipart
   resque
   rspec-power_assert
