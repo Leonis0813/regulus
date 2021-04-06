@@ -1,3 +1,6 @@
+# 4.9.9 (2021/04/06)
+- [UPDATE] views to update table automatically by websocket
+
 # 4.9.8 (2021/03/07)
 - [FIX] csv file to change column order
 - [FIX] test data array order
