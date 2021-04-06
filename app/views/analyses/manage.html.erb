@@ -7,7 +7,7 @@
       <div>
         分析結果の確認は<span id='analysis-result' style='font-weight: bold; cursor: pointer'>こちら</span>
       </div>
-      <%= form_for @analysis, url: analyses_path, remote: true, class: 'new-analysis' do |f| %>
+      <%= form_for @analysis, html: {class: 'new-analysis'}, url: analyses_path, remote: true do |f| %>
         <%= label_tag '期間' %>
         <div class='form-group'>
           <%= f.label :from, '開始', {:class => 'period-label'} %>
