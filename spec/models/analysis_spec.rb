@@ -73,7 +73,7 @@ describe Analysis, type: :model do
     include_context 'トランザクション作成'
     include_context 'ActionCableのモックを作成'
     before do
-      @analysis = create(:analysis)
+      @analysis = create(:analysis, performed_at: Time.zone.now)
       @analysis.completed!
     end
 
@@ -85,7 +85,7 @@ describe Analysis, type: :model do
     include_context 'トランザクション作成'
     include_context 'ActionCableのモックを作成'
     before do
-      @analysis = create(:analysis)
+      @analysis = create(:analysis, performed_at: Time.zone.now)
       @analysis.failed!
     end
 
