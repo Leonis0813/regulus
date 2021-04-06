@@ -13,14 +13,11 @@ class PredictionsController < ApplicationController
     model = execute_params[:model]
     raise BadRequest, 'invalid_param_model' unless model.respond_to?(:original_filename)
 
-    prediction = Prediction.new(
-      execute_params.merge(
-        prediction_id: SecureRandom.hex,
-        model: model.original_filename,
-        means: Prediction::MEANS_MANUAL,
-        state: Prediction::STATE_PROCESSING,
-      ),
+    attribute = execute_params.merge(
+      model: model.original_filename,
+      means: Prediction::MEANS_MANUAL,
     )
+    prediction = Prediction.new(attribute)
 
     unless prediction.save
       error_codes = prediction.errors.messages.keys.map {|key| "invalid_param_#{key}" }
@@ -59,7 +56,8 @@ class PredictionsController < ApplicationController
       output_model(tmp_dir, model)
       unzip_model(File.join(tmp_dir, model.original_filename), tmp_dir)
 
-      pair = YAML.load_file(File.join(tmp_dir, 'metadata.yml'))['pair']
+      metadata = YAML.load_file(File.join(tmp_dir, 'metadata.yml'))
+      pair = Analysis.find_by(analysis_id: metadata['analysis_id']).pair
       pair_dir = File.join(auto_dir, pair)
       FileUtils.rm_rf(pair_dir) if File.exist?(pair_dir)
       FileUtils.mv(tmp_dir, pair_dir)
@@ -92,7 +90,7 @@ class PredictionsController < ApplicationController
     return @configs if @configs
 
     file_path = Rails.root.join(Settings.prediction.auto.config_file)
-    @configs = YAML.load_file(file_path)
+    @configs = YAML.load_file(file_path) rescue nil
     @configs ||= []
     @configs.map!(&:deep_stringify_keys)
   end

@@ -3,6 +3,8 @@ class AnalysisJob < ApplicationJob
 
   def perform(analysis_id)
     analysis = Analysis.find(analysis_id)
+    analysis.start!
+
     tmp_dir = Rails.root.join('scripts/tmp')
     FileUtils.mkdir_p(tmp_dir)
 
@@ -19,16 +21,20 @@ class AnalysisJob < ApplicationJob
 
     to = Rails.root.join('tmp', 'models', analysis_id.to_s)
     FileUtils.mv(tmp_dir, to)
+
+    metadata = YAML.load_file(File.join(to, 'metadata.yml'))
+    analysis.update!(metadata)
     File.open(File.join(to, 'metadata.yml'), 'w') do |file|
-      YAML.dump({'pair' => analysis.pair}, file)
+      YAML.dump({'analysis_id' => analysis.analysis_id}, file)
     end
-    analysis.update!(state: 'completed')
+
     AnalysisMailer.completed(analysis).deliver_now
     FileUtils.rm_rf("#{Rails.root}/tmp/models/#{analysis_id}")
+    analysis.completed!
   rescue StandardError => e
     Rails.logger.error(e.message)
     Rails.logger.error(e.backtrace.join("\n"))
-    analysis.update!(state: 'error')
+    analysis.failed!
     AnalysisMailer.error(analysis).deliver_now
   end
 end

@@ -1,25 +1,52 @@
 class Analysis < ApplicationRecord
   DEFAULT_PAIR = 'USDJPY'.freeze
   PAIR_LIST = %w[AUDJPY CADJPY CHFJPY EURJPY EURUSD GBPJPY NZDJPY USDJPY].freeze
-  STATE_PROCESSING = 'processing'.freeze
-  STATE_COMPLETED = 'completed'.freeze
-  STATE_ERROR = 'error'.freeze
-  STATE_LIST = [STATE_PROCESSING, STATE_COMPLETED, STATE_ERROR].freeze
 
   validate :valid_period?
-  validates :batch_size, :pair, :state,
+  validates :analysis_id, :batch_size, :pair, :state,
             presence: {message: 'absent'}
-  validates :batch_size,
-            numericality: {only_integer: true, greater_than: 0, message: 'invalid'},
+  validates :analysis_id,
+            format: {with: /\A[0-9a-f]{32}\z/, message: 'invalid'},
             allow_nil: true
   validates :pair,
             inclusion: {in: PAIR_LIST, message: 'invalid'},
+            allow_nil: true
+  validates :batch_size,
+            numericality: {only_integer: true, greater_than: 0, message: 'invalid'},
+            allow_nil: true
+  validates :min, :max,
+            numericality: {greater_than: 0, message: 'invalid'},
             allow_nil: true
   validates :state,
             inclusion: {in: STATE_LIST, message: 'invalid'},
             allow_nil: true
 
+  after_initialize if: :new_record? do |analysis|
+    analysis.analysis_id = SecureRandom.hex
+    analysis.state = DEFAULT_STATE
+  end
+
+  def start!
+    update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
+    broadcast
+  end
+
+  def completed!
+    update!(state: STATE_COMPLETED)
+    broadcast
+  end
+
+  def failed!
+    update!(state: STATE_ERROR)
+    broadcast
+  end
+
   private
+
+  def broadcast
+    updated_attribute = attributes.slice('analysis_id', 'state', 'performed_at')
+    ActionCable.server.broadcast('analysis', updated_attribute)
+  end
 
   def valid_period?
     errors.add(:from, 'invalid') unless from

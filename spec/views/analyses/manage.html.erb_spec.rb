@@ -14,7 +14,9 @@ describe 'analyses/manage', type: :view do
 
   shared_context '分析ジョブを登録する' do |total: per_page, attribute: default_attribute|
     before(:all) do
-      total.times { Analysis.create!(attribute) }
+      total.times do |i|
+        create(:analysis, attribute.merge(analysis_id: i.to_s * 32))
+      end
       @analyses = Analysis.order(created_at: :desc).page(1)
     end
   end

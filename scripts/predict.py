@@ -28,32 +28,13 @@ for record in records:
   raw_data = raw_data.append(record, ignore_index=True)
 
 normalized_data = pd.DataFrame()
-max = max(
-  raw_data['open'].max(),
-  raw_data['ma25'].max(),
-  raw_data['ma75'].max(),
-  raw_data['ma200'].max()
-)
-min = min(
-  raw_data['open'].min(),
-  raw_data['ma25'].min(),
-  raw_data['ma75'].min(),
-  raw_data['ma200'].min()
-)
 for column in list(set(raw_data.columns) - set(['time'])):
-  normalized_data[column] = 2.0 * (raw_data[column] - min) / (max - min) - 1.0
-
-raw_data.to_csv(WORKDIR + '/tmp/raw_data.csv', index=False)
-normalized_data.to_csv(WORKDIR + '/tmp/normalized_data.csv', index=False)
+  normalized_data[column] = 2.0 * (raw_data[column] - param['min']) / (param['max'] - param['min']) - 1.0
 
 test_data = []
-for index in range(0, 20):
-  test_data.extend([
-    normalized_data['open'][index],
-    normalized_data['ma25'][index],
-    normalized_data['ma75'][index],
-    normalized_data['ma200'][index],
-  ])
+for column in ['ma25', 'ma75', 'ma200', 'open']:
+  for index in range(0, 20):
+    test_data.append(normalized_data[column][index])
 
 x = tf.placeholder(tf.float32, [None, 80])
 

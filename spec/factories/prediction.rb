@@ -4,7 +4,6 @@ FactoryBot.define do
     model { 'model.zip' }
     from {}
     to {}
-    pair {}
     result {}
     state { 'processing' }
   end
