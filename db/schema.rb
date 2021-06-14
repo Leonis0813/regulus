@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20210403063506) do
+ActiveRecord::Schema.define(version: 20210614135915) do
 
   create_table "analyses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "analysis_id"
@@ -25,6 +25,32 @@ ActiveRecord::Schema.define(version: 20210403063506) do
     t.datetime "created_at",                                              null: false
     t.datetime "updated_at",                                              null: false
     t.index ["analysis_id"], name: "index_analyses_on_analysis_id", unique: true, using: :btree
+  end
+
+  create_table "evaluation_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer  "evaluation_id"
+    t.date     "from"
+    t.date     "to"
+    t.string   "prediction_result"
+    t.string   "ground_truth"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+    t.index ["evaluation_id", "from", "to"], name: "index_evaluation_data_on_evaluation_id_and_from_and_to", unique: true, using: :btree
+    t.index ["evaluation_id"], name: "index_evaluation_data_on_evaluation_id", using: :btree
+  end
+
+  create_table "evaluations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer  "analysis_id"
+    t.string   "evaluation_id"
+    t.string   "model"
+    t.date     "from"
+    t.date     "to"
+    t.float    "log_less",      limit: 24
+    t.datetime "performed_at"
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.index ["analysis_id"], name: "index_evaluations_on_analysis_id", using: :btree
+    t.index ["evaluation_id"], name: "index_evaluations_on_evaluation_id", unique: true, using: :btree
   end
 
   create_table "predictions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
