@@ -4,21 +4,21 @@ class Analysis < ApplicationRecord
 
   validate :valid_period?
   validates :analysis_id, :batch_size, :pair, :state,
-            presence: {message: 'absent'}
+            presence: {message: MESSAGE_ABSENT}
   validates :analysis_id,
-            format: {with: /\A[0-9a-f]{32}\z/, message: 'invalid'},
+            format: {with: /\A[0-9a-f]{32}\z/, message: MESSAGE_INVALID},
             allow_nil: true
   validates :pair,
-            inclusion: {in: PAIR_LIST, message: 'invalid'},
+            inclusion: {in: PAIR_LIST, message: MESSAGE_INVALID},
             allow_nil: true
   validates :batch_size,
-            numericality: {only_integer: true, greater_than: 0, message: 'invalid'},
+            numericality: {only_integer: true, greater_than: 0, message: MESSAGE_INVALID},
             allow_nil: true
   validates :min, :max,
-            numericality: {greater_than: 0, message: 'invalid'},
+            numericality: {greater_than: 0, message: MESSAGE_INVALID},
             allow_nil: true
   validates :state,
-            inclusion: {in: STATE_LIST, message: 'invalid'},
+            inclusion: {in: STATE_LIST, message: MESSAGE_INVALID},
             allow_nil: true
 
   after_initialize if: :new_record? do |analysis|

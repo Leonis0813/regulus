@@ -2,25 +2,24 @@ class Prediction < ApplicationRecord
   MEANS_MANUAL = 'manual'.freeze
   MEANS_AUTO = 'auto'.freeze
   MEANS_LIST = [MEANS_MANUAL, MEANS_AUTO].freeze
-  RESULT_LIST = %w[up down range].freeze
 
   validate :valid_period?
   validates :prediction_id, :model, :state,
-            presence: {message: 'absent'}
+            presence: {message: MESSAGE_ABSENT}
   validates :prediction_id,
-            format: {with: /\A[0-9a-f]{32}\z/, message: 'invalid'},
+            format: {with: /\A[0-9a-f]{32}\z/, message: MESSAGE_INVALID},
             allow_nil: true
   validates :model,
-            format: {with: /\.zip\z/, message: 'invalid'},
+            format: {with: /\.zip\z/, message: MESSAGE_INVALID},
             allow_nil: true
   validates :means,
-            inclusion: {in: MEANS_LIST, message: 'invalid'},
+            inclusion: {in: MEANS_LIST, message: MESSAGE_INVALID},
             allow_nil: true
   validates :result,
-            inclusion: {in: RESULT_LIST, message: 'invalid'},
+            inclusion: {in: RESULT_LIST, message: MESSAGE_INVALID},
             allow_nil: true
   validates :state,
-            inclusion: {in: STATE_LIST, message: 'invalid'},
+            inclusion: {in: STATE_LIST, message: MESSAGE_INVALID},
             allow_nil: true
 
   belongs_to :analysis
