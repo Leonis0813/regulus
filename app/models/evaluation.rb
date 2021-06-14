@@ -16,7 +16,7 @@ class Evaluation < ApplicationRecord
             allow_nil: true
 
   belongs_to :analysis
-  has_many :test_data
+  has_many :test_data, dependent: :destroy
 
   after_initialize if: :new_record? do |evaluation|
     evaluation.evaluation_id = SecureRandom.hex
