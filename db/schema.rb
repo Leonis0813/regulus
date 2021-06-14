@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20210614135915) do
     t.index ["analysis_id"], name: "index_analyses_on_analysis_id", unique: true, using: :btree
   end
 
-  create_table "evaluation_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "evaluation_test_data", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "evaluation_id"
     t.date     "from"
     t.date     "to"
@@ -35,8 +35,8 @@ ActiveRecord::Schema.define(version: 20210614135915) do
     t.string   "ground_truth"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
-    t.index ["evaluation_id", "from", "to"], name: "index_evaluation_data_on_evaluation_id_and_from_and_to", unique: true, using: :btree
-    t.index ["evaluation_id"], name: "index_evaluation_data_on_evaluation_id", using: :btree
+    t.index ["evaluation_id", "from", "to"], name: "index_evaluation_test_data_on_evaluation_id_and_from_and_to", unique: true, using: :btree
+    t.index ["evaluation_id"], name: "index_evaluation_test_data_on_evaluation_id", using: :btree
   end
 
   create_table "evaluations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
