@@ -12,7 +12,11 @@ class Analysis < ApplicationRecord
             inclusion: {in: PAIR_LIST, message: MESSAGE_INVALID},
             allow_nil: true
   validates :batch_size,
-            numericality: {only_integer: true, greater_than: 0, message: MESSAGE_INVALID},
+            numericality: {
+              only_integer: true,
+              greater_than: 0,
+              message: MESSAGE_INVALID,
+            },
             allow_nil: true
   validates :min, :max,
             numericality: {greater_than: 0, message: MESSAGE_INVALID},
