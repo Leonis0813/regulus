@@ -1,4 +1,6 @@
 class EvaluationsController < ApplicationController
+  include ModelUtil
+
   before_action :check_request_evaluation, only: %i[show]
 
   def index
@@ -24,6 +26,9 @@ class EvaluationsController < ApplicationController
       end
       raise BadRequest, error_codes
     end
+
+    output_dir = Rails.root.join(Settings.evaluation.base_model_dir, evaluation_id.to_s)
+    output_model(output_dir, model)
 
     EvaluationJob.perform_later(evaluation)
     render status: :ok, json: {}
