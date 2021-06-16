@@ -1,4 +1,4 @@
-class Evaluation::Testdatum < ApplicationRecord
+class Evaluation::TestDatum < ApplicationRecord
   validate :valid_period?
   validates :ground_truth,
             presence: {message: MESSAGE_ABSENT}

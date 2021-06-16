@@ -1,0 +1,51 @@
+<div class='row center-block'>
+  <div class='col-lg-4'>
+    <div class='well'>
+      <div>
+        <h3 style='display:inline'>モデルを評価</h3>
+      </div>
+      <%= form_for @evaluation, html: {multipart: true}, url: evaluations_path, remote: true do |f| %>
+        <div class='form-group'>
+          <%= f.label :model, 'モデル' %><br>
+          <%= f.file_field :model, name: :model, required: true %>
+        </div>
+
+        <%= label_tag '期間' %>
+        <div class='form-group'>
+          <%= f.label :from, '開始', {class: 'period-label'} %>
+          <%= f.date_field :from, {class: 'form-control period-form', name: :from} %>
+          <%= f.label :to, '終了', {:class => 'period-label'} %>
+          <%= f.date_field :to, {class: 'form-control period-form', name: :to} %>
+        </div>
+
+        <%= f.submit '実行', class: 'btn btn-primary btn-sm btn-submit' %>
+        <%= f.submit 'リセット', type: 'reset', class: 'btn btn-default btn-sm' %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class='col-lg-8 well'>
+    <div>
+      <h3 style='display:inline;padding: 10px 0px'>ジョブ実行履歴</h3>
+    </div>
+    <span id='page-info'>
+      <%= render partial: 'layouts/page_info', locals: {resources: @evaluations} %>
+    </span>
+    <span id='paginate'>
+      <%= paginate @evaluations %>
+    </span>
+    <table id='table-job' class='table table-hover'>
+      <thead>
+        <th width='25%'>実行開始日時</th>
+        <th width='20%'>モデル</th>
+        <th width='20%'>期間</th>
+        <th width='10%'>ペア</th>
+        <th width='13%'>Log損失</th>
+        <th width='12%'>状態</th>
+      </thead>
+      <tbody id='tbody-evaluation'>
+        <%= render @evaluations %>
+      </tbody>
+    </table>
+  </div>
+</div>

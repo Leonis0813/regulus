@@ -44,7 +44,8 @@ class EvaluationsController < ApplicationController
   end
 
   def evaluation
-    @evaluation ||= Evaluation.find_by(request.path_parameters.slice(:evaluation_id))
+    @evaluation ||= Evaluation.includes(:test_data)
+                              .find_by(request.path_parameters.slice(:evaluation_id))
   end
 
   def execute_params

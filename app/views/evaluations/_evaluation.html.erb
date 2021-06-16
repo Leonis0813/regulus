@@ -1,0 +1,23 @@
+<tr id='<%= evaluation.evaluation_id %>' class='<%= state_to_class(evaluation.state) %>'>
+  <td class='performed_at'>
+    <%= time_to_string(evaluation.performed_at) %>
+  </td>
+  <td>
+    <%= evaluation.model %>
+  </td>
+  <td class='period'>
+    <% if evaluation.from and evaluation.to %>
+    開始: <%= date_to_string(evaluation.from) %><br>
+    終了: <%= date_to_string(evaluation.to) %>
+    <% end %>
+  </td>
+  <td class='pair'>
+    <%= evaluation.analysis&.pair %>
+  </td>
+  <td>
+    <%= evaluation.log_less %>
+  </td>
+  <td>
+    <%= state_to_title(evaluation.state) %>
+  </td>
+</tr>
