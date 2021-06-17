@@ -20,7 +20,10 @@ connection = mysql.connect(
 )
 
 cursor = connection.cursor(dictionary=True)
-cursor.execute(open(WORKDIR + '/test_data.sql').read().replace("${PAIR}", param['pair']))
+sql = open(WORKDIR + '/test_data.sql').read()
+  .replace("${PAIR}", param['pair']))
+  .replace("${TO}", param['to'])
+cursor.execute(sql)
 records = cursor.fetchall()
 
 raw_data = pd.DataFrame()
@@ -64,12 +67,9 @@ with tf.Session() as sess:
   saver.restore(sess, os.path.dirname(os.path.abspath(args[0])) + '/tmp/model.ckpt')
   result = sess.run(out, feed_dict={x:[test_data]})
 
+  up, down = result[0]
   result_file.write("from: " + records[-1]['time'].strftime('%Y-%m-%d %H:%M:%S') + "\n")
   result_file.write("to: " + records[0]['time'].strftime('%Y-%m-%d %H:%M:%S') + "\n")
-
-  up, down = result[0]
-  if up > down:
-    result_file.write("result: up\n")
-  else:
-    result_file.write("result: down\n")
+  result_file.write("up: " + up + "\n")
+  result_file.write("down: " + down + "\n")
   result_file.close()
