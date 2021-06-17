@@ -6,7 +6,7 @@ class CreateEvaluations < ActiveRecord::Migration[5.0]
       t.string :model
       t.date :from
       t.date :to
-      t.float :log_less
+      t.float :log_loss
       t.string :state
       t.datetime :performed_at
       t.timestamps null: false

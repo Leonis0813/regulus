@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(version: 20210614135915) do
     t.string   "model"
     t.date     "from"
     t.date     "to"
-    t.float    "log_less",      limit: 24
+    t.float    "log_loss",      limit: 24
     t.string   "state"
     t.datetime "performed_at"
     t.datetime "created_at",               null: false
