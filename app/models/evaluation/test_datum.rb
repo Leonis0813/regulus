@@ -8,6 +8,14 @@ class Evaluation::TestDatum < ApplicationRecord
 
   belongs_to :evaluation
 
+  after_create do
+
+  end
+
+  def import_result!(result_file)
+    update!(prediction_result: YAML.load_file(result_file)['result'])
+  end
+
   private
 
   def valid_period?

@@ -23,6 +23,28 @@ class Evaluation < ApplicationRecord
     evaluation.state = DEFAULT_STATE
   end
 
+  def start!
+    update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
+  end
+
+  def complete!
+    update!(state: STATE_COMPLETED)
+  end
+
+  def create_test_data!
+    weekdays = (from..to).to_a.select {|date| !(date.saturday? or date.sunday?) }
+
+    weekdays.size.times.each do |i|
+      next unless (i + 21) < weekdays.size
+
+      from = weekdays[i]
+      to = weekdays[i + 19]
+      values = Zosma::CandleStick.daily.between(to, to + 2).find_by(pair: analysis.pair)
+      ground_truth = values.first.open < values.last.open ? RESULT_UP : RESULT_DOWN
+      test_data.create!(from: from, to: to, ground_truth: ground_truth)
+    end
+  end
+
   private
 
   def valid_period?
