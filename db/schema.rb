@@ -31,10 +31,11 @@ ActiveRecord::Schema.define(version: 20210614135915) do
     t.integer  "evaluation_id"
     t.date     "from"
     t.date     "to"
-    t.string   "prediction_result"
+    t.float    "up_probability",   limit: 24
+    t.float    "down_probability", limit: 24
     t.string   "ground_truth"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
     t.index ["evaluation_id", "from", "to"], name: "index_evaluation_test_data_on_evaluation_id_and_from_and_to", unique: true, using: :btree
     t.index ["evaluation_id"], name: "index_evaluation_test_data_on_evaluation_id", using: :btree
   end

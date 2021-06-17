@@ -4,7 +4,8 @@ class CreateEvaluationTestData < ActiveRecord::Migration[5.0]
       t.references :evaluation
       t.date :from
       t.date :to
-      t.string :prediction_result
+      t.float :up_probability
+      t.float :down_probability
       t.string :ground_truth
       t.timestamps null: false
     end
