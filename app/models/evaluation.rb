@@ -45,6 +45,17 @@ class Evaluation < ApplicationRecord
     end
   end
 
+  def calculate!
+    log_loss_sum = test_data.inject(0.0) do |log_loss, test_datum|
+      log_loss + if test_datum.ground_truth == RESULT_UP
+                   Math.log(test_datum.up_probability)
+                 else
+                   Math.log(test_datum.down_probability)
+                 end
+    end
+    update!(log_loss: -log_loss_sum / test_data.size)
+  end
+
   private
 
   def valid_period?

@@ -2,7 +2,14 @@ class Evaluation::TestDatum < ApplicationRecord
   validate :valid_period?
   validates :ground_truth,
             presence: {message: MESSAGE_ABSENT}
-  validates :prediction_result, :ground_truth,
+  validates :up_probability, :down_probability,
+            numericality: {
+              greater_than_or_equal: 0,
+              less_than_or_equal: 1,
+              message: MESSAGE_INVALID,
+            },
+            allow_nil: true
+  validates :ground_truth,
             inclusion: {in: RESULT_LIST, message: MESSAGE_INVALID},
             allow_nil: true
 
@@ -14,8 +21,7 @@ class Evaluation::TestDatum < ApplicationRecord
 
   def import_result!(result_file)
     attribute = YAML.load_file(result_file)
-    result = attribute['up'] > attribute['down'] ? RESULT_UP : RESULT_DOWN
-    update!(prediction_result: result)
+    update!(up_probability: attribute['up'], down_probability: attribute['down'])
   end
 
   private
