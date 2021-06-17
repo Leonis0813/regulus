@@ -13,7 +13,9 @@ class Evaluation::TestDatum < ApplicationRecord
   end
 
   def import_result!(result_file)
-    update!(prediction_result: YAML.load_file(result_file)['result'])
+    attribute = YAML.load_file(result_file)
+    result = attribute['up'] > attribute['down'] ? RESULT_UP : RESULT_DOWN
+    update!(prediction_result: result)
   end
 
   private

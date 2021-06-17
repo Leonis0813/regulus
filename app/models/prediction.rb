@@ -39,7 +39,9 @@ class Prediction < ApplicationRecord
   end
 
   def import_result!(result_file)
-    update!(YAML.load_file(result_file))
+    attribute = YAML.load_file(result_file)
+    result = attribute['up'] > attribute['down'] > RESULT_UP : RESULT_DOWN
+    update!(attribute.slice('from', 'to').merge(result: result))
     updated_attribute = {
       'result' => result,
       'from' => from.strftime('%Y/%m/%d %T'),
