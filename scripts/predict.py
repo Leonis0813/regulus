@@ -19,10 +19,11 @@ connection = mysql.connect(
   database = database[param['env']]['database'],
 )
 
-cursor = connection.cursor(dictionary=True)
 sql = open(WORKDIR + '/test_data.sql').read()
-  .replace("${PAIR}", param['pair']))
-  .replace("${TO}", param['to'])
+.replace("${PAIR}", param['pair']))
+.replace("${TO}", param['to'])
+
+cursor = connection.cursor(dictionary=True)
 cursor.execute(sql)
 records = cursor.fetchall()
 
