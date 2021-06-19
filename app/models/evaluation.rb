@@ -23,16 +23,21 @@ class Evaluation < ApplicationRecord
     evaluation.state = DEFAULT_STATE
   end
 
+  after_create :broadcast
+
   def start!
     update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
+    broadcast(performed_at: performed_at.strftime('%Y/%m/%d %T'))
   end
 
   def complete!
     update!(state: STATE_COMPLETED)
+    broadcast
   end
 
   def failed!
     update!(state: STATE_ERROR)
+    broadcast
   end
 
   def set_analysis!
@@ -41,6 +46,7 @@ class Evaluation < ApplicationRecord
     raise StandardError if analysis.nil?
 
     update!(analysis: analysis)
+    broadcast(pair: pair)
   end
 
   def create_test_data!
@@ -66,6 +72,7 @@ class Evaluation < ApplicationRecord
                  end
     end
     update!(log_loss: -log_loss_sum / completed_test_data.size)
+    broadcast(log_loss: log_loss)
   end
 
   private
@@ -81,8 +88,13 @@ class Evaluation < ApplicationRecord
     errors.add(:to, MESSAGE_INVALID)
   end
 
+  def broadcast(updated_attribute = {})
+    updated_attribute.merge!(slice(:evaluation_id, :state))
+    ActionCable.server.broadcast('evaluation', updated_attribute)
+  end
+
   def completed_test_data
-    completed_test_data = test_data.select do |test_datum|
+    test_data.select do |test_datum|
       test_datum.up_probability and test_datum.down_probability
     end
   end
