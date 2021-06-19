@@ -72,7 +72,7 @@ class Evaluation < ApplicationRecord
                  end
     end
     update!(log_loss: -log_loss_sum / completed_test_data.size)
-    broadcast(log_loss: log_loss)
+    broadcast(log_loss: log_loss.round(4))
   end
 
   private
