@@ -51,7 +51,7 @@ class Evaluation < ApplicationRecord
 
       from = weekdays[i]
       to = weekdays[i + 19]
-      values = Zosma::CandleStick.daily.between(to, to + 2).find_by(pair: analysis.pair)
+      values = Zosma::CandleStick.daily.between(to, to + 2).where(pair: analysis.pair)
       ground_truth = values.first.open < values.last.open ? RESULT_UP : RESULT_DOWN
       test_data.create!(from: from, to: to, ground_truth: ground_truth)
     end
