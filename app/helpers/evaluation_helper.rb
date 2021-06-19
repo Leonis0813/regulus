@@ -1,7 +1,23 @@
 module EvaluationHelper
-  def prediction_result(up, down)
-    return if up.nil? or down.nil?
+  def test_datum_row_class(test_datum)
+    result = prediction_result(test_datum)
+    return unless result
 
-    up > down ? 'up' : 'down'
+    result == test_datum.ground_truth ? 'success' : 'danger'
+  end
+
+  def prediction_result(test_datum)
+    return if test_datum.up_probability.nil? or test_datum.down_probability.nil?
+
+    test_datum.up_probability > test_datum.down_probability ? 'up' : 'down'
+  end
+
+  def trend_icon(trend)
+    case trend
+    when 'up'
+      tag('span', class: 'glyphicon glyphicon-circle-arrow-up glyphicon-blue')
+    when 'down'
+      tag('span', class: 'glyphicon glyphicon-circle-arrow-down glyphicon-red')
+    end
   end
 end

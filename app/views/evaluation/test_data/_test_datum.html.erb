@@ -1,4 +1,4 @@
-<tr>
+<tr class='<%= test_datum_row_class(test_datum) %>'>
   <td>
     <%= test_datum_counter + 1 %>
   </td>
@@ -6,9 +6,10 @@
     <%= date_to_string(test_datum.from) %> 〜 <%= date_to_string(test_datum.to) %>
   </td>
   <td>
-    <%= prediction_result(test_datum.up_probability, test_datum.down_probability) %>
+    <% result = prediction_result(test_datum) %>
+    <%= trend_icon(result) if result %>
   </td>
   <td>
-    <%= test_datum.ground_truth %>
+    <%= trend_icon(test_datum.ground_truth) %>
   </td>
 </tr>
