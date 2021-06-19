@@ -40,7 +40,7 @@ class Prediction < ApplicationRecord
 
   def import_result!(result_file)
     attribute = YAML.load_file(result_file)
-    result = attribute['up'] > attribute['down'] > RESULT_UP : RESULT_DOWN
+    result = attribute['up'] > attribute['down'] ? RESULT_UP : RESULT_DOWN
     update!(attribute.slice('from', 'to').merge(result: result))
     updated_attribute = {
       'result' => result,
