@@ -34,8 +34,7 @@ class EvaluationsController < ApplicationController
     render status: :ok, json: {}
   end
 
-  def show
-  end
+  def show; end
 
   private
 
