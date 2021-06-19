@@ -11,6 +11,7 @@ class EvaluationJob < ApplicationJob
     tmp_dir = Rails.root.join('scripts/tmp')
     FileUtils.rm_rf(tmp_dir)
     FileUtils.mkdir_p(tmp_dir)
+    model_dir = Rails.root.join(Settings.evaluation.base_model_dir, evaluation.id.to_s)
     unzip_model(File.join(model_dir, evaluation.model), tmp_dir)
 
     evaluation.set_analysis!

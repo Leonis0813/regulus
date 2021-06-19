@@ -31,6 +31,10 @@ class Evaluation < ApplicationRecord
     update!(state: STATE_COMPLETED)
   end
 
+  def failed!
+    update!(state: STATE_ERROR)
+  end
+
   def create_test_data!
     weekdays = (from..to).to_a.select {|date| !(date.saturday? or date.sunday?) }
 
