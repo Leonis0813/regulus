@@ -19,11 +19,9 @@ connection = mysql.connect(
   database = database[param['env']]['database'],
 )
 
-sql = open(WORKDIR + '/test_data.sql').read().replace(
-  "${PAIR}", param['pair'])
-).replace(
-  "${TO}", param['to']
-)
+sql = open(WORKDIR + '/test_data.sql').read()
+sql = sql.replace("${PAIR}", param['pair'])
+sql = sql.replace("${TO}", param['to'])
 
 cursor = connection.cursor(dictionary=True)
 cursor.execute(sql)
@@ -73,6 +71,6 @@ with tf.Session() as sess:
   up, down = result[0]
   result_file.write("from: " + records[-1]['time'].strftime('%Y-%m-%d %H:%M:%S') + "\n")
   result_file.write("to: " + records[0]['time'].strftime('%Y-%m-%d %H:%M:%S') + "\n")
-  result_file.write("up: " + up + "\n")
-  result_file.write("down: " + down + "\n")
+  result_file.write("up: " + up.astype('str') + "\n")
+  result_file.write("down: " + down.astype('str') + "\n")
   result_file.close()

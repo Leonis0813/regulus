@@ -44,7 +44,7 @@ class Evaluation < ApplicationRecord
   end
 
   def create_test_data!
-    weekdays = (from..to).to_a.select {|date| !(date.saturday? or date.sunday?) }
+    weekdays = (from..to).to_a.reject {|date| date.saturday? or date.sunday? }
 
     weekdays.size.times.each do |i|
       next unless (i + 21) < weekdays.size
@@ -58,14 +58,14 @@ class Evaluation < ApplicationRecord
   end
 
   def calculate!
-    log_loss_sum = test_data.inject(0.0) do |log_loss, test_datum|
+    log_loss_sum = completed_test_data.inject(0.0) do |log_loss, test_datum|
       log_loss + if test_datum.ground_truth == RESULT_UP
                    Math.log(test_datum.up_probability)
                  else
                    Math.log(test_datum.down_probability)
                  end
     end
-    update!(log_loss: -log_loss_sum / test_data.size)
+    update!(log_loss: -log_loss_sum / completed_test_data.size)
   end
 
   private
@@ -79,5 +79,11 @@ class Evaluation < ApplicationRecord
 
     errors.add(:from, MESSAGE_INVALID)
     errors.add(:to, MESSAGE_INVALID)
+  end
+
+  def completed_test_data
+    completed_test_data = test_data.select do |test_datum|
+      test_datum.up_probability and test_datum.down_probability
+    end
   end
 end
