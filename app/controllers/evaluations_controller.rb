@@ -27,7 +27,7 @@ class EvaluationsController < ApplicationController
       raise BadRequest, error_codes
     end
 
-    output_dir = Rails.root.join(Settings.evaluation.base_model_dir, evaluation_id.to_s)
+    output_dir = Rails.root.join(Settings.evaluation.base_model_dir, evaluation.id.to_s)
     output_model(output_dir, model)
 
     EvaluationJob.perform_later(evaluation)

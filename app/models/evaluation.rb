@@ -8,7 +8,7 @@ class Evaluation < ApplicationRecord
   validates :model,
             format: {with: /\.zip\z/, message: MESSAGE_INVALID},
             allow_nil: true
-  validates :log_less,
+  validates :log_loss,
             numericality: {greater_than_or_equal: 0, message: MESSAGE_INVALID},
             allow_nil: true
   validates :state,
