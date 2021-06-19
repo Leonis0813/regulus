@@ -19,9 +19,11 @@ connection = mysql.connect(
   database = database[param['env']]['database'],
 )
 
-sql = open(WORKDIR + '/test_data.sql').read()
-.replace("${PAIR}", param['pair']))
-.replace("${TO}", param['to'])
+sql = open(WORKDIR + '/test_data.sql').read().replace(
+  "${PAIR}", param['pair'])
+).replace(
+  "${TO}", param['to']
+)
 
 cursor = connection.cursor(dictionary=True)
 cursor.execute(sql)
