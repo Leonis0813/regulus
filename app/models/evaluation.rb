@@ -46,7 +46,7 @@ class Evaluation < ApplicationRecord
     raise StandardError if analysis.nil?
 
     update!(analysis: analysis)
-    broadcast(pair: pair)
+    broadcast(pair: analysis.pair)
   end
 
   def create_test_data!
