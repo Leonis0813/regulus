@@ -35,6 +35,14 @@ class Evaluation < ApplicationRecord
     update!(state: STATE_ERROR)
   end
 
+  def set_analysis!
+    metadata = YAML.load_file(Rails.root.join('scripts/tmp/metadata.yml'))
+    analysis = Analysis.find_by(analysis_id: metadata['analysis_id'])
+    raise StandardError if analysis.nil?
+
+    update!(analysis: analysis)
+  end
+
   def create_test_data!
     weekdays = (from..to).to_a.select {|date| !(date.saturday? or date.sunday?) }
 
