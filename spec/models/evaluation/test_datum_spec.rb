@@ -7,14 +7,6 @@ describe Evaluation::TestDatum, type: :model do
     it_is_asserted_by { @called }
   end
 
-  shared_examples '更新した状態がブロードキャストされていること' do |state|
-    it "状態が#{state}になっていること" do
-      is_asserted_by { @evaluation.state == state }
-    end
-
-    it_behaves_like '更新情報がブロードキャストされていること'
-  end
-
   describe '#validates' do
     describe '正常系' do
       valid_attribute = {
@@ -122,5 +114,7 @@ describe Evaluation::TestDatum, type: :model do
       is_asserted_by { @test_datum.up_probability == 0.99 }
       is_asserted_by { @test_datum.down_probability == 0.01 }
     end
+
+    it_behaves_like '更新情報がブロードキャストされていること'
   end
 end

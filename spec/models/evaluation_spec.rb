@@ -255,6 +255,8 @@ describe Evaluation, type: :model do
           @evaluation.log_loss == -(Math.log(0.9) + Math.log(0.9)) / 2.0
         end
       end
+
+      it_behaves_like '更新情報がブロードキャストされていること'
     end
   end
 end
