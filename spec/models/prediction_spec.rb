@@ -78,7 +78,7 @@ describe Prediction, type: :model do
         to: %w[1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101],
       }
       test_cases = CommonHelper.generate_test_case(invalid_period).select do |test_case|
-        test_case.has_key?(:from) and test_case.has_key?(:to)
+        test_case.key?(:from) and test_case.key?(:to)
       end
 
       test_cases.each do |attribute|

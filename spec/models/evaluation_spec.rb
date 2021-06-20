@@ -78,7 +78,7 @@ describe Evaluation, type: :model do
         to: %w[1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101],
       }
       test_cases = CommonHelper.generate_test_case(invalid_period).select do |test_case|
-        test_case.has_key?(:from) and test_case.has_key?(:to)
+        test_case.key?(:from) and test_case.key?(:to)
       end
 
       test_cases.each do |attribute|
@@ -200,10 +200,10 @@ describe Evaluation, type: :model do
           before do
             @analysis = create(:analysis)
 
-            mockClass = Zosma::CandleStick
-            allow(mockClass).to receive(:daily).and_return(Zosma::CandleStick)
-            allow(mockClass).to receive(:between).and_return(Zosma::CandleStick)
-            allow(mockClass).to receive(:where) do
+            mock_class = Zosma::CandleStick
+            allow(mock_class).to receive(:daily).and_return(Zosma::CandleStick)
+            allow(mock_class).to receive(:between).and_return(Zosma::CandleStick)
+            allow(mock_class).to receive(:where) do
               [
                 Zosma::CandleStick.new(open: open_from),
                 Zosma::CandleStick.new(open: open_to),
