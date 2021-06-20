@@ -9,7 +9,7 @@ class Evaluation < ApplicationRecord
             format: {with: /\.zip\z/, message: MESSAGE_INVALID},
             allow_nil: true
   validates :log_loss,
-            numericality: {greater_than_or_equal: 0, message: MESSAGE_INVALID},
+            numericality: {greater_than_or_equal_to: 0, message: MESSAGE_INVALID},
             allow_nil: true
   validates :state,
             inclusion: {in: STATE_LIST, message: MESSAGE_INVALID},
@@ -81,6 +81,9 @@ class Evaluation < ApplicationRecord
   def valid_period?
     errors.add(:from, MESSAGE_INVALID) unless from
     errors.add(:to, MESSAGE_INVALID) unless to
+
+    errors.add(:from, MESSAGE_INVALID) unless from.is_a?(Date)
+    errors.add(:to, MESSAGE_INVALID) unless to.is_a?(Date)
 
     return if errors.messages.include?(:from) or errors.messages.include?(:to)
     return if from < to

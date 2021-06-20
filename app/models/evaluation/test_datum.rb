@@ -4,8 +4,8 @@ class Evaluation::TestDatum < ApplicationRecord
             presence: {message: MESSAGE_ABSENT}
   validates :up_probability, :down_probability,
             numericality: {
-              greater_than_or_equal: 0,
-              less_than_or_equal: 1,
+              greater_than_or_equal_to: 0,
+              less_than_or_equal_to: 1,
               message: MESSAGE_INVALID,
             },
             allow_nil: true
