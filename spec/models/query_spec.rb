@@ -12,7 +12,12 @@ describe Query, type: :model do
         per_page: 50,
       }
 
-      it_behaves_like '正常な値を指定した場合のテスト', valid_attribute
+      CommonHelper.generate_test_case(valid_attribute).each do |attribute|
+        context "#{attribute}を指定した場合" do
+          before(:all) { @object = build(:query, attribute) }
+          it_behaves_like 'バリデーションエラーにならないこと'
+        end
+      end
     end
 
     describe '異常系' do
@@ -23,7 +28,18 @@ describe Query, type: :model do
         per_page: [0],
       }
 
-      it_behaves_like '不正な値を指定した場合のテスト', invalid_attribute
+      CommonHelper.generate_test_case(invalid_attribute).each do |attribute|
+        context "#{attribute.keys.join(',')}が不正な場合" do
+          expected_error = attribute.keys.map {|key| [key, 'invalid'] }.to_h
+
+          before(:all) do
+            @object = build(:query, attribute)
+            @object.validate
+          end
+
+          it_behaves_like 'エラーメッセージが正しいこと', expected_error
+        end
+      end
     end
   end
 end
