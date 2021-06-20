@@ -107,7 +107,12 @@ describe Prediction, type: :model do
     before do
       FileUtils.mkdir_p(Rails.root.join('tmp'))
       result_file = Rails.root.join('tmp/result.yml')
-      @attribute = {result: 'up', from: '2000-01-01 00:00:00', to: '2000-01-01 01:00:00'}
+      @attribute = {
+        up: 0.99,
+        down: 0.01,
+        from: '2000-01-01 00:00:00',
+        to: '2000-01-01 01:00:00',
+      }.stringify_keys
       File.open(result_file, 'w') do |file|
         YAML.dump(@attribute, file)
       end
@@ -118,9 +123,9 @@ describe Prediction, type: :model do
     after { FileUtils.rm_rf(Rails.root.join('tmp')) }
 
     it '予測結果がDBに保存されていること' do
-      is_asserted_by { @prediction.result == @attribute[:result] }
-      is_asserted_by { @prediction.from == Time.zone.parse(@attribute[:from]) }
-      is_asserted_by { @prediction.to == Time.zone.parse(@attribute[:to]) }
+      is_asserted_by { @prediction.result == 'up' }
+      is_asserted_by { @prediction.from == Time.zone.parse(@attribute['from']) }
+      is_asserted_by { @prediction.to == Time.zone.parse(@attribute['to']) }
     end
 
     it_behaves_like '更新情報がブロードキャストされていること'

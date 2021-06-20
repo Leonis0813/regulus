@@ -1,6 +1,6 @@
 module EvaluationHelper
   def test_datum_row_id(test_datum)
-    "#{test_datum.from.strftime('%Y%m%d')-#{test_datum.to.strftime('%Y%m%d')}"
+    "#{test_datum.from.strftime('%Y%m%d')}-#{test_datum.to.strftime('%Y%m%d')}"
   end
 
   def test_datum_row_class(test_datum)
