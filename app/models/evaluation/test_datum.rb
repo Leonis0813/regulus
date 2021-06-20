@@ -16,12 +16,18 @@ class Evaluation::TestDatum < ApplicationRecord
   belongs_to :evaluation
 
   after_create do
-
+    broadcast(
+      'message_type' => 'create',
+      'no' => evaluation.test_data.size,
+      'from' => from.strftime('%F'),
+      'to' => to.strftime('%F'),
+    )
   end
 
   def import_result!(result_file)
     attribute = YAML.load_file(result_file)
     update!(up_probability: attribute['up'], down_probability: attribute['down'])
+    broadcast('message_type' => 'update', 'prediction_result' => prediction_result)
   end
 
   private
@@ -35,5 +41,14 @@ class Evaluation::TestDatum < ApplicationRecord
 
     errors.add(:from, MESSAGE_INVALID)
     errors.add(:to, MESSAGE_INVALID)
+  end
+
+  def prediction_result
+    up_probability > down_probability ? RESULT_UP : RESULT_DOWN
+  end
+
+  def broadcast(updated_attribute = {})
+    updated_attribute['id'] = "#{from.strftime('%Y%m%d')}-#{to.strftime('%Y%m%d')}"
+    ActionCable.server.broadcast('evaluation_test_datum', updated_attribute)
   end
 end
