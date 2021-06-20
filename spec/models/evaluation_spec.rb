@@ -26,11 +26,31 @@ describe Evaluation, type: :model do
         state: %w[waiting processing completed error],
       }
 
-      it_behaves_like '正常な値を指定した場合のテスト', valid_attribute
+      CommonHelper.generate_test_case(valid_attribute).each do |attribute|
+        context "#{attribute}を指定した場合" do
+          before(:all) { @object = build(:evaluation, attribute) }
+          it_behaves_like 'バリデーションエラーにならないこと'
+        end
+      end
     end
 
     describe '異常系' do
-      absent_keys = %i[model]
+      required_keys = %i[model]
+
+      CommonHelper.generate_combinations(required_keys).each do |absent_keys|
+        context "#{absent_keys.join(',')}が設定されていない場合" do
+          expected_error = absent_keys.map {|key| [key, 'absent'] }.to_h
+
+          before(:all) do
+            attribute = absent_keys.map {|key| [key, nil] }.to_h
+            @object = build(:evaluation, attribute)
+            @object.validate
+          end
+
+          it_behaves_like 'エラーメッセージが正しいこと', expected_error
+        end
+      end
+
       invalid_attribute = {
         evaluation_id: ['invalid', 'g' * 32],
         model: %w[invalid],
@@ -39,14 +59,38 @@ describe Evaluation, type: :model do
         log_loss: ['invalid', -0.1],
         state: %w[invalid],
       }
+
+      CommonHelper.generate_test_case(invalid_attribute).each do |attribute|
+        context "#{attribute.keys.join(',')}が不正な場合" do
+          expected_error = attribute.keys.map {|key| [key, 'invalid'] }.to_h
+
+          before(:all) do
+            @object = build(:evaluation, attribute)
+            @object.validate
+          end
+
+          it_behaves_like 'エラーメッセージが正しいこと', expected_error
+        end
+      end
+
       invalid_period = {
         from: %w[1000-01-02 1000/01/02 02-01-1000 02/01/1000 10000102],
         to: %w[1000-01-01 1000/01/01 01-01-1000 01/01/1000 10000101],
       }
+      test_cases = CommonHelper.generate_test_case(invalid_period).select do |test_case|
+        test_case.has_key?(:from) and test_case.has_key?(:to)
+      end
 
-      it_behaves_like '必須パラメーターがない場合のテスト', absent_keys
-      it_behaves_like '不正な値を指定した場合のテスト', invalid_attribute
-      it_behaves_like '不正な期間を指定した場合のテスト', invalid_period
+      test_cases.each do |attribute|
+        expected_error = {from: 'invalid', to: 'invalid'}
+
+        before(:all) do
+          @object = build(:evaluation, attribute)
+          @object.validate
+        end
+
+        it_behaves_like 'エラーメッセージが正しいこと', expected_error
+      end
     end
   end
 

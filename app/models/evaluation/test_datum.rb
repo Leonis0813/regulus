@@ -33,8 +33,8 @@ class Evaluation::TestDatum < ApplicationRecord
   private
 
   def valid_period?
-    errors.add(:from, MESSAGE_INVALID) unless from
-    errors.add(:to, MESSAGE_INVALID) unless to
+    errors.add(:from, MESSAGE_INVALID) if from.nil? or not from.is_a?(Date)
+    errors.add(:to, MESSAGE_INVALID) if to.nil? or not to.is_a?(Date)
 
     return if errors.messages.include?(:from) or errors.messages.include?(:to)
     return if from < to
