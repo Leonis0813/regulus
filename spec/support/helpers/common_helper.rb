@@ -3,10 +3,6 @@ module CommonHelper
     ENV['REMOTE_HOST']
   end
 
-  def client
-    @client ||= Capybara.page.driver
-  end
-
   def http_client
     @http_client ||= HTTPClient.new
   end
@@ -50,5 +46,5 @@ module CommonHelper
     end.flatten(1)
   end
 
-  module_function :client, :generate_test_case, :generate_combinations
+  module_function :generate_test_case, :generate_combinations
 end

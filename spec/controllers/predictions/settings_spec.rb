@@ -31,14 +31,14 @@ describe PredictionsController, type: :controller do
     after(:all) { FileUtils.rm(config_file) }
   end
 
-  shared_context 'リクエスト送信' do |body: default_params|
-    before(:all) do
-      response = client.put('/predictions/settings', body)
+  shared_context 'リクエスト送信' do |params: default_params|
+    before do
+      response = put(:settings, params: params)
       @response_status = response.status
       @response_body = JSON.parse(response.body) rescue response.body
     end
 
-    after(:all) { FileUtils.rm_rf(model_dir) if File.exist?(model_dir) }
+    after { FileUtils.rm_rf(model_dir) if File.exist?(model_dir) }
   end
 
   shared_examples 'ファイルが作成されていること' do |expected|
@@ -67,9 +67,9 @@ describe PredictionsController, type: :controller do
     end
 
     context '定期予測を無効にする場合' do
-      body = default_params.merge(auto: inactive_params)
+      params = default_params.merge(auto: inactive_params)
       include_context '設定ファイルを作成', configs: [active_config]
-      include_context 'リクエスト送信', body: body
+      include_context 'リクエスト送信', params: params
       it_behaves_like 'ステータスコードが正しいこと', 200
       it_behaves_like 'ファイルが作成されていること',
                       'status' => 'inactive', 'pair' => 'USDJPY'
@@ -91,11 +91,11 @@ describe PredictionsController, type: :controller do
       ['status', {auto: {pair: 'USDJPY'}}],
       ['model', {auto: {status: 'active'}}],
       ['pair', {auto: {status: 'inactive'}}],
-    ].each do |absent_key, body|
+    ].each do |absent_key, params|
       context "#{absent_key}がない場合" do
         errors = [{'error_code' => "absent_param_#{absent_key}"}]
         include_context '設定ファイルを作成'
-        include_context 'リクエスト送信', body: body
+        include_context 'リクエスト送信', params: params
         it_behaves_like 'レスポンスが正しいこと', status: 400, body: {'errors' => errors}
       end
     end
@@ -112,11 +112,11 @@ describe PredictionsController, type: :controller do
           },
         },
       ],
-    ].each do |invalid_key, body|
+    ].each do |invalid_key, params|
       context "#{invalid_key}が不正な場合" do
         errors = [{'error_code' => "invalid_param_#{invalid_key}"}]
         include_context '設定ファイルを作成'
-        include_context 'リクエスト送信', body: body
+        include_context 'リクエスト送信', params: params
         it_behaves_like 'レスポンスが正しいこと', status: 400, body: {'errors' => errors}
       end
     end

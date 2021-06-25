@@ -3,9 +3,11 @@
 require 'rails_helper'
 
 describe Api::PredictionsController, type: :controller do
-  shared_context 'リクエスト送信' do |query|
-    before(:all) do
-      response = client.get('/api/predictions', query)
+  render_views
+
+  shared_context 'リクエスト送信' do |params|
+    before do
+      response = get(:index, params: params, format: :json)
       @response_status = response.status
       @response_body = JSON.parse(response.body) rescue nil
     end
