@@ -59,7 +59,7 @@ shared_examples '評価ジョブテーブルが表示されていること' do |
   it_behaves_like 'テーブルが正しく表示されていること', table_xpath, expected
 end
 
-shared_examples '評価ジョブの状態が正しいこと' do |state: nil, result: nil|
+shared_examples '評価ジョブの状態が正しいこと' do
   displayed_state = {
     'waiting' => '実行待ち',
     'processing' => '実行中',

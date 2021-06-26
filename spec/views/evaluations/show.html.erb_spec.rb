@@ -27,7 +27,7 @@ describe 'evaluations/show', type: :view do
     end
   end
 
-  shared_examples '画面共通テスト' do |expected: {}|
+  shared_examples '画面共通テスト' do
     it_behaves_like 'ヘッダーが表示されていること'
     it_behaves_like 'テーブルが表示されていること'
 
@@ -87,7 +87,7 @@ describe 'evaluations/show', type: :view do
     it '予測結果のアイコンが表示されていないこと', unless: show_prediction_result do
       @rows.each do |row|
         icon = row.children.search('td')[2].children.search('span')
-        is_asserted_by { not icon.present? }
+        is_asserted_by { icon.blank? }
       end
     end
 

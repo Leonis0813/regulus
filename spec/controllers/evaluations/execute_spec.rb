@@ -3,11 +3,11 @@
 require 'rails_helper'
 
 describe EvaluationsController, type: :controller do
-  zip_file_path = Rails.root.join('spec', 'fixtures', 'analysis.zip')
+  zip_file_path = Rails.root.join('spec/fixtures/analysis.zip')
   model = Rack::Test::UploadedFile.new(File.open(zip_file_path))
   default_params = {model: model, from: '1000-01-01', to: '1000-01-31'}
 
-  after(:all) { FileUtils.rm_rf(Dir[Rails.root.join('tmp', 'models', '*')]) }
+  after(:all) { FileUtils.rm_rf(Dir[Rails.root.join('tmp/models/*')]) }
 
   shared_context 'リクエスト送信' do |params: default_params|
     before do
@@ -39,7 +39,7 @@ describe EvaluationsController, type: :controller do
 
     invalid_attribute = {
       from: ['invalid', nil],
-      to: ['invalid', nil]
+      to: ['invalid', nil],
     }
 
     CommonHelper.generate_test_case(invalid_attribute).each do |invalid_param|
