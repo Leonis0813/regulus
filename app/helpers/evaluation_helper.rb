@@ -1,4 +1,17 @@
 module EvaluationHelper
+  def evaluation_row_class(state)
+    case state
+    when 'waiting'
+      'cursor-auto'
+    when 'processing'
+      'warning cursor-pointer'
+    when 'completed'
+      'success cursor-pointer'
+    when 'error'
+      'danger cursor-auto'
+    end
+  end
+
   def test_datum_row_id(test_datum)
     "#{test_datum.from.strftime('%Y%m%d')}-#{test_datum.to.strftime('%Y%m%d')}"
   end

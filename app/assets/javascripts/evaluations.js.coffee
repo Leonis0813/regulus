@@ -19,3 +19,13 @@ $ ->
         return
     })
     return
+
+  $('#table-evaluation').on 'click', 'td', (event) ->
+    row = $(@).parents('tr')
+    state = row.data('state')
+
+    if state == 'waiting' or state == 'error'
+      return
+
+    open("/regulus/evaluations/#{row.attr('id')}", '_blank')
+    return

@@ -53,7 +53,7 @@ shared_examples '評価情報入力フォームが表示されていること' d
 end
 
 shared_examples '評価ジョブテーブルが表示されていること' do |columns: 0|
-  table_xpath = '//table[@id="table-job"]'
+  table_xpath = '//table[@id="table-evaluation"]'
   expected = {rows: 6, columns: columns, headers: %w[実行開始日時 モデル 期間 ペア Log損失 状態]}
 
   it_behaves_like 'テーブルが正しく表示されていること', table_xpath, expected
