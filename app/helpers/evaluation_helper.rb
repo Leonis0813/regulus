@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 module EvaluationHelper
   def evaluation_row_class(state)
     case state
@@ -10,6 +12,10 @@ module EvaluationHelper
     when 'error'
       'danger cursor-auto'
     end
+  end
+
+  def evaluation_row_title(state)
+    %w[processing completed].include?(state) ? '結果を確認' : ''
   end
 
   def test_datum_row_id(test_datum)
