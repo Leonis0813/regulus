@@ -10,10 +10,12 @@ pairs:
 
 analysis:
   base_model_dir: 'tmp/models'
+  tmp_dir: 'scripts/tmp'
   tensorboard_dir: 'tensorboard'
 
 prediction:
   base_model_dir: 'tmp/models'
+  tmp_dir: 'scripts/tmp'
   auto:
     model_dir: 'auto'
     config_file: 'config/prediction.yml'
@@ -21,3 +23,4 @@ prediction:
 
 evaluation:
   base_model_dir: 'tmp/models'
+  tmp_dir: 'scripts/tmp'

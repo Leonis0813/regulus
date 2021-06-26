@@ -15,7 +15,7 @@ gem 'rails', '~> 5.0.0'
 gem 'redis', '~> 3.0'
 gem 'remotipart'
 gem 'resque'
-gem 'rubyzip'
+gem 'rubyzip', require: 'zip'
 gem 'sass-rails', '~> 5.0'
 gem 'sdoc', group: :doc
 gem 'therubyracer'

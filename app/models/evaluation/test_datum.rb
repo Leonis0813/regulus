@@ -25,7 +25,8 @@ class Evaluation::TestDatum < ApplicationRecord
   end
 
   def import_result!(result_file)
-    attribute = YAML.load_file(result_file)
+    result_path = File.join(evaluation.model_dir, result_file)
+    attribute = YAML.load_file(result_path)
     update!(up_probability: attribute['up'], down_probability: attribute['down'])
     broadcast('message_type' => 'update', 'prediction_result' => prediction_result)
   end

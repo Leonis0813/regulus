@@ -26,11 +26,17 @@ class Evaluation < ApplicationRecord
   after_create :broadcast
 
   def start!
+    tmp_dir = Rails.root.join('scripts/tmp')
+    FileUtils.rm_rf(tmp_dir)
+    FileUtils.mkdir_p(tmp_dir)
     update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
     broadcast(performed_at: performed_at.strftime('%Y/%m/%d %T'))
   end
 
   def complete!
+    tmp_dir = Rails.root.join('scripts/tmp')
+    FileUtils.rm_rf(tmp_dir)
+    FileUtils.rm_rf(model_dir)
     update!(state: STATE_COMPLETED)
     broadcast
   end
@@ -74,6 +80,10 @@ class Evaluation < ApplicationRecord
     update!(log_loss: -log_loss_sum / completed_test_data.size)
     broadcast(log_loss: log_loss.round(4))
     ActionCable.server.broadcast('evaluation_test_datum', {log_loss: log_loss.round(4)})
+  end
+
+  def model_dir
+    Rails.root.join(Settings.evaluation.base_model_dir, id.to_s)
   end
 
   private
