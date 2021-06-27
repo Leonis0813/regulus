@@ -91,21 +91,21 @@ describe Evaluation::TestDatum, type: :model do
     include_context 'トランザクション作成'
     include_context 'ActionCableのモックを作成'
     before do
-      FileUtils.mkdir_p(Rails.root.join('tmp'))
-      result_file = Rails.root.join('tmp/result.yml')
+      evaluation = create(:evaluation)
+
+      FileUtils.mkdir_p(evaluation.model_dir)
       @attribute = {
         up: 0.99,
         down: 0.01,
         from: '2000-01-01 00:00:00',
         to: '2000-01-01 01:00:00',
       }.stringify_keys
-      File.open(result_file, 'w') do |file|
+      File.open(File.join(evaluation.model_dir, 'result.yml'), 'w') do |file|
         YAML.dump(@attribute, file)
       end
 
-      evaluation = create(:evaluation)
       @test_datum = create(:evaluation_test_datum, evaluation_id: evaluation.id)
-      @test_datum.import_result!(result_file)
+      @test_datum.import_result!('result.yml')
     end
 
     after { FileUtils.rm_rf(Rails.root.join('tmp')) }
