@@ -1,5 +1,6 @@
 # 5.0.0 (2021/06/27)
 - [ADD] evaluation view
+- [UPDATE] gems
 
 # 4.9.10 (2021/04/09)
 - [FIX] action cable url for production
