@@ -20,6 +20,7 @@ class PredictionJob < ApplicationJob
 
     pair = prediction.analysis.pair
     param = {
+      to: latest.strftime('%F'),
       min: prediction.analysis.min,
       max: prediction.analysis.max,
       pair: pair,

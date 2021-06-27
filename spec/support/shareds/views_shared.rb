@@ -24,6 +24,7 @@ shared_examples 'ヘッダーが表示されていること' do
   [
     ['/analyses', '分析画面'],
     ['/predictions', '予測画面'],
+    ['/evaluations', '評価画面'],
   ].each do |href, text|
     it do
       link = @html.xpath("#{ul_xpath}/li/a[@href='#{href}']")

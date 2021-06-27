@@ -8,6 +8,6 @@
 (function() {
   this.App || (this.App = {});
 
-  App.cable = ActionCable.createConsumer('ws://localhost/regulus/cable');
+  App.cable = ActionCable.createConsumer('/regulus/cable');
 
 }).call(this);
