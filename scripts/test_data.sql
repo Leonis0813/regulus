@@ -25,6 +25,7 @@ ON
   cs.pair = ma200.pair AND
   cs.time_frame = ma200.time_frame
 WHERE
+  DATE(cs.from) <= "${TO}" AND
   cs.pair = "${PAIR}" AND
   cs.time_frame = "D1" AND
   ma25.period = 25 AND

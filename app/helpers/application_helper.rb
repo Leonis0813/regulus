@@ -1,6 +1,10 @@
 # coding: utf-8
 
 module ApplicationHelper
+  def date_to_string(date)
+    date&.strftime('%Y/%m/%d')
+  end
+
   def time_to_string(time)
     time&.strftime('%Y/%m/%d %T')
   end

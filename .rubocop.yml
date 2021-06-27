@@ -33,10 +33,13 @@ Metrics/MethodLength:
 Style/AndOr:
   Enabled: false
 
-Style/Encoding:
-  Enabled: false
+Style/ClassAndModuleChildren:
+  EnforcedStyle: 'compact'
 
 Style/Documentation:
+  Enabled: false
+
+Style/Encoding:
   Enabled: false
 
 Style/FrozenStringLiteralComment:

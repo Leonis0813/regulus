@@ -9,6 +9,9 @@ Rails.application.routes.draw do
   post '/predictions' => 'predictions#execute'
   put '/predictions/settings' => 'predictions#settings'
 
+  resources :evaluations, only: %i[index show], param: :evaluation_id
+  post '/evaluations' => 'evaluations#execute'
+
   namespace :api, format: 'json' do
     resources :predictions, only: %i[index]
   end
