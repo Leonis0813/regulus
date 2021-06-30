@@ -1,8 +1,12 @@
 # coding: utf-8
 
 module ApplicationHelper
+  def date_to_string(date)
+    date&.strftime('%Y/%m/%d')
+  end
+
   def time_to_string(time)
-    time.strftime('%Y/%m/%d %T')
+    time&.strftime('%Y/%m/%d %T')
   end
 
   def period_to_string(from, to)
@@ -22,6 +26,8 @@ module ApplicationHelper
 
   def state_to_title(state)
     case state
+    when 'waiting'
+      '実行待ち'
     when 'completed'
       '完了'
     when 'processing'

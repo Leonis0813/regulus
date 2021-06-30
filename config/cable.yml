@@ -1,0 +1,12 @@
+production:
+  adapter: redis
+  url: redis://localhost:6379
+  channel_prefix: regulus
+
+development:
+  adapter: redis
+  url: redis://localhost:6379
+  channel_prefix: regulus
+
+test:
+  adapter: async

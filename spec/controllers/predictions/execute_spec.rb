@@ -8,14 +8,12 @@ describe PredictionsController, type: :controller do
 
   after(:all) { FileUtils.rm_rf(Dir[Rails.root.join('tmp', 'models', '*')]) }
 
-  shared_context 'リクエスト送信' do |body: default_params|
-    before(:all) do
-      RSpec::Mocks.with_temporary_scope do
-        allow(PredictionJob).to receive(:perform_later).and_return(true)
-        response = client.post('/predictions', body)
-        @response_status = response.status
-        @response_body = JSON.parse(response.body) rescue nil
-      end
+  shared_context 'リクエスト送信' do |params: default_params|
+    before do
+      allow(PredictionJob).to receive(:perform_later).and_return(true)
+      response = post(:execute, params: params)
+      @response_status = response.status
+      @response_body = JSON.parse(response.body) rescue nil
     end
   end
 
@@ -28,13 +26,13 @@ describe PredictionsController, type: :controller do
   describe '異常系' do
     context 'modelがない場合' do
       errors = [{'error_code' => 'absent_param_model'}]
-      include_context 'リクエスト送信', body: {}
+      include_context 'リクエスト送信', params: {}
       it_behaves_like 'レスポンスが正しいこと', status: 400, body: {'errors' => errors}
     end
 
     context 'modelが不正な場合' do
       errors = [{'error_code' => 'invalid_param_model'}]
-      include_context 'リクエスト送信', body: {model: 'invalid.txt'}
+      include_context 'リクエスト送信', params: {model: 'invalid.txt'}
       it_behaves_like 'レスポンスが正しいこと', status: 400, body: {'errors' => errors}
     end
   end

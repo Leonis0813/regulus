@@ -3,7 +3,12 @@ module Api
     def index
       query = Query.new(index_param)
       if query.valid?
-        @predictions = Prediction.where(index_param.slice(:means, :pair))
+        db_query = {
+          'means' => index_param[:means],
+          'analyses.pair' => index_param[:pair],
+        }.compact
+        @predictions = Prediction.joins(:analysis)
+                                 .where(db_query)
                                  .order(created_at: :desc)
                                  .page(query.page)
                                  .per(query.per_page)

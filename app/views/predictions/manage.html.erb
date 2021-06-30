@@ -17,7 +17,7 @@
         <%= form_for @prediction, html: {multipart: true}, url: predictions_path, remote: true do |f| %>
           <div class='form-group'>
             <%= f.label :model, 'モデル' %><br>
-            <%= f.file_field :model, class: 'form-control', name: :model, required: true %>
+            <%= f.file_field :model, name: :model, required: true %>
           </div>
           <%= f.submit '実行', class: 'btn btn-primary btn-sm btn-submit' %>
           <%= f.submit 'リセット', type: 'reset', class: 'btn btn-default btn-sm' %>
@@ -37,7 +37,7 @@
           </div>
           <div id='form-active' class='form-group form-setting'>
             <%= label_tag :auto_model, 'モデル' %><br>
-            <%= file_field_tag 'auto[model]', class: 'form-control form-active' %>
+            <%= file_field_tag 'auto[model]', class: 'form-active' %>
           </div>
           <div id='form-inactive' class='form-group form-setting not-selected'>
             <%= label_tag :auto_pair, 'ペア' %><br>
@@ -73,11 +73,12 @@
     <div>
       <h3 style='display:inline;padding: 10px 0px'>ジョブ実行履歴</h3>
     </div>
-    <% from = @predictions.total_count.zero? ? 0 : @predictions.offset_value + 1 %>
-    <% to = @predictions.offset_value + @predictions.size %>
-    <% info = {total_count: @predictions.total_count, from: from, to: to} %>
-    <h4 style='padding: 10px 0px'><%= t('views.pagination.info', info) %></h4>
-    <%= paginate @predictions %>
+    <span id='page-info'>
+      <%= render partial: 'layouts/page_info', locals: {resources: @predictions} %>
+    </span>
+    <span id='paginate'>
+      <%= paginate @predictions %>
+    </span>
     <table id='table-job' class='table table-hover'>
       <thead>
         <th width='150'>実行開始日時</th>
@@ -87,7 +88,7 @@
         <th>方法</th>
         <th width='50'>結果</th>
       </thead>
-      <tbody>
+      <tbody id='tbody-predictions'>
         <%= render @predictions %>
       </tbody>
     </table>

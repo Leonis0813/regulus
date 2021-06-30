@@ -3,6 +3,8 @@ class AnalysisJob < ApplicationJob
 
   def perform(analysis_id)
     analysis = Analysis.find(analysis_id)
+    analysis.start!
+
     tmp_dir = Rails.root.join('scripts/tmp')
     FileUtils.mkdir_p(tmp_dir)
 
@@ -28,11 +30,11 @@ class AnalysisJob < ApplicationJob
 
     AnalysisMailer.completed(analysis).deliver_now
     FileUtils.rm_rf("#{Rails.root}/tmp/models/#{analysis_id}")
-    analysis.update!(state: Analysis::STATE_COMPLETED)
+    analysis.completed!
   rescue StandardError => e
     Rails.logger.error(e.message)
     Rails.logger.error(e.backtrace.join("\n"))
-    analysis.update!(state: 'error')
+    analysis.failed!
     AnalysisMailer.error(analysis).deliver_now
   end
 end

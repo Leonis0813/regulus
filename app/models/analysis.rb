@@ -4,29 +4,57 @@ class Analysis < ApplicationRecord
 
   validate :valid_period?
   validates :analysis_id, :batch_size, :pair, :state,
-            presence: {message: 'absent'}
+            presence: {message: MESSAGE_ABSENT}
   validates :analysis_id,
-            format: {with: /\A[0-9a-f]{32}\z/, message: 'invalid'},
+            format: {with: /\A[0-9a-f]{32}\z/, message: MESSAGE_INVALID},
             allow_nil: true
   validates :pair,
-            inclusion: {in: PAIR_LIST, message: 'invalid'},
+            inclusion: {in: PAIR_LIST, message: MESSAGE_INVALID},
             allow_nil: true
   validates :batch_size,
-            numericality: {only_integer: true, greater_than: 0, message: 'invalid'},
+            numericality: {
+              only_integer: true,
+              greater_than: 0,
+              message: MESSAGE_INVALID,
+            },
             allow_nil: true
   validates :min, :max,
-            numericality: {greater_than: 0, message: 'invalid'},
+            numericality: {greater_than: 0, message: MESSAGE_INVALID},
             allow_nil: true
   validates :state,
-            inclusion: {in: STATE_LIST, message: 'invalid'},
+            inclusion: {in: STATE_LIST, message: MESSAGE_INVALID},
             allow_nil: true
+
+  has_many :predictions, dependent: :destroy
+  has_many :evaluations, dependent: :destroy
 
   after_initialize if: :new_record? do |analysis|
     analysis.analysis_id = SecureRandom.hex
     analysis.state = DEFAULT_STATE
   end
 
+  def start!
+    update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
+    broadcast
+  end
+
+  def completed!
+    update!(state: STATE_COMPLETED)
+    broadcast
+  end
+
+  def failed!
+    update!(state: STATE_ERROR)
+    broadcast
+  end
+
   private
+
+  def broadcast
+    updated_attribute = attributes.slice('analysis_id', 'state')
+    updated_attribute['performed_at'] = performed_at.strftime('%Y/%m/%d %T')
+    ActionCable.server.broadcast('analysis', updated_attribute)
+  end
 
   def valid_period?
     errors.add(:from, 'invalid') unless from

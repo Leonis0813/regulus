@@ -1,30 +1,25 @@
 class Prediction < ApplicationRecord
-  PAIR_LIST = Analysis::PAIR_LIST
   MEANS_MANUAL = 'manual'.freeze
   MEANS_AUTO = 'auto'.freeze
   MEANS_LIST = [MEANS_MANUAL, MEANS_AUTO].freeze
-  RESULT_LIST = %w[up down range].freeze
 
   validate :valid_period?
   validates :prediction_id, :model, :state,
-            presence: {message: 'absent'}
+            presence: {message: MESSAGE_ABSENT}
   validates :prediction_id,
-            format: {with: /\A[0-9a-f]{32}\z/, message: 'invalid'},
+            format: {with: /\A[0-9a-f]{32}\z/, message: MESSAGE_INVALID},
             allow_nil: true
   validates :model,
-            format: {with: /\.zip\z/, message: 'invalid'},
-            allow_nil: true
-  validates :pair,
-            inclusion: {in: PAIR_LIST, message: 'invalid'},
+            format: {with: /\.zip\z/, message: MESSAGE_INVALID},
             allow_nil: true
   validates :means,
-            inclusion: {in: MEANS_LIST, message: 'invalid'},
+            inclusion: {in: MEANS_LIST, message: MESSAGE_INVALID},
             allow_nil: true
   validates :result,
-            inclusion: {in: RESULT_LIST, message: 'invalid'},
+            inclusion: {in: RESULT_LIST, message: MESSAGE_INVALID},
             allow_nil: true
   validates :state,
-            inclusion: {in: STATE_LIST, message: 'invalid'},
+            inclusion: {in: STATE_LIST, message: MESSAGE_INVALID},
             allow_nil: true
 
   belongs_to :analysis
@@ -40,9 +35,46 @@ class Prediction < ApplicationRecord
     raise StandardError if analysis.nil?
 
     update!(analysis: analysis)
+    broadcast('pair' => analysis.pair)
+  end
+
+  def import_result!(result_file)
+    attribute = YAML.load_file(result_file)
+    result = attribute['up'] > attribute['down'] ? RESULT_UP : RESULT_DOWN
+    update!(attribute.slice('from', 'to').merge(result: result))
+    updated_attribute = {
+      'result' => result,
+      'from' => from.strftime('%Y/%m/%d %T'),
+      'to' => to.strftime('%Y/%m/%d %T'),
+    }
+    broadcast(updated_attribute)
+  end
+
+  def start!
+    update!(state: STATE_PROCESSING, performed_at: Time.zone.now)
+    updated_attribute = {
+      'state' => state,
+      'performed_at' => performed_at.strftime('%Y/%m/%d %T'),
+    }
+    broadcast(updated_attribute)
+  end
+
+  def completed!
+    update!(state: STATE_COMPLETED)
+    broadcast(attributes.slice('state'))
+  end
+
+  def failed!
+    update!(state: STATE_ERROR)
+    broadcast(attributes.slice('state'))
   end
 
   private
+
+  def broadcast(updated_attribute = {})
+    updated_attribute['prediction_id'] = prediction_id
+    ActionCable.server.broadcast('prediction', updated_attribute)
+  end
 
   def valid_period?
     return unless from and to

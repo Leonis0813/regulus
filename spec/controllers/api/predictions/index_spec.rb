@@ -3,9 +3,11 @@
 require 'rails_helper'
 
 describe Api::PredictionsController, type: :controller do
-  shared_context 'リクエスト送信' do |query|
-    before(:all) do
-      response = client.get('/api/predictions', query)
+  render_views
+
+  shared_context 'リクエスト送信' do |params|
+    before do
+      response = get(:index, params: params, format: :json)
       @response_status = response.status
       @response_body = JSON.parse(response.body) rescue nil
     end
@@ -15,11 +17,20 @@ describe Api::PredictionsController, type: :controller do
 
   before(:all) do
     now = Time.zone.now
+    @analyses = []
+
+    analysis_eurjpy = create(:analysis, analysis_id: '0' * 32, pair: 'EURJPY')
     @predictions = Array.new(5) do |i|
-      create(:prediction, means: 'auto', pair: 'EURJPY', created_at: now - i)
+      @analyses << analysis_eurjpy
+      attribute = {means: 'auto', created_at: now - i, analysis: analysis_eurjpy}
+      create(:prediction, attribute)
     end
+
+    analysis_usdjpy = create(:analysis, analysis_id: '1' * 32, pair: 'USDJPY')
     @predictions += Array.new(6) do |i|
-      create(:prediction, means: 'manual', created_at: now - 10 - i)
+      @analyses << analysis_usdjpy
+      attribute = {means: 'manual', created_at: now - 10 - i, analysis: analysis_usdjpy}
+      create(:prediction, attribute)
     end
   end
 
@@ -33,9 +44,10 @@ describe Api::PredictionsController, type: :controller do
     ].each do |query, indexes|
       context "#{query}を指定した場合" do
         before(:all) do
-          attributes = PredictionHelper.response_keys.sort
+          attributes = PredictionHelper.response_keys.sort - %w[pair]
           predictions = indexes.map do |index|
             prediction = @predictions[index].slice(*attributes)
+            prediction['pair'] = @analyses[index].pair
             prediction['created_at'] = prediction['created_at'].strftime('%FT%T.%LZ')
             prediction
           end

@@ -1,3 +1,14 @@
+# 5.0.0 (2021/06/27)
+- [ADD] evaluation view
+- [UPDATE] gems
+
+# 4.9.10 (2021/04/09)
+- [FIX] action cable url for production
+
+# 4.9.9 (2021/04/06)
+- [UPDATE] views to update table automatically by websocket
+- [UPDATE] gems
+
 # 4.9.8 (2021/03/07)
 - [FIX] csv file to change column order
 - [FIX] test data array order
